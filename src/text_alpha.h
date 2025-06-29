@@ -1,0 +1,1 @@
+void Patches_Apply();

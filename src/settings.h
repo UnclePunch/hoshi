@@ -1,0 +1,82 @@
+#ifndef MODSETTINGS_H
+#define MODSETTINGS_H
+
+#include "hoshi/settings.h" // public headers
+
+#define SETTINGS_DEBUG 1
+
+#define MENU_PLINK 31
+#define MODSETTINGS_GXLINK 4
+#define OPTION_GXPRI 1
+#define TEXT_GXPRI 2
+#define CURSOR_GXPRI 2
+
+#define OPTION_NUM 5
+
+#if SETTINGS_DEBUG == 1
+#define LOG(...) OSReport(__VA_ARGS__)
+#else
+#define LOG(...) (sizeof(void *))
+#endif
+
+typedef struct SettingsData
+{
+    JOBJSet **ScMenValue_scene_models;
+    JOBJSet **ScMenSelruleFrame_scene_models;
+    JOBJSet **ScMenSelruleFrame2_scene_models;
+    JOBJSet **ScMenSelruleCursor_scene_models;
+    JOBJSet **ScMenTransition_scene_models;
+    struct
+    {
+        GOBJ *cur_gobj;
+        GOBJ *prev_gobj;
+    } menu;
+    GOBJ *cursor_gobj;
+    GOBJ *transition_gobj;
+} SettingsData;
+
+typedef struct OptionData
+{
+    OptionKind kind;
+    JOBJSet *assets;
+    struct
+    {
+        Text *text;
+        JOBJ *j;
+    } name;
+    struct
+    {
+        Text *text;
+        JOBJ *j;
+    } value[1];
+} OptionData;
+
+typedef struct MenuData
+{
+    MenuDesc *desc;
+    int is_remove;
+    int option_num;
+    OptionData option_data[OPTION_NUM];
+} MenuData;
+
+void MainMenu_ApplyPatches();
+
+void Settings_Init(ModloaderData *mod_data);
+void Settings_UpdateCurrentMenu();
+void Settings_EnterNewMenu(MenuDesc *desc, MenuState trans_kind);
+void Settings_ReqDestroy();
+void Settings_Destroy();
+void Cursor_Think(GOBJ *g);
+JOBJ *Option_Create(OptionDesc *desc, OptionData *op);
+GOBJ *Menu_Create(MenuDesc *desc);
+void Menu_Think(GOBJ *m);
+void Menu_Destroy(MenuData *mp);
+void Menu_CopyAllModToSave(MenuDesc *desc);
+void OptionText_GX(GOBJ *g, int pass);
+void Menu_AddTransitionAnim(GOBJ *m, int anim_id);
+void Menu_CopyToSave(GlobalMod *mod);
+void Menu_CopyFromSave(GlobalMod *mod);
+u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc);
+GlobalMod *Menu_GetMod();
+void Menu_GetSaveSize(MenuDesc *desc, int *size);
+#endif

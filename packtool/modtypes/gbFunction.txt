@@ -1,0 +1,14 @@
+ModName
+ModAuthor
+ModVersion
+ModSaveSize
+ModMenu
+OnBoot
+OnSceneChange
+OnSaveInit
+On3DLoad
+On3DPause
+On3DUnpause
+On3DExit
+OnMainMenuLoad
+OnPlayerSelectLoad

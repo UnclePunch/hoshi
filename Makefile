@@ -10,7 +10,7 @@ BINDIR   = out
 PACKDIR  = packtool
 
 # === Compiler Flags ===
-INCLUDES = -I$(PACKDIR)/include -Iinclude -I$(LIBDIR) -I$(SRCDIR)
+INCLUDES = -Iinclude -I$(LIBDIR) -I$(SRCDIR)
 
 CFLAGS = -O1 -mcpu=750 -meabi -msdata=none -mhard-float -ffreestanding \
          -fno-unwind-tables -fno-exceptions -fno-asynchronous-unwind-tables \

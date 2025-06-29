@@ -26,6 +26,12 @@
 
 ModloaderData *stc_modloader_data;
 
+/////////////////////////////
+//                         //
+//       DOL Hooks         //
+//                         //
+/////////////////////////////
+
 // runs every scene change, heap exists
 void Hook_SceneChange()
 {
@@ -150,8 +156,12 @@ void Hook_PlayerSelectLoad()
 };
 CODEPATCH_HOOKCREATE(0x8003b48c, "", Hook_PlayerSelectLoad, "", 0)
 
-// Main program entrypoint.
-// not much about the game is initialized yet, not even the heaps.
+////////////////////////////////////////////
+//                                        //
+//       Main program entrypoint.         //
+//                                        //
+////////////////////////////////////////////
+
 void OnFileLoad(HSD_Archive *archive)
 {
     // replace hsd_memalloc for the duration of this callback

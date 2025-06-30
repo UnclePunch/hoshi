@@ -5551,6 +5551,7 @@ GroundKind Gm_GetCurrentGrKind();
 int Gm_IsGrKindCity(GroundKind gr_kind);
 void CitySelect_Cursor6Update(int ply, int color_idx);
 void AirRideSelect_Cursor6Update(int ply, int color_idx);
+int Gm_GetPauseKind(int type);
 void Gm_Pause(int pause_kind);
 void Gm_Resume(int pause_kind);
 void Gm_PlayPauseSFX();

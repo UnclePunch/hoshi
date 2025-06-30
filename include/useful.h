@@ -688,5 +688,5 @@ void Vec3_RotateAboutUnitAxis(Vec3 *v, Vec3 *axis, float angle);
 void Wind_StageCreate(Vec3 *pos, int duration, float radius, float lifetime, float angle, float left, float right, float top, float bottom);
 void Wind_FighterCreate(Vec3 *pos, int duration, float radius, float lifetime, float angle);
 
-int Gm_GetPauseKind(int type);
+int bp();
 #endif

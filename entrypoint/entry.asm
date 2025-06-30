@@ -75,7 +75,7 @@ mexPatch_Skip:
 
 FileName:
 blrl
-.string "hoshi.dat"
+.string "hoshi.bin"
 .align 2
 SymbolName:
 blrl
@@ -102,11 +102,11 @@ NoFile:
 #############################################
 Assert_Name:
 blrl
-.string "m-ex"
+.string "hoshi"
 .align 2
 ErrorString:
 blrl
-.string "error: hoshi.dat not found!\n"
+.string "error: hoshi.bin not found!\n"
 .align 2
 ###############################################
 

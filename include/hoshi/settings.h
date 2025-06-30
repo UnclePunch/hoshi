@@ -1,6 +1,8 @@
 #ifndef HOSHISETTINGS_H
 #define HOSHISETTINGS_H
 
+#include "scene.h"
+
 typedef enum OptionKind
 {
     OPTKIND_VALUE,

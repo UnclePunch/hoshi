@@ -33,7 +33,7 @@ typedef struct GlobalMod
 {
     gbFunction data;
     MEXFunction *mex_function;
-    HSD_Archive *archive;
+    void *archive;
     int entrynum;
     struct
     {
@@ -63,7 +63,7 @@ void OnSceneChange();
 void OnSceneChange_Caller();
 void Mods_CountFile(int entrynum, int *num);
 void Mods_LoadFile_Callback(int r3, int *is_loaded);
-HSD_Archive *Mods_LoadFile(int entrynum);
+void *Mods_LoadFile(int entrynum);
 void Mods_LoadGlobal(int entrynum);
 void Mods_LoadVS(int entrynum);
 void Modloader_InitSaveData();

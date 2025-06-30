@@ -18,11 +18,12 @@
 #include "more_preload.h"
 #include "stack.h"
 #include "hash.h"
+#include "text_alpha.h"
+#include "reloc/reloc.h"
 
+// Lib
 #include "code_patch/code_patch.h"
 #include "fst/fst.h"
-
-#include "text_alpha.h"
 
 ModloaderData *stc_modloader_data;
 
@@ -183,10 +184,11 @@ void OnFileLoad(HSD_Archive *archive)
 
     stc_modloader_data->hoshi.archive = archive;
     // stc_modloader_data->hoshi.mex_function = Archive_GetPublicAddress(archive, "mdFunction");
+    bp();
 
     // count number of mod files on disc
     int mod_num = 0;
-    FST_ForEachInFolder("/mods", ".dat", 0, (void (*)(int, void *))Mods_CountFile, &mod_num);
+    FST_ForEachInFolder("/mods", ".bin", 0, (void (*)(int, void *))Mods_CountFile, &mod_num);
     OSReport("found %d mods\n", mod_num);
 
     // if mods were found, load them
@@ -198,7 +200,7 @@ void OnFileLoad(HSD_Archive *archive)
         int tick = OSGetTick();
 
         // load each mod file and install them
-        FST_ForEachInFolder("/mods", ".dat", 0, (void (*)(int, void *))Mods_LoadGlobal, 0);
+        FST_ForEachInFolder("/mods", ".bin", 0, (void (*)(int, void *))Mods_LoadGlobal, 0);
         OSReport("\n");
 
         // count size of all mods
@@ -261,7 +263,7 @@ void Mods_LoadFile_Callback(int r3, int *is_loaded)
     (*is_loaded) = 1;
     return;
 }
-HSD_Archive *Mods_LoadFile(int entrynum)
+void *Mods_LoadFile(int entrynum)
 {
 
     // load this file
@@ -269,7 +271,6 @@ HSD_Archive *Mods_LoadFile(int entrynum)
     DVDFastOpen(entrynum, &file_info);
     int file_size = file_info.length;
     DVDClose(&file_info);
-    HSD_Archive *file_archive = HSD_MemAlloc(sizeof(HSD_Archive));
     void *file_buffer = HSD_MemAlloc(OSRoundUp32B(file_size));
 
     // load file
@@ -280,11 +281,9 @@ HSD_Archive *Mods_LoadFile(int entrynum)
     while (!is_loaded)
         ;
 
-    Archive_Init(file_archive, file_buffer, file_size);
+    OSReport("Loaded mod file: %s (0x%08x)\n", FST_GetFilenameFromEntrynum(entrynum), file_buffer);
 
-    OSReport("Loaded mod archive: %s (0x%08x)\n", FST_GetFilenameFromEntrynum(entrynum), file_archive);
-
-    return file_archive;
+    return file_buffer;
 }
 
 void Mods_LoadGlobal(int entrynum)
@@ -295,14 +294,15 @@ void Mods_LoadGlobal(int entrynum)
     this_mod->entrynum = entrynum;
 
     // load file
-    HSD_Archive *file_archive = Mods_LoadFile(entrynum); //
-    this_mod->archive = file_archive;                    // save ptr to archive
+    ModHeader *file = Mods_LoadFile(entrynum); //
+    this_mod->archive = file;                  // save ptr to archive
 
     // reloc and overload
-    MEX_InitRELDAT(file_archive, "gbFunction", (void **)&this_mod->data);
+    reloc(file);
+    get_func(file, (void **)&this_mod->data);
 
     // save ptr to mexFunction so we can access debug data
-    this_mod->mex_function = Archive_GetPublicAddress(file_archive, "gbFunction");
+    // this_mod->mex_function = Archive_GetPublicAddress(file_archive, "gbFunction");
 
     OSReport("~~~~~~~~~~~~~~~~~~~~~\n");
     OSReport("[hoshi] Installing global mod...\n");

@@ -62,7 +62,7 @@ def main():
     write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbols)
  
      # cleanup compile files
-    print(f"[*] Cleaning build directory: {build_dir}")
+    #print(f"[*] Cleaning build directory: {build_dir}")
     shutil.rmtree(build_dir)
 
 def strip_linked_obj(linked_obj, lookup_symbols):
@@ -87,7 +87,7 @@ def extract_sections_and_data(file_path):
         needed_sections = {".text", ".data", ".rodata", ".bss"}
 
         # Loop over all sections in the ELF file
-        #print("[*] Sections and Data:")
+        # print("[*] Sections and Data:")
         for section in elf.iter_sections():
             section_name = section.name
             if any(section_name.startswith(prefix) for prefix in needed_sections):
@@ -97,7 +97,7 @@ def extract_sections_and_data(file_path):
                 sections[section_name] = {'data' : section_data, 'offset' : None}
 
                 # Print section information
-                #print(f"Section: {section_name}, Size: {len(section_data)} bytes")
+                # print(f"Section: {section_name}, Size: {len(section_data)} bytes")
 
         
         print(f"Extracted {len(sections)} sections")
@@ -199,35 +199,33 @@ def resolve_symbol_offset(symbol_name, symbols, all_sections):
     Returns:
       - offset (int), or None if symbol is unresolved
     """
+
+    offset = None
+
+    # first check for a psuedo symbol with an operator and offset
+    if "+" in symbol_name or "-" in symbol_name:
+        operator = "+" if "+" in symbol_name else "-"
+        multiplier = 1 if operator == "+" else -1
+        # print(f"resolving pseudo symbol {symbol_name}")
+        symbol_name, offset_str = symbol_name.split(operator, 1)
+        offset = int(offset_str, 16) * multiplier
+
     symbol_info = symbols.get(symbol_name)
     if symbol_info:
         section = symbol_info["section"]
+        # print(f"resolving symbol {symbol_name} in section {section}")
 
         if section == "*ABS*":
             return symbol_info["value"]
         elif section in all_sections:
-            return all_sections[section]['offset'] + symbol_info["value"]
+            # print(f"FOUND in all sections")
+            if offset is None:
+                offset = symbol_info["value"]
+            return all_sections[section]['offset'] + offset
         else:
             print(f"[!] Unknown section '{section}' in symbol table for '{symbol_name}'")
             return None
-
-    # Fallback: section+offset pseudo-symbol
-    if "+" in symbol_name or "-" in symbol_name:
-        multiplier = 1 if "+" in symbol_name else -1
-        operator = "+" if "+" in symbol_name else "-"
-        try:
-            base_section, offset_str = symbol_name.split(operator, 1)
-            offset = int(offset_str, 16)
-            # print(f"symbol {symbol_name} -> {base_section} has operator in it, multiplying {offset:x} by {multiplier}")
-
-            if base_section in all_sections:
-                return all_sections[base_section]['offset'] + (offset * multiplier)
-            else:
-                print(f"[!] Unknown base section '{base_section}' in pseudo-symbol '{symbol_name}'")
-                return None
-        except ValueError:
-            print(f"[!] Invalid pseudo-symbol format: '{symbol_name}'")
-            return None
+        
 
     return None
 

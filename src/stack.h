@@ -1,8 +1,6 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "mex.h"
-
 #define STACK_MAX_DEPTH_LOG 16
 
 typedef struct StackChain StackChain;

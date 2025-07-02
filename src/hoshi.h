@@ -1,7 +1,7 @@
 #ifndef MODLOADER_H
 #define MODLOADER_H
 
-#include "mex.h"
+#include "reloc/reloc.h"           // public header
 #include "hoshi/settings.h"        // public header
 #include "code_patch/code_patch.h" //
 
@@ -32,7 +32,7 @@ typedef struct gbFunction
 typedef struct GlobalMod
 {
     gbFunction data;
-    MEXFunction *mex_function;
+    ModHeader *mex_function;
     void *archive;
     int entrynum;
     struct
@@ -49,7 +49,7 @@ typedef struct ModloaderData
     struct
     {
         HSD_Archive *archive;
-        MEXFunction *mex_function;
+        ModHeader *mex_function;
     } hoshi;
     int mod_num;
     GlobalMod *mods;

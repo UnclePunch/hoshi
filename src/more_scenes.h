@@ -1,8 +1,6 @@
 #ifndef MORESCENES_H
 #define MORESCENES_H
 
-#include "mex.h"
-
 // void Scenes_Init();
 // void Gm_MajorPatch();
 // void minor_scene_asm_1();

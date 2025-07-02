@@ -1,4 +1,3 @@
-#include "mex.h"
 #include "text.h"
 #include "useful.h"
 #include "hsd.h"
@@ -246,7 +245,7 @@ void Settings_Think()
             if (is_moved)
             {
                 SFX_Play(FGMMENU_CS_MV);
-                Settings_UpdateCurrentMenu(TRANSKIND_NONE);
+                Settings_UpdateCurrentMenu();
             }
         }
         else if (rapid & PAD_BUTTON_RIGHT)
@@ -267,7 +266,7 @@ void Settings_Think()
             if (is_moved)
             {
                 SFX_Play(FGMMENU_CS_MV);
-                Settings_UpdateCurrentMenu(TRANSKIND_NONE);
+                Settings_UpdateCurrentMenu();
             }
         }
     }

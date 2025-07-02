@@ -1,4 +1,3 @@
-#include "mex.h"
 #include "text.h"
 #include "useful.h"
 #include "hsd.h"
@@ -11,6 +10,7 @@
 
 #include "stack.h"
 #include "hoshi.h"
+#include "reloc/reloc.h"
 #include "code_patch/code_patch.h"
 
 static StackLog stc_stack_log = {.num = 0};
@@ -18,7 +18,7 @@ static MEXDebug *stc_dol_debug = 0;
 
 void Stack_Init()
 {
-    Stack_ApplyPatches();
+    // Stack_ApplyPatches();
 }
 
 // Functions
@@ -115,91 +115,92 @@ CODEPATCH_HOOKCREATE(0x8007d790,
                      "",
                      0x8007d7d4) // 0x8007d90c
 
+/*
 char *MEXFunction_SearchForSymbol(MEXFunction *mex_function, void *addr)
 {
-    // skip mod if no debug data is present
-    if (!mex_function->debug.symbol)
-        return 0;
+// skip mod if no debug data is present
+if (!mex_function->debug.symbol)
+return 0;
 
-    // skip mod if address exists outside mods code region
-    if ((u32)addr < (u32)mex_function->code || (u32)addr >= ((u32)mex_function->code + mex_function->code_size))
-        return 0;
+// skip mod if address exists outside mods code region
+if ((u32)addr < (u32)mex_function->code || (u32)addr >= ((u32)mex_function->code + mex_function->code_size))
+return 0;
 
-    // binary search to find the code section the addr lies in
-    int symbol_idx_min = 0;
-    int symbol_idx_max = mex_function->debug.symbol_num - 1;
-    int symbol_idx;
-    while (symbol_idx_min < symbol_idx_max)
-    {
-        symbol_idx = symbol_idx_min + (symbol_idx_max - symbol_idx_min) / 2;
+// binary search to find the code section the addr lies in
+int symbol_idx_min = 0;
+int symbol_idx_max = mex_function->debug.symbol_num - 1;
+int symbol_idx;
+while (symbol_idx_min < symbol_idx_max)
+{
+symbol_idx = symbol_idx_min + (symbol_idx_max - symbol_idx_min) / 2;
 
-        u32 symbol_addr_start = (u32)mex_function->code + mex_function->debug.symbol[symbol_idx].code_offset_start;
-        u32 symbol_addr_end = (u32)mex_function->code + mex_function->debug.symbol[symbol_idx].code_offset_end;
+u32 symbol_addr_start = (u32)mex_function->code + mex_function->debug.symbol[symbol_idx].code_offset_start;
+u32 symbol_addr_end = (u32)mex_function->code + mex_function->debug.symbol[symbol_idx].code_offset_end;
 
-        if ((u32)addr >= symbol_addr_start && (u32)addr < symbol_addr_end) // symbol found
-            return mex_function->debug.symbol[symbol_idx].symbol;          //
-        else if ((u32)addr > symbol_addr_end)                              // symbol exists after this one
-            symbol_idx_min = symbol_idx + 1;
-        else if ((u32)addr < symbol_addr_start) // symbol exists prior to this one
-            symbol_idx_max = symbol_idx - 1;
-    }
+if ((u32)addr >= symbol_addr_start && (u32)addr < symbol_addr_end) // symbol found
+return mex_function->debug.symbol[symbol_idx].symbol;          //
+else if ((u32)addr > symbol_addr_end)                              // symbol exists after this one
+symbol_idx_min = symbol_idx + 1;
+else if ((u32)addr < symbol_addr_start) // symbol exists prior to this one
+symbol_idx_max = symbol_idx - 1;
+}
 
-    return 0;
+return 0;
 }
 char *Stack_FindSymbolNameFromAddress(void *lr)
 {
-    char *symbol_name;
+char *symbol_name;
 
-    // OSReport("Searching for %p\n", lr);
+// OSReport("Searching for %p\n", lr);
 
-    // OSReport("Checking Modloader code...\n", lr);
+// OSReport("Checking Modloader code...\n", lr);
 
-    // check hoshi code
-    symbol_name = MEXFunction_SearchForSymbol(stc_modloader_data->hoshi.mex_function, lr);
-    if (symbol_name)
-        return symbol_name;
+// check hoshi code
+symbol_name = MEXFunction_SearchForSymbol(stc_modloader_data->hoshi.mex_function, lr);
+if (symbol_name)
+return symbol_name;
 
-    // check each installed mod
-    for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
-    {
-        MEXFunction *mex_function = stc_modloader_data->mods[mod_idx].mex_function;
+// check each installed mod
+for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
+{
+MEXFunction *mex_function = stc_modloader_data->mods[mod_idx].mex_function;
 
-        // OSReport("Checking %s code...\n", stc_modloader_data->mods[mod_idx].data.name);
+// OSReport("Checking %s code...\n", stc_modloader_data->mods[mod_idx].data.name);
 
-        char *symbol_name = MEXFunction_SearchForSymbol(mex_function, lr);
+char *symbol_name = MEXFunction_SearchForSymbol(mex_function, lr);
 
-        if (symbol_name)
-            return symbol_name;
-    }
-
-    // check dol
-    if (stc_dol_debug && (u32)lr >= 0x80003100 && (u32)lr < 0x80535300) // hardcoded bounds, look into detecting regions from dol
-    {
-        // OSReport("Checking dol code...\n");
-
-        // binary search to find the code section the addr lies in
-        int symbol_idx_min = 0;
-        int symbol_idx_max = stc_dol_debug->symbol_num - 1;
-        int symbol_idx;
-        while (symbol_idx_min <= symbol_idx_max)
-        {
-            symbol_idx = symbol_idx_min + (symbol_idx_max - symbol_idx_min) / 2;
-
-            u32 symbol_addr_start = stc_dol_debug->symbol[symbol_idx].code_offset_start;
-            u32 symbol_addr_end = stc_dol_debug->symbol[symbol_idx].code_offset_end;
-
-            if ((u32)lr >= symbol_addr_start && (u32)lr <= symbol_addr_end) // symbol found
-                return stc_dol_debug->symbol[symbol_idx].symbol;            //
-            else if ((u32)lr > symbol_addr_end)                             // symbol exists after this one
-                symbol_idx_min = symbol_idx + 1;                            //
-            else if ((u32)lr < symbol_addr_start)                           // symbol exists prior to this one
-                symbol_idx_max = symbol_idx - 1;                            //
-        }
-    }
-
-    return 0;
+if (symbol_name)
+return symbol_name;
 }
 
+// check dol
+if (stc_dol_debug && (u32)lr >= 0x80003100 && (u32)lr < 0x80535300) // hardcoded bounds, look into detecting regions from dol
+{
+// OSReport("Checking dol code...\n");
+
+// binary search to find the code section the addr lies in
+int symbol_idx_min = 0;
+int symbol_idx_max = stc_dol_debug->symbol_num - 1;
+int symbol_idx;
+while (symbol_idx_min <= symbol_idx_max)
+{
+symbol_idx = symbol_idx_min + (symbol_idx_max - symbol_idx_min) / 2;
+
+u32 symbol_addr_start = stc_dol_debug->symbol[symbol_idx].code_offset_start;
+u32 symbol_addr_end = stc_dol_debug->symbol[symbol_idx].code_offset_end;
+
+if ((u32)lr >= symbol_addr_start && (u32)lr <= symbol_addr_end) // symbol found
+return stc_dol_debug->symbol[symbol_idx].symbol;            //
+else if ((u32)lr > symbol_addr_end)                             // symbol exists after this one
+symbol_idx_min = symbol_idx + 1;                            //
+else if ((u32)lr < symbol_addr_start)                           // symbol exists prior to this one
+symbol_idx_max = symbol_idx - 1;                            //
+}
+}
+
+return 0;
+}
+*/
 void Stack_ApplyPatches()
 {
 

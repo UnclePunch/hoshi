@@ -5,7 +5,6 @@
 #include "game.h"
 #include "scene.h"
 #include "inline.h"
-#include "mex.h"
 
 #include <stdarg.h>
 #include <string.h>

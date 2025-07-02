@@ -65,7 +65,7 @@ void Settings_Init(ModloaderData *mod_data);
 void Settings_UpdateCurrentMenu();
 void Settings_EnterNewMenu(MenuDesc *desc, MenuState trans_kind);
 void Settings_ReqDestroy();
-void Settings_Destroy();
+void Settings_Destroy(void *);
 void Cursor_Think(GOBJ *g);
 JOBJ *Option_Create(OptionDesc *desc, OptionData *op);
 GOBJ *Menu_Create(MenuDesc *desc);

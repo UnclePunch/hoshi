@@ -1,4 +1,3 @@
-#include "mex.h"
 #include "text.h"
 #include "useful.h"
 #include "hsd.h"

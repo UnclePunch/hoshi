@@ -25,4 +25,5 @@ void TextJoint_Think();
 void TextJoint_GX(GOBJ *g, int pass);
 JOBJ *TextJoint_FindJointFromText(Text *t);
 float TextJoint_GetWidth(Text *t);
+int Text_Sanitize(char *in, char *out, int buffer_size);
 #endif

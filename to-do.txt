@@ -1,5 +1,4 @@
 - Settings
-    - implement priority sorting for mod settings
     - OptionDesc instead of MenuDesc?
 
 - Save Prompt

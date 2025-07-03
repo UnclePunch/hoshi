@@ -14,6 +14,7 @@
 #include "save.h"
 
 #include "code_patch/code_patch.h"
+#include "text_joint/text_joint.h"
 
 static int stc_text_canvas_idx = -1;
 static SettingsData stc_settings_data;
@@ -25,32 +26,10 @@ static int deflicker_enabled = 0;
 static int resolution_kind = 0;
 
 static MenuDesc main_menu = {0};
-static MenuDesc default_menu = {
-    .name = "_mainmenu",
-    .option_num = 1,
-    .options = (OptionDesc[]){
-        {
-            .name = "View Credits",
-            .kind = OPTKIND_SCENE,
-            .major_idx = MJRKIND_AIR,
-        },
-    },
-};
-
-static GlobalMod settings_mod = {
-    .data.name = "_settings",
-    .data.menu_desc = &default_menu,
-    .data.OnSaveInit = 0,
-};
 
 //////////////
 // Settings //
 //////////////
-
-GlobalMod *Menu_GetMod()
-{
-    return &settings_mod;
-}
 
 void Settings_Init(ModloaderData *mod_data)
 {
@@ -90,8 +69,10 @@ void Settings_Init(ModloaderData *mod_data)
                 }
                 else // insert this menu as an option on the main menu
                 {
-                    // copy values from menu to option
+                    // essentially convert modmenu pointer to an option that points to a menu
+                    // i really need to have mods use OptionDesc instead of MenuDesc...
                     this_opt->name = mod_menu->name;
+                    this_opt->description = mod_menu->description;
                     this_opt->kind = OPTKIND_MENU;
                     this_opt->_pri = mod_menu->pri;
                     this_opt->menu_ptr = mod_menu;
@@ -104,13 +85,6 @@ void Settings_Init(ModloaderData *mod_data)
         // sort optiondesc arr
         qsort((u8 *)main_menu.options, main_menu.option_num, sizeof(OptionDesc), Settings_SortCallback);
     }
-
-    // // install the credits scene
-    // default_menu.options[0].major_idx = Credits_Init(); // install and set index
-
-    // // copy the credits option
-    // memcpy(&opt_arr[main_menu.option_num], &default_menu.options[0], sizeof(opt_arr[main_menu.option_num]));
-    // main_menu.option_num++;
 
     return;
 }
@@ -161,6 +135,22 @@ void Settings_Create()
     desc->cursor = 0;
     desc->scroll = 0;
 
+    // destroy main menu's description text
+    ScMenuCommon *md = Gm_GetMenuData();
+    Text_Destroy(md->description_text);
+    md->description_text = 0;
+
+    // create description text
+    Text *t = Text_CreateText(0, md->canvas_idx);
+    t->trans = (Vec3){99, 406.9, 10};
+    t->aspect = (Vec2){830, 19.2};
+    t->viewport_scale = (Vec2){0.6, 0.6};
+    t->color = (GXColor){170, 170, 170, 255};
+    t->kerning = 1;
+    t->use_aspect = 1;
+    Text_AddSubtext(t, 0, 0, "");
+    stc_settings_data.description_text = t;
+
     // create initial menu
     GOBJ *m = Menu_Create(desc);
     MenuData *mp = m->userdata;
@@ -170,7 +160,7 @@ void Settings_Create()
     // replace background's destroy function to destroy our stuff as well
     Gm_GetMenuData()->main.ScMenOpdelpanel_gobj->destructor_function = Settings_Destroy;
 
-    Settings_UpdateCurrentMenu();
+    // Settings_UpdateCurrentMenu();
 }
 void Settings_Think()
 {
@@ -403,7 +393,6 @@ void Settings_UpdateCurrentMenu()
     JObj_RemoveAll(JObj_GetIndex(stc_settings_data.menu.cur_gobj->hsd_object, 2));
 
     // destroy all options text
-    mp = stc_settings_data.menu.cur_gobj->userdata;
     for (int opt_idx = 0; opt_idx < GetElementsIn(mp->option_data); opt_idx++)
     {
         if (mp->option_data[opt_idx].name.text)
@@ -424,37 +413,8 @@ void Settings_UpdateCurrentMenu()
         }
     }
 
-    // recreate options
-    JOBJ *option_root = JObj_GetIndex(m->hsd_object, 1);
-    for (int opt_idx = 0; opt_idx < mp->option_num; opt_idx++)
-    {
-        OptionDesc *this_opt_desc = &desc->options[desc->scroll + opt_idx];
-        OptionData *this_opt_data = &mp->option_data[opt_idx];
-
-        JOBJ *oj = Option_Create(this_opt_desc, this_opt_data);
-
-        JObj_AddNext(option_root, oj);
-
-        // update selected status
-        switch (this_opt_desc->kind)
-        {
-        case (OPTKIND_VALUE):
-        {
-            JObj_AddSetAnim(oj, 0, this_opt_data->assets, (opt_idx == desc->cursor), 0);
-            break;
-        }
-        case (OPTKIND_MENU):
-        case (OPTKIND_SCENE):
-        {
-            JObj_AddSetAnim(oj, (opt_idx == desc->cursor), this_opt_data->assets, 0, 1);
-            break;
-        }
-        }
-
-        // move into position
-        float height = 5;
-        JObj_GetIndex(oj, 1)->trans.Y = 11 - (opt_idx * height);
-    }
+    // create options
+    Menu_CreateOptions(m);
 }
 void Settings_Destroy(void *data)
 {
@@ -518,6 +478,8 @@ void Settings_ReqDestroy()
                        gd->main_menu.cursor_val[gd->main_menu.depth],
                        stc_menu_select->menu_option_desc[gd->main_menu.submenu_kind].option[gd->main_menu.cursor_val[gd->main_menu.depth]].description_idx);
     MainMenu_AnimateOptions(gd->main_menu.depth, gd->main_menu.menu_name_tex_idx);
+
+    Text_Destroy(stc_settings_data.description_text);
 }
 
 GOBJ *Menu_Create(MenuDesc *desc)
@@ -548,17 +510,25 @@ GOBJ *Menu_Create(MenuDesc *desc)
     mp->desc = desc;
 
     // create options
-    for (int opt_idx = 0; opt_idx < opt_num; opt_idx++)
-    {
+    Menu_CreateOptions(m);
 
+    return m;
+}
+void Menu_CreateOptions(GOBJ *m)
+{
+    MenuData *mp = m->userdata;
+    MenuDesc *desc = mp->desc;
+    JOBJ *option_root = JObj_GetIndex(m->hsd_object, 1);
+
+    // recreate options
+    for (int opt_idx = 0; opt_idx < mp->option_num; opt_idx++)
+    {
         OptionDesc *this_opt_desc = &desc->options[desc->scroll + opt_idx];
         OptionData *this_opt_data = &mp->option_data[opt_idx];
 
-        // OSReport("creating option %d (%s)\n", desc->scroll + opt_idx, this_opt_desc->name);
-
         JOBJ *oj = Option_Create(this_opt_desc, this_opt_data);
 
-        JObj_AddNext(mj, oj);
+        JObj_AddNext(option_root, oj);
 
         // update selected status
         switch (this_opt_desc->kind)
@@ -569,11 +539,11 @@ GOBJ *Menu_Create(MenuDesc *desc)
             break;
         }
         case (OPTKIND_MENU):
+        case (OPTKIND_SCENE):
         {
             JObj_AddSetAnim(oj, (opt_idx == desc->cursor), this_opt_data->assets, 0, 1);
             break;
         }
-        case (OPTKIND_SCENE):
         }
 
         // move into position
@@ -581,7 +551,16 @@ GOBJ *Menu_Create(MenuDesc *desc)
         JObj_GetIndex(oj, 1)->trans.Y = 11 - (opt_idx * height);
     }
 
-    return m;
+    // update description
+    bp();
+    OptionDesc *sel_option = &desc->options[desc->scroll + desc->cursor];
+    char buf[128];
+    if (sel_option->description)
+        Text_Sanitize(sel_option->description, buf, sizeof(buf));
+    else
+        Text_Sanitize("No description.", buf, sizeof(buf));
+
+    Text_SetText(stc_settings_data.description_text, 0, buf);
 }
 void Menu_Destroy(MenuData *mp)
 {
@@ -925,10 +904,6 @@ void Menu_CopyToSave(GlobalMod *mod)
 }
 void Menu_CopyAllModToSave(MenuDesc *desc)
 {
-    // // base settings
-    // LOG("copying base settings to save\n");
-    // Menu_CopyToSave(&settings_mod);
-
     // for each menu
     for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
     {

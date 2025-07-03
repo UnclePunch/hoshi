@@ -116,19 +116,19 @@ struct SceneInfo
 
 struct ScMenuCommon
 {
-    u8 x0;              // 0x0
-    HSD_SObjDesc *sobj; // 0x4
-    GOBJ *cam_gobj;     // 0x8
-    int xc;             // 0xc
-    int x10;            // 0x10
-    int x14;            // 0x14
-    int x18;            // 0x18
-    int x1c;            // 0x1c
-    int x20;            // 0x20
-    int x24;            // 0x24
-    u8 canvas_idx;      // 0x28
-    int x2c;            // 0x2c
-    u8 x30[0x2C8];      // 0x30
+    u8 x0;                  // 0x0
+    HSD_SObjDesc *sobj;     // 0x4
+    GOBJ *cam_gobj;         // 0x8
+    int xc;                 // 0xc
+    int x10;                // 0x10
+    int x14;                // 0x14
+    int x18;                // 0x18
+    int x1c;                // 0x1c
+    int x20;                // 0x20
+    int x24;                // 0x24
+    u8 canvas_idx;          // 0x28
+    Text *description_text; // 0x2c
+    u8 x30[0x2C8];          // 0x30
     struct
     {
         GOBJ *menu_name;            // 0x2f8

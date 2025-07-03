@@ -40,6 +40,7 @@ typedef struct SettingsData
     } menu;
     GOBJ *cursor_gobj;
     GOBJ *transition_gobj;
+    Text *description_text;
 } SettingsData;
 
 typedef struct OptionData
@@ -77,6 +78,7 @@ void Settings_Destroy(void *);
 void Cursor_Think(GOBJ *g);
 JOBJ *Option_Create(OptionDesc *desc, OptionData *op);
 GOBJ *Menu_Create(MenuDesc *desc);
+void Menu_CreateOptions(GOBJ *m);
 void Menu_Think(GOBJ *m);
 void Menu_Destroy(MenuData *mp);
 void Menu_CopyAllModToSave(MenuDesc *desc);
@@ -85,7 +87,6 @@ void Menu_AddTransitionAnim(GOBJ *m, int anim_id);
 void Menu_CopyToSave(GlobalMod *mod);
 void Menu_CopyFromSave(GlobalMod *mod);
 u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc);
-GlobalMod *Menu_GetMod();
 void Menu_GetSaveSize(MenuDesc *desc, int *size);
 
 void swap_bytes(u8 *a, u8 *b, size_t size);

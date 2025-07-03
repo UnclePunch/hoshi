@@ -25,6 +25,8 @@ RELOC_TYPE_ENUM = {
     "R_PPC_REL32":     5,
 }
 
+## To-do: do not pack executable if [!] Symbol X not found warning goes off
+
 def main():
 
     args = parser.parse_args()

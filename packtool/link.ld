@@ -307,6 +307,10 @@ SECTIONS
   Ply_SetMachineIsBike = 0x8022C8C8;
   Ply_GetMachineIsBike = 0x8022C8B0;
   Rider_RespawnEnter = 0x801A1D70;
+  Rider_CheckUnableAbility = 0x80191798;
+  Rider_AbilityRemoveModel = 0x80191554;
+  Rider_AbilityRemoveUnk = 0x801915c4;
+  Rider_LoseAbilityState_Enter = 0x801b0adc;
   Gm_Get3dData = 0x80112044;
   ClearChecker_GetClearKindFromRewardKind = 0x80049C84;
   ClearChecker_GetRewardNum = 0x80049C20;

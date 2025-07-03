@@ -86,14 +86,14 @@ void Settings_Init(ModloaderData *mod_data)
                     mod_menu->options[0].kind == OPTKIND_SCENE)
                 {
                     *this_opt = mod_menu->options[0];
-                    this_opt->pri = mod_menu->options->pri; // copy pri
+                    this_opt->_pri = mod_menu->pri; // copy pri
                 }
                 else // insert this menu as an option on the main menu
                 {
                     // copy values from menu to option
                     this_opt->name = mod_menu->name;
                     this_opt->kind = OPTKIND_MENU;
-                    this_opt->pri = mod_menu->pri;
+                    this_opt->_pri = mod_menu->pri;
                     this_opt->menu_ptr = mod_menu;
                 }
 
@@ -124,8 +124,8 @@ int Settings_SortCallback(const void *a, const void *b)
         return (int)oa->kind - (int)ob->kind;
 
     // 2. Compare pri ascending
-    if (oa->pri != ob->pri)
-        return oa->pri - ob->pri;
+    if (oa->_pri != ob->_pri)
+        return oa->_pri - ob->_pri;
 
     // 3. Compare name alphabetically
     return strcmp(oa->name, ob->name);

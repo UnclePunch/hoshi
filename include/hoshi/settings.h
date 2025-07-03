@@ -26,7 +26,7 @@ typedef struct OptionDesc
 {
     char *name;
     OptionKind kind : 16;
-    MenuPriority pri : 16;
+    MenuPriority _pri : 16; /// ignore, used by hoshi at runtime
     union
     {
         struct

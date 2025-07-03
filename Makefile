@@ -3,11 +3,12 @@ CC = powerpc-eabi-gcc
 LD = powerpc-eabi-ld
 
 # === Paths ===
-SRCDIR   = src
-LIBDIR   = Lib
-BUILDDIR = build
-BINDIR   = out
-PACKDIR  = packtool
+SRCDIR   		= src
+LIBDIR   		= Lib
+BUILDDIR 		= build
+BINDIR   		= out
+PACKDIR  		= packtool
+INSTALLDIR 		?= C:/Users/Vin/Documents/ROMs/KAR-Plus/files		#can override this on the command line: make install INSTALL_DIR=/path/to/your/mods
 
 # === Compiler Flags ===
 INCLUDES = -Iinclude -I$(LIBDIR) -I$(SRCDIR)
@@ -33,6 +34,8 @@ OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o, \
           $(patsubst %.s,$(BUILDDIR)/%.o, \
           $(patsubst %.S,$(BUILDDIR)/%.o, \
           $(ALL_SOURCES))))
+
+$(warning path is $(LIBCDIR))
 
 # === Default target ===
 all: $(TARGET_BIN)
@@ -64,8 +67,18 @@ $(TARGET_BIN): $(LINKED_O)
 	mkdir -p $(BINDIR)
 	python $(PACKDIR)/main.py $< -m $(MODTYPE) -o $@
 
+# --- Install Target ---
+# Copies the final .bin files from $(OUT_DIR) to $(INSTALLDIR)
+install: all
+	@echo ""
+	@echo "--- Installing hoshi to "$(INSTALLDIR)" ---"
+	cp "$(TARGET_BIN)" "$(strip $(INSTALLDIR))"
+	@echo ""
+	@echo "Installation complete."
+
 # === Clean ===
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)
 
-.PHONY: all clean
+.PHONY: all clean install
+ 

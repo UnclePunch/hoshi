@@ -1,0 +1,18 @@
+- Settings
+    - implement priority sorting for mod settings
+    - OptionDesc instead of MenuDesc?
+
+- Save Prompt
+    - ask the user if they would like to play with everything unlocked upon save creation
+    - if no memory card is inserted, unlock everything
+
+- Modloader
+    - allow mods to link against other mods functions? lots of strings... maybe i hash
+    - re-init all mod save data when deleting all in settings
+
+- Buildtool
+    - index reloc symbol offsets/addresses, should save a good amount of mem
+    - implement debug strings
+
+Misc:
+- FGM pitch can be adjusted dynamically in debug menu?

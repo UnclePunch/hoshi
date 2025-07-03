@@ -162,102 +162,8 @@ typedef struct ItDynamicBoneset ItDynamicBoneset;
 // Boneset
 typedef struct DynamicBoneset DynamicBoneset;
 
-// Fighter
-typedef struct FighterData FighterData;
-typedef struct FighterBone FighterBone;
-typedef struct PlayerData PlayerData;
-typedef struct FtCreateDesc FtCreateDesc;
-typedef struct FtState FtState;
-typedef struct ftHit ftHit;
-typedef struct HitVictim HitVictim;
-typedef struct FtHurt FtHurt;
-typedef struct FtCoin FtCoin;
-typedef struct ReflectDesc ReflectDesc;
-typedef struct ShieldDesc ShieldDesc;
-typedef struct AbsorbDesc AbsorbDesc;
-typedef struct AfterImageDesc AfterImageDesc;
-typedef struct FtDmgLog FtDmgLog;
-typedef struct CPULeaderLog CPULeaderLog;
-typedef struct CPU CPU;
-typedef struct FtCollDesc FtCollDesc;
-typedef struct FtSFX FtSFX;
-typedef struct FtSFXArr FtSFXArr;
-typedef struct FtAction FtAction;
-typedef struct Figatree Figatree;
-typedef struct ftData ftData;
-typedef struct FtDmgVibrateDesc FtDmgVibrateDesc;
-typedef struct ftCommonBone ftCommonBone;
-typedef struct ftCommonData ftCommonData;
-typedef struct FtMultiJumpDesc FtMultiJumpDesc;
-typedef struct ftChkDevice ftChkDevice;
-typedef struct FtSymbolLookup FtSymbolLookup;
-typedef struct FtSymbols FtSymbols;
-typedef struct FtDatNameLookup FtDatNameLookup;
-typedef struct FtKindDesc FtKindDesc;
-typedef struct FtParts FtParts;
-typedef struct FtPartsDesc FtPartsDesc;
-typedef struct FtPartsVis FtPartsVis;
-typedef struct FtPartsLookup FtPartsLookup;
-typedef struct FtPartsVisLookup FtPartsVisLookup;
-typedef struct FtSymbolLookup FtSymbolLookup;
-typedef struct FtDynamicBoneset FtDynamicBoneset;
-typedef struct DynamicBoneData DynamicBoneData;
-typedef struct DynamicHit DynamicHit;
-typedef struct DynamicsDesc DynamicsDesc;
-typedef struct DynamicsHitDesc DynamicsHitDesc;
-typedef struct DynamicsBehave DynamicsBehave;
-typedef struct DynamicForceDesc DynamicForceDesc;
-typedef struct DynamicForce DynamicForce;
-typedef struct IKParam IKParam;
-typedef struct FtVis FtVis;
-typedef struct ftDynamics ftDynamics;
-typedef struct FtScript FtScript;
-// typedef struct FtScriptTimerSync FtScriptTimerSync;
-// typedef struct FtScriptTimerAsync FtScriptTimerAsync;
-// typedef struct FtScriptGFX FtScriptGFX;
-// typedef struct FtScriptHit FtScriptHit;
-// typedef struct FtScriptHitClear FtScriptHitClear;
-// typedef struct FtScriptSFX FtScriptSFX;
-// typedef struct FtScriptVuln FtScriptVuln;
-// typedef struct FtScriptEye FtScriptEye;
-// typedef struct FtScriptRumble FtScriptRumble;
-// typedef struct FtScriptColAnimApply FtScriptColAnimApply;
-// typedef struct FtScriptIK FtScriptIK;
-
-// Fighter States
-typedef struct FtCliffCatch FtCliffCatch;
-typedef struct FtDamage FtDamage;
-typedef struct FtLanding FtLanding;
-typedef struct FtDead FtDead;
-typedef struct FtEntry FtEntry;
-
-// CSS
-typedef struct CSSBackup CSSBackup;
-typedef struct MnSelectChrDataTable MnSelectChrDataTable;
-typedef struct VSMinorData VSMinorData; // is the css minor data
-typedef struct SSSMinorData SSSMinorData;
-typedef struct CSSCursor CSSCursor;
-typedef struct CSSPuck CSSPuck;
-typedef struct MnSlChrKindData MnSlChrKindData;
-typedef struct MnSlChrData MnSlChrData;
-typedef struct MnSlChrIcon MnSlChrIcon;
-typedef struct MnSlChrDoor MnSlChrDoor;
-typedef struct MnSlChrTag MnSlChrTag;
-typedef struct MnSlChrTagData MnSlChrTagData;
-typedef struct MnSlChrKOStar MnSlChrKOStar;
-
-// Memcard
-typedef struct Memcard Memcard;
-typedef struct MemcardWork MemcardWork;
-typedef struct MemcardUnk MemcardUnk;
-typedef struct MemcardSave MemcardSave;
-typedef struct MemcardInfo MemcardInfo;
-typedef struct SnapshotInfo SnapshotInfo;
-typedef struct SnapshotList SnapshotList;
-typedef struct MemSnapIconData MemSnapIconData;
-typedef struct MemSaveIconData MemSaveIconData;
-typedef struct Rules1 Rules1;
-typedef struct Rules4 Rules4;
+// Rider
+typedef struct RiderData RiderData;
 
 // Collision
 typedef struct CollData CollData;
@@ -306,19 +212,5 @@ typedef struct PreloadEntry PreloadEntry;
 typedef struct PreloadLookup PreloadLookup;
 typedef struct PreloadAllocData PreloadAllocData;
 typedef struct PreloadTable PreloadTable;
-
-// 1P
-typedef struct ClassicLineupDesc ClassicLineupDesc;
-typedef struct ClassicLineup ClassicLineup;
-
-// Kirby
-typedef struct FtVarKirby FtVarKirby;
-
-// Custom
-typedef struct Stc_icns Stc_icns;
-typedef struct MEXPlaylist MEXPlaylist;
-typedef struct MEXPlaylistEntry MEXPlaylistEntry;
-typedef struct MexCostumeDesc MexCostumeDesc;
-typedef struct MexCostumeDescAccessory MexCostumeDescAccessory;
 
 #endif

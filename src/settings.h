@@ -19,6 +19,13 @@
 #define LOG(...) (sizeof(void *))
 #endif
 
+typedef enum MenuState
+{
+    TRANSKIND_NONE,
+    TRANSKIND_ADVANCE,
+    TRANSKIND_REGRESS,
+} MenuState;
+
 typedef struct SettingsData
 {
     JOBJSet **ScMenValue_scene_models;
@@ -62,6 +69,7 @@ typedef struct MenuData
 void MainMenu_ApplyPatches();
 
 void Settings_Init(ModloaderData *mod_data);
+int Settings_SortCallback(const void *a, const void *b);
 void Settings_UpdateCurrentMenu();
 void Settings_EnterNewMenu(MenuDesc *desc, MenuState trans_kind);
 void Settings_ReqDestroy();
@@ -79,4 +87,7 @@ void Menu_CopyFromSave(GlobalMod *mod);
 u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc);
 GlobalMod *Menu_GetMod();
 void Menu_GetSaveSize(MenuDesc *desc, int *size);
+
+void swap_bytes(u8 *a, u8 *b, size_t size);
+void qsort(u8 *base, size_t n, size_t size, int (*cmp)(const void *, const void *));
 #endif

@@ -183,7 +183,6 @@ void OnFileLoad(HSD_Archive *archive)
 
     stc_modloader_data->hoshi.archive = archive;
     // stc_modloader_data->hoshi.mex_function = Archive_GetPublicAddress(archive, "mdFunction");
-    bp();
 
     // count number of mod files on disc
     int mod_num = 0;

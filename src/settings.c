@@ -67,41 +67,42 @@ void Settings_Init(ModloaderData *mod_data)
         }
     }
 
-    // alloc option array
-    OptionDesc *opt_arr = HSD_MemAlloc((sizeof(OptionDesc) * default_menu.option_num) + //
-                                       (sizeof(OptionDesc) * mod_settings_num));        //
-    main_menu.options = opt_arr;                                                        // store pointer
-
-    // copy over mod options
     if (mod_settings_num > 0)
     {
+        // alloc option array
+        OptionDesc *opt_arr = HSD_MemAlloc((sizeof(OptionDesc) * mod_settings_num)); //
+        main_menu.options = opt_arr;                                                 // store pointer
+
+        // copy over mod options
         for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
         {
             MenuDesc *mod_menu = mod_data->mods[mod_idx].data.menu_desc;
             if (mod_menu)
             {
-
-                // determine this options position
                 OptionDesc *this_opt = &opt_arr[main_menu.option_num];
-                for (int i = 0; i < main_menu.option_num; i++)
-                {
-                }
 
                 // if the menu only contains one scene option, put it directly on the main menu
                 if (mod_menu->option_num == 1 &&
                     mod_menu->options[0].kind == OPTKIND_SCENE)
                 {
                     *this_opt = mod_menu->options[0];
+                    this_opt->pri = mod_menu->options->pri; // copy pri
                 }
                 else // insert this menu as an option on the main menu
                 {
+                    // copy values from menu to option
+                    this_opt->name = mod_menu->name;
                     this_opt->kind = OPTKIND_MENU;
+                    this_opt->pri = mod_menu->pri;
                     this_opt->menu_ptr = mod_menu;
                 }
 
                 main_menu.option_num++;
             }
         }
+
+        // sort optiondesc arr
+        qsort((u8 *)main_menu.options, main_menu.option_num, sizeof(OptionDesc), Settings_SortCallback);
     }
 
     // // install the credits scene
@@ -113,6 +114,23 @@ void Settings_Init(ModloaderData *mod_data)
 
     return;
 }
+int Settings_SortCallback(const void *a, const void *b)
+{
+    OptionDesc *oa = (OptionDesc *)a;
+    OptionDesc *ob = (OptionDesc *)b;
+
+    // 1. Compare OptionKind descending
+    if (oa->kind != ob->kind)
+        return (int)oa->kind - (int)ob->kind;
+
+    // 2. Compare pri ascending
+    if (oa->pri != ob->pri)
+        return oa->pri - ob->pri;
+
+    // 3. Compare name alphabetically
+    return strcmp(oa->name, ob->name);
+}
+
 void Settings_Create()
 {
     // init data
@@ -532,8 +550,11 @@ GOBJ *Menu_Create(MenuDesc *desc)
     // create options
     for (int opt_idx = 0; opt_idx < opt_num; opt_idx++)
     {
+
         OptionDesc *this_opt_desc = &desc->options[desc->scroll + opt_idx];
         OptionData *this_opt_data = &mp->option_data[opt_idx];
+
+        // OSReport("creating option %d (%s)\n", desc->scroll + opt_idx, this_opt_desc->name);
 
         JOBJ *oj = Option_Create(this_opt_desc, this_opt_data);
 
@@ -940,6 +961,50 @@ u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc)
     HSD_Free(full_name);
 
     return hash;
+}
+
+//////////////////////////
+// qsort Implementation //
+//////////////////////////
+
+/*
+https://chromium.googlesource.com/native_client/nacl-newlib/+/refs/heads/main/newlib/libc/search/qsort.c
+*/
+
+void swap_bytes(u8 *a, u8 *b, size_t size)
+{
+    while (size--)
+    {
+        u8 tmp = *a;
+        *a++ = *b;
+        *b++ = tmp;
+    }
+}
+void qsort(u8 *base, size_t n, size_t size, int (*cmp)(const void *, const void *))
+{
+    if (n < 2)
+        return;
+
+    // Choose pivot (last element)
+    u8 *pivot = base + (n - 1) * size;
+    size_t i = 0;
+
+    for (size_t j = 0; j < n - 1; ++j)
+    {
+        u8 *elem = base + j * size;
+        if (cmp(elem, pivot) < 0)
+        {
+            swap_bytes(base + i * size, elem, size);
+            i++;
+        }
+    }
+
+    // Swap pivot into correct position
+    swap_bytes(base + i * size, pivot, size);
+
+    // Recurse on subarrays
+    qsort(base, i, size, cmp);
+    qsort(base + (i + 1) * size, n - i - 1, size, cmp);
 }
 
 ///////////////////////

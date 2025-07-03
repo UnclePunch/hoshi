@@ -11,20 +11,22 @@ typedef enum OptionKind
     OPTKIND_NUM,
 } OptionKind;
 
-typedef enum MenuState
+typedef enum MenuPriority
 {
-    TRANSKIND_NONE,
-    TRANSKIND_ADVANCE,
-    TRANSKIND_REGRESS,
-} MenuState;
+    MENUPRI_VERYHIGH,
+    MENUPRI_HIGH,
+    MENUPRI_NORMAL,
+    MENUPRI_LOW,
+    MENUPRI_VERYLOW,
+} MenuPriority;
 
 typedef struct MenuDesc MenuDesc;
 
 typedef struct OptionDesc
 {
     char *name;
-    u16 pri;
     OptionKind kind : 16;
+    MenuPriority pri : 16;
     union
     {
         struct
@@ -49,7 +51,8 @@ typedef struct OptionDesc
 struct MenuDesc
 {
     char *name;
-    u16 option_num;
+    int option_num : 16;
+    MenuPriority pri : 16;
     OptionDesc *options;
     MenuDesc *prev;
     u16 cursor;

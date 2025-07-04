@@ -17,7 +17,7 @@ typedef struct gbFunction
     char *author;
     char *version;
     int *save_size;
-    MenuDesc *menu_desc;
+    OptionDesc *option_desc;
     void (*OnBoot)(HSD_Archive *archive);
     void (*OnSceneChange)();
     void (*OnSaveInit)(void *save_ptr, int req_init);
@@ -37,7 +37,7 @@ typedef struct GlobalMod
     int entrynum;
     struct
     {
-        int menu_size;
+        int menu_num;
         MenuSave *menu_data;
         int user_size;
         void *user_data;
@@ -68,8 +68,11 @@ void Mods_LoadGlobal(int entrynum);
 void Mods_LoadVS(int entrynum);
 void Modloader_InitSaveData();
 GlobalMod *Mods_GetFromName(char *name);
-GlobalMod *Mods_GetFromMenuDesc(MenuDesc *desc);
 int Mod_InitSaveData(GlobalMod *mod);
 int _hash_32(const void *data, int size);
+
+void Mod_CopyFromSave(GlobalMod *mod);
+void Mod_CopyToSave(GlobalMod *mod);
+void Mod_CopyAllToSave();
 
 #endif

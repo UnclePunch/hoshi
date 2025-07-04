@@ -51,14 +51,12 @@ typedef struct OptionDesc
 
 struct MenuDesc
 {
-    char *name;
-    char *description;
-    int option_num : 16;
-    MenuPriority pri : 16;
-    OptionDesc *options;
     MenuDesc *prev;
+    MenuPriority pri : 16;
     u16 cursor;
     u16 scroll;
+    u16 option_num;
+    OptionDesc *options[];
 };
 #pragma pack(push, 1) // Align to 1-byte boundaries
 typedef struct MenuSave

@@ -331,17 +331,6 @@ GlobalMod *Mods_GetFromName(char *name)
 
     return 0;
 }
-GlobalMod *Mods_GetFromMenuDesc(MenuDesc *desc)
-{
-    // each mod
-    for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
-    {
-        if (stc_modloader_data->mods[mod_idx].data.menu_desc == desc)
-            return &stc_modloader_data->mods[mod_idx];
-    }
-
-    return 0;
-}
 
 void Modloader_InitSaveData()
 {
@@ -378,7 +367,7 @@ int Mod_InitSaveData(GlobalMod *mod)
 
     // get save data sizes as dictated by the currently installed mod version
     int menu_size = 0, user_size = 0;
-    Menu_GetSaveSize(mod->data.menu_desc, &menu_size);
+    Option_GetSaveSize(mod->data.option_desc, &menu_size);
 
     if ((mod->data.save_size != 0) && (*mod->data.save_size) > 0)
         user_size = *mod->data.save_size;
@@ -409,7 +398,7 @@ int Mod_InitSaveData(GlobalMod *mod)
         if (mod->save.menu_data)
             OSReport("menu_data: %x (0x%x)\n",
                      mod->save.menu_data,
-                     mod->save.menu_size);
+                     mod->save.menu_num * sizeof(MenuSave));
 
         if (mod->save.user_data)
             OSReport("user_data: %x (0x%x)\n",
@@ -417,9 +406,9 @@ int Mod_InitSaveData(GlobalMod *mod)
                      mod->save.user_size);
 
         if (!req_init)
-            Menu_CopyFromSave(mod); // copy saved menu settings to the mod
+            Mod_CopyFromSave(mod); // copy saved menu settings to the mod
         else
-            Menu_CopyToSave(mod); // copy default menu settings to the save
+            Mod_CopyToSave(mod); // copy default menu settings to the save
 
         if (mod->data.OnSaveInit)
         {
@@ -436,4 +425,60 @@ int Mod_InitSaveData(GlobalMod *mod)
     OSReport("~~~~~~~~~~~~~~~~~~~~~\n\n");
 
     return req_init;
+}
+
+void Mod_CopyFromSave(GlobalMod *mod)
+{
+
+    if (mod->data.option_desc)
+    {
+        OptionDesc *this_option = mod->data.option_desc;
+
+        switch (this_option->kind)
+        {
+        case (OPTKIND_VALUE):
+        {
+            Option_CopyFromSave(mod, "", this_option);
+            break;
+        }
+        case (OPTKIND_MENU):
+        {
+            if (this_option->menu_ptr)
+                Menu_CopyFromSave(mod, this_option->name, this_option->menu_ptr);
+
+            break;
+        }
+        }
+    }
+}
+void Mod_CopyToSave(GlobalMod *mod)
+{
+    if (mod->data.option_desc)
+    {
+        OptionDesc *this_option = mod->data.option_desc;
+        switch (this_option->kind)
+        {
+        case (OPTKIND_VALUE):
+        {
+            Option_CopyToSave(mod, "", this_option);
+            break;
+        }
+        case (OPTKIND_MENU):
+        {
+            if (this_option->menu_ptr)
+                Menu_CopyToSave(mod, this_option->name, this_option->menu_ptr);
+
+            break;
+        }
+        }
+    }
+}
+void Mod_CopyAllToSave()
+{
+    // for each mod
+    for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
+    {
+        GlobalMod *mod = &stc_modloader_data->mods[mod_idx];
+        Mod_CopyToSave(mod);
+    }
 }

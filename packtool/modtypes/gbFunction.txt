@@ -2,7 +2,7 @@ ModName
 ModAuthor
 ModVersion
 ModSaveSize
-ModMenu
+ModSettings
 OnBoot
 OnSceneChange
 OnSaveInit

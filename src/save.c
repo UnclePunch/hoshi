@@ -416,7 +416,7 @@ void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
 
     // save pointers to mod data
     mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_karplus_save->data)[menu_offset]);
-    mod->save.menu_size = menu_size;
+    mod->save.menu_num = menu_size / sizeof(MenuSave);
     mod->save.user_data = (MenuSave *)(&((u8 *)&stc_karplus_save->data)[user_offset]);
     mod->save.user_size = user_size;
 
@@ -538,7 +538,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
 
             // save pointers
             mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_karplus_save->data)[menu_data_offset]);
-            mod->save.menu_size = menu_size;
+            mod->save.menu_num = menu_size / sizeof(MenuSave);
             mod->save.user_data = (MenuSave *)(&((u8 *)&stc_karplus_save->data)[user_data_offset]);
             mod->save.user_size = user_size;
 

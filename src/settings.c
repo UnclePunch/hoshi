@@ -25,7 +25,7 @@ static MatAnimJointDesc *stc_preview_matanimjointdesc = 0;
 static int deflicker_enabled = 0;
 static int resolution_kind = 0;
 
-static MenuDesc main_menu = {0};
+MenuDesc *main_menu;
 
 //////////////
 // Settings //
@@ -39,7 +39,7 @@ void Settings_Init(ModloaderData *mod_data)
     int mod_settings_num = 0;
     for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
     {
-        if (mod_data->mods[mod_idx].data.menu_desc)
+        if (mod_data->mods[mod_idx].data.option_desc)
         {
             OSReport("Mod %s has settings menu\n", mod_data->mods[mod_idx].data.name);
             mod_settings_num++;
@@ -49,49 +49,31 @@ void Settings_Init(ModloaderData *mod_data)
     if (mod_settings_num > 0)
     {
         // alloc option array
-        OptionDesc *opt_arr = HSD_MemAlloc((sizeof(OptionDesc) * mod_settings_num)); //
-        main_menu.options = opt_arr;                                                 // store pointer
+        int main_menu_size = (sizeof(*main_menu) + (sizeof(OptionDesc) * mod_settings_num));
+        main_menu = HSD_MemAlloc(main_menu_size); //
+        memset(main_menu, 0, main_menu_size);
 
         // copy over mod options
         for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
         {
-            MenuDesc *mod_menu = mod_data->mods[mod_idx].data.menu_desc;
-            if (mod_menu)
+            OptionDesc *mod_option = mod_data->mods[mod_idx].data.option_desc;
+            if (mod_option)
             {
-                OptionDesc *this_opt = &opt_arr[main_menu.option_num];
-
-                // if the menu only contains one scene option, put it directly on the main menu
-                if (mod_menu->option_num == 1 &&
-                    mod_menu->options[0].kind == OPTKIND_SCENE)
-                {
-                    *this_opt = mod_menu->options[0];
-                    this_opt->_pri = mod_menu->pri; // copy pri
-                }
-                else // insert this menu as an option on the main menu
-                {
-                    // essentially convert modmenu pointer to an option that points to a menu
-                    // i really need to have mods use OptionDesc instead of MenuDesc...
-                    this_opt->name = mod_menu->name;
-                    this_opt->description = mod_menu->description;
-                    this_opt->kind = OPTKIND_MENU;
-                    this_opt->_pri = mod_menu->pri;
-                    this_opt->menu_ptr = mod_menu;
-                }
-
-                main_menu.option_num++;
+                main_menu->options[main_menu->option_num] = mod_option;
+                main_menu->option_num++;
             }
         }
 
         // sort optiondesc arr
-        qsort((u8 *)main_menu.options, main_menu.option_num, sizeof(OptionDesc), Settings_SortCallback);
+        qsort((u8 *)&main_menu->options, main_menu->option_num, sizeof(OptionDesc *), Settings_SortCallback);
     }
 
     return;
 }
 int Settings_SortCallback(const void *a, const void *b)
 {
-    OptionDesc *oa = (OptionDesc *)a;
-    OptionDesc *ob = (OptionDesc *)b;
+    OptionDesc *oa = *(OptionDesc **)a;
+    OptionDesc *ob = *(OptionDesc **)b;
 
     // 1. Compare OptionKind descending
     if (oa->kind != ob->kind)
@@ -130,7 +112,7 @@ void Settings_Create()
     JObj_AddSetAnim(cj, 0, stc_settings_data.ScMenSelruleCursor_scene_models[0], 0, 1);
     stc_settings_data.cursor_gobj = c;
 
-    MenuDesc *desc = &main_menu;
+    MenuDesc *desc = main_menu;
     desc->prev = 0;
     desc->cursor = 0;
     desc->scroll = 0;
@@ -230,7 +212,7 @@ void Settings_Think()
         }
     }
 
-    OptionDesc *opt_desc = &desc->options[desc->cursor + desc->scroll];
+    OptionDesc *opt_desc = desc->options[desc->cursor + desc->scroll];
 
     // left and right
     if (opt_desc->kind == OPTKIND_VALUE)
@@ -301,7 +283,7 @@ void Settings_Think()
 
             SFX_Play(FGMMENU_CS_KETTEI);
 
-            Menu_CopyAllModToSave(&main_menu);
+            Mod_CopyAllToSave();
             KARPlusSave_Write();
         }
     }
@@ -318,7 +300,7 @@ void Settings_Think()
         else
         {
             Settings_ReqDestroy();
-            Menu_CopyAllModToSave(&main_menu);
+            Mod_CopyAllToSave();
             KARPlusSave_Write();
         }
 
@@ -523,7 +505,7 @@ void Menu_CreateOptions(GOBJ *m)
     // recreate options
     for (int opt_idx = 0; opt_idx < mp->option_num; opt_idx++)
     {
-        OptionDesc *this_opt_desc = &desc->options[desc->scroll + opt_idx];
+        OptionDesc *this_opt_desc = desc->options[desc->scroll + opt_idx];
         OptionData *this_opt_data = &mp->option_data[opt_idx];
 
         JOBJ *oj = Option_Create(this_opt_desc, this_opt_data);
@@ -552,8 +534,7 @@ void Menu_CreateOptions(GOBJ *m)
     }
 
     // update description
-    bp();
-    OptionDesc *sel_option = &desc->options[desc->scroll + desc->cursor];
+    OptionDesc *sel_option = desc->options[desc->scroll + desc->cursor];
     char buf[128];
     if (sel_option->description)
         Text_Sanitize(sel_option->description, buf, sizeof(buf));
@@ -640,11 +621,6 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
         break;
     }
     case (OPTKIND_MENU):
-    {
-        name_joint_idx = 11;
-        opt_name = desc->menu_ptr->name;
-        break;
-    }
     case (OPTKIND_SCENE):
     {
         name_joint_idx = 11;
@@ -773,12 +749,15 @@ void Menu_GetSaveSize(MenuDesc *desc, int *size)
 
     for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
     {
+        if (!desc->options[opt_idx])
+            continue;
+
         // process each option
-        switch (desc->options[opt_idx].kind)
+        switch (desc->options[opt_idx]->kind)
         {
         case (OPTKIND_MENU):
         {
-            Menu_GetSaveSize(desc->options[opt_idx].menu_ptr, size);
+            Menu_GetSaveSize(desc->options[opt_idx]->menu_ptr, size);
             break;
         }
         case (OPTKIND_VALUE):
@@ -791,144 +770,141 @@ void Menu_GetSaveSize(MenuDesc *desc, int *size)
 
     return;
 }
+void Option_GetSaveSize(OptionDesc *desc, int *size)
+{
+    if (!desc)
+        return;
 
-// Saving Functions
-void _Menu_CopyFromSave(MenuDesc *desc, MenuSave *save, int save_num)
+    // process each option
+    switch (desc->kind)
+    {
+    case (OPTKIND_MENU):
+    {
+        Menu_GetSaveSize(desc->menu_ptr, size);
+        break;
+    }
+    case (OPTKIND_VALUE):
+    {
+        (*size) += 3;
+        break;
+    }
+    }
+
+    return;
+}
+
+void Option_CopyFromSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
+{
+    // hash this option name
+    u16 opt_hash = Option_Hash(menu_name, desc->name);
+    MenuSave *save = mod->save.menu_data;
+
+    // find it in the save data
+    for (int i = 0; i < mod->save.menu_num; i++)
+    {
+        // copy save value
+        if (save[i].hash == opt_hash)
+        {
+            LOG("copying val %d from save for option %s.\n", save[i].val, desc->name);
+            *desc->val = save[i].val;
+            return;
+        }
+        else if (save[i].hash == (u16)-1)
+        {
+            LOG("%s hash not found.\n", desc->name);
+            return;
+        }
+    }
+
+    LOG("%s hash not found.\n", desc->name);
+
+    return;
+}
+void Menu_CopyFromSave(GlobalMod *mod, char *menu_name, MenuDesc *desc)
 {
     for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
     {
+        OptionDesc *this_option = desc->options[opt_idx];
+
         // process each option
-        switch (desc->options[opt_idx].kind)
+        switch (this_option->kind)
         {
         case (OPTKIND_MENU):
         {
-            _Menu_CopyFromSave(desc->options[opt_idx].menu_ptr, save, save_num);
+            Menu_CopyFromSave(mod, this_option->name, this_option->menu_ptr);
             break;
         }
         case (OPTKIND_VALUE):
         {
-            // hash this option name
-            u16 opt_hash = Menu_HashOption(desc, &desc->options[opt_idx]);
-
-            // find it in the save data
-            for (int i = 0; i < save_num; i++)
-            {
-                // copy save value
-                if (save[i].hash == opt_hash)
-                {
-                    LOG("copying val %d from save for option %s\n", save[i].val, desc->options[opt_idx].name);
-                    *desc->options[opt_idx].val = save[i].val;
-                    break;
-                }
-                else if (save[i].hash == (u16)-1)
-                {
-                    LOG("hash not found\n", save[i].val, desc->options[opt_idx].name, "?");
-                    break;
-                }
-            }
-
+            Option_CopyFromSave(mod, menu_name, this_option);
             break;
         }
         }
     }
 }
-void _Menu_CopyToSave(MenuDesc *desc, MenuSave *save, int save_num)
+void Option_CopyToSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
+{
+    // hash this option name
+    u16 opt_hash = Option_Hash(menu_name, desc->name);
+    MenuSave *save = mod->save.menu_data;
+
+    // find it in the save data
+    for (int i = 0; i < mod->save.menu_num; i++)
+    {
+        // copy save value
+        if (save[i].hash == opt_hash)
+        {
+            LOG(" %s hash found, update value %d in save.\n",
+                desc->name,
+                *desc->val);
+            save[i].val = *desc->val;
+            break;
+        }
+        else if (save[i].hash == (u16)-1)
+        {
+            // free space, insert it
+            LOG(" %s hash created, copying value %d to save.\n", desc->name, *desc->val);
+            save[i].hash = opt_hash;
+            save[i].val = *desc->val;
+            break;
+        }
+    }
+
+    return;
+}
+void Menu_CopyToSave(GlobalMod *mod, char *menu_name, MenuDesc *desc)
 {
     for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
     {
-        // process each option
-        switch (desc->options[opt_idx].kind)
+        OptionDesc *this_option = desc->options[opt_idx];
+
+        switch (this_option->kind)
         {
-        case (OPTKIND_MENU):
-        {
-            _Menu_CopyToSave(desc->options[opt_idx].menu_ptr, save, save_num);
-            break;
-        }
         case (OPTKIND_VALUE):
         {
-            // hash this option name
-            u16 opt_hash = Menu_HashOption(desc, &desc->options[opt_idx]);
+            Option_CopyToSave(mod, menu_name, this_option);
+            break;
+        }
+        case (OPTKIND_MENU):
+        {
+            if (this_option->menu_ptr)
+                Menu_CopyToSave(mod, this_option->name, this_option->menu_ptr);
 
-            // find it in the save data
-            for (int i = 0; i < save_num; i++)
-            {
-                // copy save value
-                if (save[i].hash == opt_hash)
-                {
-                    LOG(" %s hash found, copying value %d to save.\n",
-                        desc->options[opt_idx].name,
-                        *desc->options[opt_idx].val);
-                    save[i].val = *desc->options[opt_idx].val;
-                    break;
-                }
-                else if (save[i].hash == (u16)-1)
-                {
-                    // free space, insert it
-                    LOG(" %s hash created, copying value %d to save.\n", desc->options[opt_idx].name, *desc->options[opt_idx].val);
-                    save[i].hash = opt_hash;
-                    save[i].val = *desc->options[opt_idx].val;
-                    break;
-                }
-            }
             break;
         }
         }
     }
 }
-void Menu_CopyFromSave(GlobalMod *mod)
+u16 Option_Hash(char *menu_name, char *option_name)
 {
+    // OSReport("hashing %s + %s\n", menu_name, option_name);
 
-    if (!mod || !mod->data.menu_desc)
-        return;
-
-    // get this mods settings data
-    if (!mod->save.menu_data)
-        return;
-
-    _Menu_CopyFromSave(mod->data.menu_desc,
-                       mod->save.menu_data,
-                       mod->save.menu_size / sizeof(MenuSave));
-}
-void Menu_CopyToSave(GlobalMod *mod)
-{
-    if (!mod || !mod->data.menu_desc)
-        return;
-
-    // get this mods settings data
-    if (!mod->save.menu_data)
-        return;
-
-    _Menu_CopyToSave(mod->data.menu_desc,
-                     mod->save.menu_data,
-                     mod->save.menu_size / sizeof(MenuSave));
-}
-void Menu_CopyAllModToSave(MenuDesc *desc)
-{
-    // for each menu
-    for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
-    {
-        if (desc->options[opt_idx].kind == OPTKIND_MENU)
-        {
-            GlobalMod *mod = Mods_GetFromMenuDesc(desc->options[opt_idx].menu_ptr);
-            if (mod)
-            {
-                LOG("%s:\n", mod->data.name);
-                Menu_CopyToSave(mod);
-            }
-            else
-            {
-            }
-        }
-    }
-}
-u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc)
-{
-    int menu_name_len = strlen(menu_desc->name);
-    int opt_name_len = strlen(opt_desc->name);
+    int menu_name_len = strlen(menu_name);
+    int opt_name_len = strlen(option_name);
 
     char *full_name = HSD_MemAlloc(menu_name_len + opt_name_len + 1);
-    memcpy(full_name, menu_desc->name, menu_name_len);
-    memcpy(full_name + menu_name_len, opt_desc->name, opt_name_len);
+    memcpy(full_name, menu_name, menu_name_len);
+    memcpy(full_name + menu_name_len, option_name, opt_name_len);
     full_name[menu_name_len + opt_name_len] = '\0';
 
     u16 hash = hashstr_16(full_name);

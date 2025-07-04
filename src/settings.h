@@ -81,13 +81,16 @@ GOBJ *Menu_Create(MenuDesc *desc);
 void Menu_CreateOptions(GOBJ *m);
 void Menu_Think(GOBJ *m);
 void Menu_Destroy(MenuData *mp);
-void Menu_CopyAllModToSave(MenuDesc *desc);
 void OptionText_GX(GOBJ *g, int pass);
 void Menu_AddTransitionAnim(GOBJ *m, int anim_id);
-void Menu_CopyToSave(GlobalMod *mod);
-void Menu_CopyFromSave(GlobalMod *mod);
-u16 Menu_HashOption(MenuDesc *menu_desc, OptionDesc *opt_desc);
 void Menu_GetSaveSize(MenuDesc *desc, int *size);
+void Option_GetSaveSize(OptionDesc *desc, int *size);
+
+void Option_CopyFromSave(GlobalMod *mod, char *menu_name, OptionDesc *desc);
+void Menu_CopyFromSave(GlobalMod *mod, char *menu_name, MenuDesc *desc);
+void Option_CopyToSave(GlobalMod *mod, char *menu_name, OptionDesc *desc);
+void Menu_CopyToSave(GlobalMod *mod, char *menu_name, MenuDesc *desc);
+u16 Option_Hash(char *menu_name, char *option_name);
 
 void swap_bytes(u8 *a, u8 *b, size_t size);
 void qsort(u8 *base, size_t n, size_t size, int (*cmp)(const void *, const void *));

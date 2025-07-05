@@ -203,8 +203,6 @@ JOBJ *TextJoint_FindJointFromText(Text *t)
 }
 float TextJoint_GetWidth(Text *t)
 {
-    JOBJ *j = TextJoint_FindJointFromText(t);
-
     // get width as reported by text lib
     float width, height;
     Text_GetWidthAndHeight(t, &width, &height);
@@ -213,7 +211,7 @@ float TextJoint_GetWidth(Text *t)
     if (t->use_aspect && width > t->aspect.X)
         width = t->aspect.X;
 
-    // return text width in jobj coordinates
+    // return text width
     return (width * t->viewport_scale.X);
 }
 

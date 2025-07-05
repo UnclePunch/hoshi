@@ -36,7 +36,7 @@ SECTIONS
   COBJ_LoadDesc = 0x804031EC;
   COBJ_LoadDescSetScissor = 0x80066DF8;
   COBJ_Init = 0x80402FC0;
-  CObjThink_Common = 0x801394B0;
+  CObjThink_Common = 0x8011586c; 
   CObj_SetCurrent = 0x80401150;
   CObj_SetEraseColor = 0x8040F884;
   CObj_EraseScreen = 0x804006D4;
@@ -292,6 +292,7 @@ SECTIONS
   Ply_GetCityStatNum = 0x8000AB48;
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetColor = 0x800095C0;
+  Ply_CheckIfHMN = 0x800098c0;
   Ply_CheckIfCPU = 0x8000948C;
   Ply_GetViewIndex = 0x80009908;
   Ply_GetPKind = 0x8022C858;
@@ -300,7 +301,7 @@ SECTIONS
   Ply_SetRiderKind = 0x8022C898;
   Gm_GetIfAllScreenArchive = 0x80112058;
   Gm_GetIfAllCityArchive = 0x80112050;
-  Gm_GetHMNNum = 0x800092B4;
+  Gm_GetPlyViewNum = 0x800092B4;
   Ply_GetRiderKind2 = 0x800094C4;
   Ply_SetMachineKind = 0x8022C8F8;
   Ply_GetMachineKind = 0x8022C8E0;

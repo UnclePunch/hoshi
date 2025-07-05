@@ -312,7 +312,7 @@ typedef struct HPSChunkHeader
 struct BGMData // this name sucks, dont know enough about it to rename it
 {
     unsigned int unk : 26;
-    unsigned int vbp_index : 6;
+    unsigned int vpb_index : 6;
 };
 
 struct VPB
@@ -339,23 +339,26 @@ struct VPB
     u8 is_updated_prev;     // 0x26, raised when prev is set @ 8038b33c
     u8 x27;                 // 0x27
     float volume_x28;       // 0x28, is used to calculate x24 @ 8038b194
-    u8 x2c[0x8];            // 0x2c
+    int x2c;                // 0x2c
+    int *x30;               // 0x30, 0x8 of this pointer is hps entrynum
     float volume_x34;       // 0x34, is used to calculate x24 @ 8038b194
     float volume_x38;       // 0x38 (gets ignored completely?)
-    u8 x3c[0x14];           // 0x3c
+    u8 x3c[0x5c];           // 0x3c
+    // 0x98
 };
 
 struct AXLive
 {
-    u8 x0[0x384];                        // 0x0
-    VPB voice_data[64];                  // 0x384
-    u8 x1784[0xc0];                      // 0x1784, some constants
-    BGMData bgm_data_lookup[263];        // 0x1844, array of BGMData corresponding to SFX that were played with an instance_slot param > 0 when calling SFX_PlayRaw. this is used to stop previous instances when playing the same sfx
+    u8 x0[0x8c0];                        // 0x0
+    VPB voice_data[64];                  // 0x8c0
+    u8 x1784[0xc0];                      // 0x1cc0, some constants
+    BGMData bgm_data_lookup[263];        // 0x1D80, array of BGMData corresponding to SFX that were played with an instance_slot param > 0 when calling SFX_PlayRaw. this is used to stop previous instances when playing the same sfx
     HPSChunkHeader hps_chunk_headers[3]; // 0x1c60, circular buffer of 3 most recent hps headers
 };
 
-static FGMLive *fgm_live = (FGMLive *)0x804c45a0; // points to an array of ? FGMLive structs
-static AXLive *ax_live = (AXLive *)0x804c28e0;
+static BGMData *stc_bgm_data_arr = (BGMData *)0x80508bc8; // 0 = ?, 1 = main song, 2 = secondary song (event)
+static FGMLive *fgm_live = (FGMLive *)0x804c45a0;         // points to an array of ? FGMLive structs
+static AXLive *ax_live = (AXLive *)0x80596da0;
 static VPB *stc_voice_data = (VPB *)0x804c2c64;
 static float *stc_fgm_volume = 0;
 static float *stc_bgm_volume = 0;

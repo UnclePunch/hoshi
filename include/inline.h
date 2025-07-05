@@ -435,28 +435,45 @@ static int Pad_GetDownSys(int pad_idx)
 
 static JOBJ *JObj_GetIndex(JOBJ *j, int idx)
 {
+    if (idx <= 0)
+        return (idx == 0) ? j : NULL;
 
-    int this_idx = 0;
-    JOBJ *this_j = j;
-    while (this_idx != idx)
+    int count = idx;
+
+    while (count)
     {
-        // go deeper
-        if (j->child)
+        if (j)
         {
-            j = j->child;
-            this_idx++;
+            if (j->child)
+            {
+                j = j->child;
+            }
+            else if (j->sibling)
+            {
+                j = j->sibling;
+            }
+            else
+            {
+                // Go up until we find a node with a sibling
+                while (j)
+                {
+                    j = j->parent;
+                    if (j && j->sibling)
+                    {
+                        j = j->sibling;
+                        break;
+                    }
+                }
+            }
         }
-        // get next
         else
         {
-            // move up until we find a parent with a next
-            while (!j->sibling)
-                j = j->parent;
-
-            j = j->sibling;
-
-            this_idx++;
+            return NULL;
         }
+
+        if (!j)
+            return NULL;
+        count--;
     }
 
     return j;

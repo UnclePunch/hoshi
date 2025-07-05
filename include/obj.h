@@ -158,14 +158,13 @@
         JObj_ForEachAnim(this_jobj, 6, flags, AOBJ_ReqAnim, 1, (float)frame); \
         JObj_AnimAll(this_jobj);                                              \
     }
-#define JObj_GetChildPosition(jobj, child_index, pos)         \
-    {                                                         \
-        JOBJ *this_jobj;                                      \
-        if (child_index != 0)                                 \
-            JObj_GetChild(jobj, &this_jobj, child_index, -1); \
-        else                                                  \
-            this_jobj = jobj;                                 \
-        JObj_GetWorldPosition(this_jobj, 0, pos);             \
+#define JObj_GetChildPosition(jobj, child_index, pos)      \
+    {                                                      \
+        JOBJ *_this_jobj = jobj;                           \
+        if (child_index != 0)                              \
+            _this_jobj = JObj_GetIndex(jobj, child_index); \
+        if (_this_jobj)                                    \
+            JObj_GetWorldPosition(_this_jobj, 0, pos);     \
     }
 
 typedef enum ForEachAnimFlag //  (used for JObj_ForEachAnim)
@@ -764,7 +763,6 @@ JOBJ *JObj_Alloc();
 JOBJ *JObj_LoadJoint(JOBJDesc *joint);
 void JObj_RemoveAll(JOBJ *joint);
 void JObj_Remove(JOBJ *joint);
-void JObj_GetChild(JOBJ *joint, JOBJ **ptr, int index, ...);
 void JObj_AddChild(JOBJ *parent, JOBJ *child);
 void JObj_AddNext(JOBJ *parent, JOBJ *child);
 float JObj_GetCurrentMatAnimFrame(JOBJ *joint);
@@ -830,7 +828,7 @@ void CObj_RenderGXLinks(GOBJ *gobj, int render_mode);
 void CObj_EndCurrent();
 void CObj_SetOrtho(COBJ *cobj, float top, float bottom, float left, float right);
 void CObj_SetViewport(COBJ *cobj, float left, float right, float top, float bottom);
-void CObj_SetScissor(COBJ *cobj, u16 top, u16 bottom, u16 left, u16 right);
+void CObj_SetScissor(COBJ *cobj, u16 left, u16 right, u16 top, u16 bottom);
 void CObj_SetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void COBJ_GetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void CObj_SetInterest(COBJ *cobj, Vec3 *pos);

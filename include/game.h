@@ -1418,7 +1418,7 @@ typedef struct Game3dData
 {
     u8 plyview_num;                               // 0x0
     s8 plyview_lookup[4];                         // 0x1, -1 for not present?
-    int x8;                                       // 0x8
+    HSD_SObjDesc *hud_sobj;                       // 0x8
     int xc;                                       // 0xc
     int x10;                                      // 0x10
     int x14;                                      // 0x14
@@ -5528,6 +5528,7 @@ CityMode Gm_GetCityMode();
 float Ply_GetCityStatNum(int ply, int stat_idx, int unk);
 GOBJ *Ply_GetRiderGObj(int ply);
 int Ply_GetColor(int ply);
+int Ply_CheckIfHMN(int ply);
 int Ply_CheckIfCPU(int ply);
 int Ply_GetViewIndex(int ply);
 RiderKind Ply_GetRiderKind2(int ply);
@@ -5545,7 +5546,7 @@ void Rider_AbilityRemoveUnk(RiderData *);
 void Rider_LoseAbilityState_Enter(RiderData *);
 HSD_Archive **Gm_GetIfAllCityArchive();   // IfAll1c, contains common city trial specific graphics (timer, ready, pause, etc)
 HSD_Archive **Gm_GetIfAllScreenArchive(); // IfAll1Xs, contains player related HUD that needs to be scaled down based on screen number
-int Gm_GetHMNNum();
+int Gm_GetPlyViewNum();
 ItemGroup Gm_GetItemGroup(ItemKind it_kind);
 int ClearChecker_GetClearKindFromRewardKind(GameMode gm, int clear_kind);
 int ClearChecker_GetRewardNum(GameMode gm);

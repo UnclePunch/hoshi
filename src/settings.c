@@ -323,6 +323,15 @@ void Settings_Think()
         }
     }
 }
+void Settings_CObj(GOBJ *g)
+{
+    if (!CObj_SetCurrent(g->hsd_object))
+        return;
+
+    CObj_RenderGXLinks(g, (1 << 0) | (1 << 1) | (1 << 2));
+
+    CObj_EndCurrent();
+}
 
 void Settings_EnterNewMenu(MenuDesc *desc, MenuState trans_kind)
 {
@@ -975,7 +984,7 @@ void MainMenu_OnLoad()
                              0, 0,
                              HSD_OBJKIND_COBJ, stc_scene_menu_common->sobj->cobjdesc[0],
                              0, 0,
-                             CObjThink_Common, 0, 5);
+                             Settings_CObj, 0, 5);
     c->cobj_links = (1ULL << MODSETTINGS_GXLINK);
 
     // create a text canvas in the 3d world

@@ -429,7 +429,6 @@ int Mod_InitSaveData(GlobalMod *mod)
 
 void Mod_CopyFromSave(GlobalMod *mod)
 {
-
     if (mod->data.option_desc)
     {
         OptionDesc *this_option = mod->data.option_desc;

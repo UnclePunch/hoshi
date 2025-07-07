@@ -406,17 +406,25 @@ typedef enum CityClearKind
 ///////////////////////
 // Struct Defintions //
 ///////////////////////
+
+typedef struct TitleScreenData
+{
+    u8 state;      // 0xc
+    u8 xd;         // 0xd
+    u16 timer;     // 0xe
+    int x10;       // 0x10
+    u8 is_skip_op; // 0x14, bool to skip the opening movie when loading the title screen
+    u8 x15;        // 0x15
+    u8 x16;        // 0x16
+    u8 x17;        // 0x17
+} TitleScreenData;
+
 typedef struct GameData
 {
     int x0;                                   // 0x0
     int x4;                                   // 0x4
     int x8;                                   // 0x8
-    int xc;                                   // 0xc
-    int x10;                                  // 0x10
-    u8 titlescreen_is_skip_op;                // 0x14, bool to skip the opening movie when loading the title screen
-    u8 x15;                                   // 0x15
-    u8 x16;                                   // 0x16
-    u8 x17;                                   // 0x17
+    TitleScreenData title_data;               // 0xc
     int x18;                                  // 0x18
     int x1c;                                  // 0x1c
     int x20;                                  // 0x20
@@ -5441,6 +5449,20 @@ typedef struct SoundTestDesc
     u8 kind; // 0 = unk, 1 = play via bgm id
 } SoundTestDesc;
 
+typedef struct MenuElementData
+{
+    int x0;            // 0x0
+    int kind;          // 0x4
+    u8 is_visible : 1; // 0x8, 0x80
+    u8 x8_40 : 1;      // 0x8, 0x40
+    u8 x8_20 : 1;      // 0x8, 0x20
+    u8 x8_10 : 1;      // 0x8, 0x10
+    u8 x8_08 : 2;      // 0x8, 0x08
+    u8 x8_04 : 2;      // 0x8, 0x04
+    u8 x8_02 : 1;      // 0x8, 0x02
+    u8 x8_01 : 1;      // 0x8, 0x01
+} MenuElementData;
+
 typedef struct HUDElementData
 {
     int x0;            // 0x0
@@ -5501,6 +5523,7 @@ static BGMDesc *stc_bgm_desc = (BGMDesc *)0x80498750;
 // Functions //
 ///////////////
 
+TitleScreenData *TitleScreen_GetData();
 GameData *Gm_GetGameData();
 Game3dData *Gm_Get3dData();
 GameClearData *Gm_GetGameClearData();
@@ -5510,6 +5533,8 @@ ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); /
 GOBJ *Item_Create(void *spawn_desc);
 ItemCommonAttr *Item_GetCommonAttr(ItemKind it_kind);
 void CityTrial_DecideStadium();
+GOBJ *MenuElement_Create(JOBJDesc *jobjdesc);
+MenuElementData *MenuElement_AddData(GOBJ *menu_element_gobj, int element_kind);
 void HUD_PauseCreate();
 void HUD_PauseDestroy();
 GOBJ *HUD_CreateElement(int ply, JOBJDesc *j);

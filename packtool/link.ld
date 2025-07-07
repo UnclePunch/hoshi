@@ -161,6 +161,8 @@ SECTIONS
   LObj_AnimAll = 0x803FDE54;
   LObj_DeleteCurrentAll = 0x803FF318;
   LObj_RemoveAll = 0x803FFA40;
+  MenuElement_Create = 0x801388a8;
+  MenuElement_AddData = 0x80138a00;
   Memcard_GetState = 0x80452790;
   Memcard_RequestCheckExist = 0x80452790;
   memcmp = 0x803B4670;
@@ -248,6 +250,7 @@ SECTIONS
   Text_FinalizeSisText = 0x8044F8C8;
   _Text_DetermineWidthHeight = 0x80451344;
   Text_SetText = 0x8045031C;
+  TitleScreen_GetData = 0x8000cdbc;
   TRK_FlushCache = 0x803BFFD8;
   VECScale = 0x803D20E0;
   VECAdd = 0x803D2098;

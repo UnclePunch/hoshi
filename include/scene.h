@@ -601,9 +601,9 @@ struct ScMenuCommon
     int xea4;                    // 0xea4
     int xea8;                    // 0xea8
     int xeac;                    // 0xeac
-    int xeb0;                    // 0xeb0
+    GOBJ *ScMenTitleBg_gobj;     // 0xeb0
     int xeb4;                    // 0xeb4
-    int xeb8;                    // 0xeb8
+    GOBJ *ScMenTitleFg_gobj;     // 0xeb8
     int xebc;                    // 0xebc
     int xec0;                    // 0xec0
     int xec4;                    // 0xec4

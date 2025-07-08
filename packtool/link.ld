@@ -272,6 +272,7 @@ SECTIONS
   Gm_HidePauseHUD = 0x80113A24;
   Gm_ShowHUD = 0x80112464;
   Gm_SetCameraNormal = 0x800BC17C;
+  Gm_IsDamageEnabled = 0x8000a188;
   Item_Create = 0x8024EEF4;
   Item_GetCommonAttr = 0x802500B0;
   CityTrial_DecideStadium = 0x8003F808;
@@ -286,14 +287,18 @@ SECTIONS
   Gm_IsInCity = 0x8000ACB0;
   Gm_GetCurrentGrKind = 0x80261ECC;
   Gm_IsGrKindCity = 0x80262574;
+  Gm_IsDestructionDerby = 0x80191900;
   Character_GetDesc = 0x8000B9DC;
   Machine_Create = 0x801C552C;
+  Machine_GetRiderPly = 0x801caa40;
+  Machine_SetMaxHP = 0x801cb4a4;
   Gm_StadiumIsDefaultUnlocked = 0x8000C148;
   Gm_StadiumIsUnlocked = 0x8000C17C;
   Gm_GetCityMode = 0x8003F6CC;
   Gm_GetIntroState = 0x8000A958;
   Ply_GetCityStatNum = 0x8000AB48;
   Ply_GetRiderGObj = 0x8022CB74;
+  Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
   Ply_CheckIfHMN = 0x800098c0;
   Ply_CheckIfCPU = 0x8000948C;
@@ -310,6 +315,8 @@ SECTIONS
   Ply_GetMachineKind = 0x8022C8E0;
   Ply_SetMachineIsBike = 0x8022C8C8;
   Ply_GetMachineIsBike = 0x8022C8B0;
+  Ply_AddDeath = 0x8022f648;
+  Ply_SetHP = 0x8022ca38;
   Rider_RespawnEnter = 0x801A1D70;
   Rider_CheckUnableAbility = 0x80191798;
   Rider_AbilityRemoveModel = 0x80191554;

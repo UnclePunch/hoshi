@@ -18,7 +18,7 @@ static MEXDebug *stc_dol_debug = 0;
 
 void Stack_Init()
 {
-    // Stack_ApplyPatches();
+    Stack_ApplyPatches();
 }
 
 // Functions
@@ -204,18 +204,19 @@ return 0;
 void Stack_ApplyPatches()
 {
 
-    CODEPATCH_REPLACEINSTRUCTION(0x8043fd40, 0x60000000); // skip osreport end so stack dump can add to it
     CODEPATCH_REPLACEINSTRUCTION(0x8043ff60, 0x60000000); // skip setting exception handler
     CODEPATCH_REPLACEINSTRUCTION(0x8043f848, 0x48000268); // skip over pad check on crash
     CODEPATCH_REPLACEINSTRUCTION(0x8043fd58, 0x60000000); // skip unknown XFB call that gets stuck?
 
-    // inject code to log stack information
-    CODEPATCH_HOOKAPPLY(0x8007d8b4);
-    CODEPATCH_HOOKAPPLY(0x8007d790);
+    // CODEPATCH_REPLACEINSTRUCTION(0x8043fd40, 0x60000000); // skip osreport end so stack dump can add to it
 
-    // inject code to output stack information in newly created thread
-    // (safe to load a file there)
-    CODEPATCH_HOOKAPPLY(0x8043f844);
+    // // inject code to log stack information
+    // CODEPATCH_HOOKAPPLY(0x8007d8b4);
+    // CODEPATCH_HOOKAPPLY(0x8007d790);
+
+    // // inject code to output stack information in newly created thread
+    // // (safe to load a file there)
+    // CODEPATCH_HOOKAPPLY(0x8043f844);
 
     return;
 }

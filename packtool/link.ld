@@ -292,6 +292,8 @@ SECTIONS
   Machine_Create = 0x801C552C;
   Machine_GetRiderPly = 0x801caa40;
   Machine_SetMaxHP = 0x801cb4a4;
+  Machine_GiveIntangibility = 0x801d6c50;
+  Machine_ApplyColAnim = 0x801d5ca0;
   Gm_StadiumIsDefaultUnlocked = 0x8000C148;
   Gm_StadiumIsUnlocked = 0x8000C17C;
   Gm_GetCityMode = 0x8003F6CC;
@@ -322,6 +324,10 @@ SECTIONS
   Rider_AbilityRemoveModel = 0x80191554;
   Rider_AbilityRemoveUnk = 0x801915c4;
   Rider_LoseAbilityState_Enter = 0x801b0adc;
+  Rider_GiveIntangibility = 0x80195f68;
+  Rider_GiveInvincibility = 0x80195f28;
+  HurtData_Create = 0x8018c1c8;
+  HurtData_GiveIntangibility = 0x8018cb5c;
   Gm_Get3dData = 0x80112044;
   ClearChecker_GetClearKindFromRewardKind = 0x80049C84;
   ClearChecker_GetRewardNum = 0x80049C20;

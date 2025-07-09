@@ -109,6 +109,23 @@ typedef enum RiderKind
     RDKIND_NUM,
 } RiderKind;
 
+typedef enum RiderPri
+{
+    RDPRI_0,
+    RDPRI_ANIM,
+    RDPRI_INPUT,
+    RDPRI_3,
+    RDPRI_PHYS,
+    RDPRI_ENVCOLL,
+    RDPRI_6,
+    RDPRI_7,
+    RDPRI_8,
+    RDPRI_HITCOLL,
+    RDPRI_DMGAPPLY,
+    RDPRI_13 = 13,
+    RDPRI_15 = 15,
+} RiderPri;
+
 typedef enum CharacterKind
 {
     CKIND_COMPACT,
@@ -3142,6 +3159,15 @@ typedef struct HurtData
     int x60;             // 0x60
     int x64;             // 0x64
     void *x68_obj;       // 0x68
+    u8 x6c[0x20];        // 0x6c
+    struct
+    {
+        int kind;         // 0x88, 0 = vuln, 2 = intang
+        int x8c;          // 0x8c
+        int x90;          // 0x90
+        int intang_timer; // 0x94
+        int invuln_timer; // 0x94
+    } vuln;
 } HurtData;
 
 typedef struct HitCollData
@@ -4965,8 +4991,8 @@ typedef struct MapData
         int x3ec;           // 0x3ec
         int x3f0;           // 0x3f0
     } input;
-    GOBJ *machine_gobj;        // 0x3f4
-    GOBJ *x3f8;                // 0x3f8
+    GOBJ *machine_gobj_again;  // 0x3f4
+    GOBJ *machine_gobj;        // 0x3f8
     int x3fc;                  // 0x3fc
     int x400;                  // 0x400
     int x404;                  // 0x404
@@ -5602,6 +5628,8 @@ CharacterDesc *Character_GetDesc(CharacterKind ckind);
 GOBJ *Machine_Create(MachineSpawnDesc *desc);
 int Machine_GetRiderPly(MachineData *md);
 void Machine_SetMaxHP(MachineData *md);
+void Machine_GiveIntangibility(MachineData *md, int time);
+void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
 GmIntroState Gm_GetIntroState();
 CityMode Gm_GetCityMode();
 float Ply_GetCityStatNum(int ply, int stat_idx, int unk);
@@ -5626,6 +5654,10 @@ int Rider_CheckUnableAbility(RiderData *); // checks if the rider can receive an
 void Rider_AbilityRemoveModel(RiderData *);
 void Rider_AbilityRemoveUnk(RiderData *);
 void Rider_LoseAbilityState_Enter(RiderData *);
+void Rider_GiveIntangibility(RiderData *, int time);
+void Rider_GiveInvincibility(RiderData *, int time);
+HurtData *HurtData_Create(void *desc, HurtKind kind, int obj1_kind, int obj2_kind, int obj3_kind);
+void HurtData_GiveIntangibility(HurtData *hurt, int timer);
 HSD_Archive **Gm_GetIfAllCityArchive();   // IfAll1c, contains common city trial specific graphics (timer, ready, pause, etc)
 HSD_Archive **Gm_GetIfAllScreenArchive(); // IfAll1Xs, contains player related HUD that needs to be scaled down based on screen number
 int Gm_GetPlyViewNum();

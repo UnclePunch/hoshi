@@ -1,3 +1,6 @@
+#ifndef HOSHI_RELOC_H
+#define HOSHI_RELOC_H
+
 #include "structs.h"
 #include "datatypes.h"
 
@@ -11,6 +14,12 @@ typedef struct ModHeader
     int code_size;
     int relocs_offset;
     int relocs_num;
+    struct
+    {
+        int lookup_offset;
+        int names_offset;
+        int num;
+    } debug_symbol;
 } ModHeader;
 
 typedef struct SymbolLookup
@@ -18,6 +27,13 @@ typedef struct SymbolLookup
     int function_idx;
     void (*function_ptr)();
 } SymbolLookup;
+
+typedef struct DebugSymbolLookup
+{
+    int symbol_name_offset;
+    int code_offset;
+    int code_size;
+} DebugSymbolLookup;
 
 typedef struct Reloc
 {
@@ -41,3 +57,5 @@ typedef struct MEXDebug
 
 void reloc(ModHeader *header);
 void get_func(ModHeader *header, void **func_array);
+
+#endif

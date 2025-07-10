@@ -162,7 +162,7 @@ CODEPATCH_HOOKCREATE(0x8003b48c, "", Hook_PlayerSelectLoad, "", 0)
 //                                        //
 ////////////////////////////////////////////
 
-void OnFileLoad(HSD_Archive *archive)
+void OnFileLoad(ModHeader *file)
 {
     // replace hsd_memalloc for the duration of this callback
     // this allows us to make persistent allocations by simply calling hsd_memalloc
@@ -181,8 +181,7 @@ void OnFileLoad(HSD_Archive *archive)
     // alloc hoshi lookup data
     stc_modloader_data = HSD_MemAlloc(sizeof(*stc_modloader_data));
 
-    stc_modloader_data->hoshi.archive = archive;
-    // stc_modloader_data->hoshi.mex_function = Archive_GetPublicAddress(archive, "mdFunction");
+    stc_modloader_data->hoshi.mod_header = file;
 
     // count number of mod files on disc
     int mod_num = 0;
@@ -293,14 +292,13 @@ void Mods_LoadGlobal(int entrynum)
 
     // load file
     ModHeader *file = Mods_LoadFile(entrynum); //
-    this_mod->archive = file;                  // save ptr to archive
 
     // reloc and overload
     reloc(file);
     get_func(file, (void **)&this_mod->data);
 
     // save ptr to mexFunction so we can access debug data
-    // this_mod->mex_function = Archive_GetPublicAddress(file_archive, "gbFunction");
+    this_mod->mod_header = file;
 
     OSReport("~~~~~~~~~~~~~~~~~~~~~\n");
     OSReport("[hoshi] Installing global mod...\n");
@@ -311,7 +309,7 @@ void Mods_LoadGlobal(int entrynum)
 
     // exec init function
     if (this_mod->data.OnBoot)
-        this_mod->data.OnBoot(this_mod->archive);
+        this_mod->data.OnBoot(file);
 
     OSReport("Finished installing %s.\n", this_mod->data.name);
     OSReport("~~~~~~~~~~~~~~~~~~~~~\n");

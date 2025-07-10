@@ -18,7 +18,7 @@ typedef struct gbFunction
     char *version;
     int *save_size;
     OptionDesc *option_desc;
-    void (*OnBoot)(HSD_Archive *archive);
+    void (*OnBoot)(ModHeader *mod_header);
     void (*OnSceneChange)();
     void (*OnSaveInit)(void *save_ptr, int req_init);
     void (*On3DLoad)();
@@ -32,8 +32,7 @@ typedef struct gbFunction
 typedef struct GlobalMod
 {
     gbFunction data;
-    ModHeader *mex_function;
-    void *archive;
+    ModHeader *mod_header;
     int entrynum;
     struct
     {
@@ -48,8 +47,7 @@ typedef struct ModloaderData
 {
     struct
     {
-        HSD_Archive *archive;
-        ModHeader *mex_function;
+        ModHeader *mod_header;
     } hoshi;
     int mod_num;
     GlobalMod *mods;
@@ -57,7 +55,7 @@ typedef struct ModloaderData
 
 extern ModloaderData *stc_modloader_data;
 
-void OnFileLoad(HSD_Archive *archive);
+void OnFileLoad(ModHeader *file);
 void *MemAllocPersistent(int size);
 void OnSceneChange();
 void OnSceneChange_Caller();

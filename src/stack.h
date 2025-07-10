@@ -1,6 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include "reloc/reloc.h"
+
 #define STACK_MAX_DEPTH_LOG 16
 
 typedef struct StackChain StackChain;
@@ -34,6 +36,7 @@ typedef struct StackLog
 
 void Stack_Init();
 void Stack_ApplyPatches();
+char *Mod_SearchForSymbol(ModHeader *mod_header, void *addr);
 char *Stack_FindSymbolNameFromAddress(void *lr);
 
 #endif

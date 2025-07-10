@@ -247,15 +247,28 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
     
     # Pack all sections together
     packed_data = bytearray()
+    debug_symbols = {}
 
+    # loop through all sections extracted from the o file
     for key, entry in all_sections.items():
-        entry['offset'] = len(packed_data)
-        packed_data += entry['data']
+        entry['offset'] = len(packed_data)  # calculate the offset of this section in the packed_data byte array
+        packed_data += entry['data']        # copy section data
         if len(packed_data) % 4 != 0:
-            packed_data += bytes(4 - (len(packed_data) % 4))
-        # print(f"{key:<18} {len(entry['data']):>6x} bytes @ offset {entry['offset']:>6x}")
-        
+            packed_data += bytes(4 - (len(packed_data) % 4))         # align all data to 4 bytes
+        if key.startswith(".text."):        # if this section contains code, add it to the debug symbols dictionary
+            debug_symbols[key.split(".text.", 1)[1]] = {'offset' : entry['offset'], 'size' : len(entry['data'])}
+
     packed_size = len(packed_data)
+
+    # create debug symbol bytearrays. one for lookup data and one for the symboldata
+    symbol_lookup_data = bytearray()
+    symbol_name_data = bytearray()
+    for key, entry in debug_symbols.items():
+        symbol_name_offset = len(symbol_name_data)
+        symbol_size = entry['size']
+        symbol_lookup_data += struct.pack(">I I I", symbol_name_offset, entry['offset'], symbol_size)
+        symbol_name_data += key.encode('ascii') + b'\x00'
+        print(f"{key:<18} starts at offset {entry['offset']:X} with size {entry['size']:X}")
 
     # create reloc data
     encoded_relocs = bytearray()
@@ -274,7 +287,7 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
         # print(f" encoding reloc for section {instr_section} with target offset {target_offset:x}")
         if target_offset is None:
             print(f"[!] Symbol {reloc['symbol']} not found")
-            continue
+            sys.exit(1)
 
         if instr_offset > 0xFFFFFF:
             raise ValueError(f"Instruction offset too large: 0x{instr_offset:X}")
@@ -294,17 +307,22 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
             print(f" [ ] {symbol_name}")
         symbol_idx+=1
 
+    header_size = 0x2c
+
     with open(output_path, "wb") as f:
         # Header
-        f.write(b"GCMB")                                                                # Magic
-        f.write(struct.pack(">B", 1))                                                   # Version
-        f.write(b"\x00\x00\x00")                                                        # Reserved
-        f.write(struct.pack(">I", 0x20))                                                # symbol lookup file pointer
-        f.write(struct.pack(">I", len(present_lookup_symbols) // 8))                    # symbol lookup size
-        f.write(struct.pack(">I", 0x20 + len(present_lookup_symbols)))                  # Packed section file pointer
-        f.write(struct.pack(">I", packed_size))                                         # Packed section size
-        f.write(struct.pack(">I", 0x20 + packed_size + len(present_lookup_symbols)))    # symbol lookup file pointer
-        f.write(struct.pack(">I", len(encoded_relocs) // 8))                            # Relocation count
+        f.write(b"GCMB")                                                                                                                        # Magic
+        f.write(struct.pack(">B", 1))                                                                                                           # Version
+        f.write(b"\x00\x00\x00")                                                                                                                # Reserved
+        f.write(struct.pack(">I", header_size))                                                                                                 # symbol lookup file pointer
+        f.write(struct.pack(">I", len(present_lookup_symbols) // 8))                                                                            # symbol lookup size
+        f.write(struct.pack(">I", header_size + len(present_lookup_symbols)))                                                                   # Packed section file pointer
+        f.write(struct.pack(">I", packed_size))                                                                                                 # Packed section size
+        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size))                                                     # Relocation data file pointer
+        f.write(struct.pack(">I", len(encoded_relocs) // 8))                                                                                    # Relocation count
+        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size + len(encoded_relocs)))                               # debug symbol lookup file pointer
+        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size + len(encoded_relocs) + len(symbol_lookup_data)))     # debug symbol names file pointer
+        f.write(struct.pack(">I", len(debug_symbols)))                                                                                          # symbol name count
 
         # lookup symbols
         f.write(present_lookup_symbols)
@@ -314,9 +332,15 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
         
         # write reloc data
         f.write(encoded_relocs)
-        
 
-    print(f"Wrote {packed_size} bytes of packed data to {output_path}")
+        # write symbol lookup data
+        f.write(symbol_lookup_data)
+
+        # write symbol name data
+        f.write(symbol_name_data)
+        
+        print(f"Wrote {f.tell()} bytes of data to {output_path}")
+
 
 if __name__ == "__main__":
     main()

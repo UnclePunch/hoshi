@@ -27,7 +27,7 @@ typedef struct OptionDesc
     char *name;
     char *description;
     OptionKind kind : 16;
-    MenuPriority _pri : 16; /// ignore, used by hoshi at runtime
+    MenuPriority pri : 16;
     union
     {
         struct
@@ -52,7 +52,6 @@ typedef struct OptionDesc
 struct MenuDesc
 {
     MenuDesc *prev;
-    MenuPriority pri : 16;
     u16 cursor;
     u16 scroll;
     u16 option_num;

@@ -75,13 +75,13 @@ int Settings_SortCallback(const void *a, const void *b)
     OptionDesc *oa = *(OptionDesc **)a;
     OptionDesc *ob = *(OptionDesc **)b;
 
-    // 1. Compare OptionKind descending
+    // 1. Compare pri ascending
+    if (oa->pri != ob->pri)
+        return oa->pri - ob->pri;
+
+    // 2. Compare OptionKind descending
     if (oa->kind != ob->kind)
         return (int)oa->kind - (int)ob->kind;
-
-    // 2. Compare pri ascending
-    if (oa->_pri != ob->_pri)
-        return oa->_pri - ob->_pri;
 
     // 3. Compare name alphabetically
     return strcmp(oa->name, ob->name);
@@ -234,6 +234,9 @@ void Settings_Think()
 
             if (is_moved)
             {
+                if (opt_desc->on_change)
+                    opt_desc->on_change(*opt_desc->val);
+
                 SFX_Play(FGMMENU_CS_MV);
                 Settings_UpdateCurrentMenu();
             }
@@ -255,6 +258,9 @@ void Settings_Think()
 
             if (is_moved)
             {
+                if (opt_desc->on_change)
+                    opt_desc->on_change(*opt_desc->val);
+
                 SFX_Play(FGMMENU_CS_MV);
                 Settings_UpdateCurrentMenu();
             }
@@ -802,6 +808,30 @@ void Option_GetSaveSize(OptionDesc *desc, int *size)
     return;
 }
 
+void Menu_ExecAllOptionChange()
+{
+    Menu_ExecOptionChange(main_menu);
+}
+void Menu_ExecOptionChange(MenuDesc *desc)
+{
+    for (int opt_idx = 0; opt_idx < desc->option_num; opt_idx++)
+    {
+        switch (desc->options[opt_idx]->kind)
+        {
+        case (OPTKIND_VALUE):
+        {
+            if (desc->options[opt_idx]->on_change)
+                desc->options[opt_idx]->on_change(*desc->options[opt_idx]->val);
+            break;
+        }
+        case (OPTKIND_MENU):
+        {
+            Menu_ExecOptionChange(desc->options[opt_idx]->menu_ptr);
+            break;
+        }
+        }
+    }
+}
 void Option_CopyFromSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
 {
     // hash this option name

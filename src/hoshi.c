@@ -348,6 +348,8 @@ void Modloader_InitSaveData()
             req_write = 1;
     }
 
+    Menu_ExecAllOptionChange();
+
     // // if a save file was initialized, write it out to card asap
     // if (req_write)
     // {

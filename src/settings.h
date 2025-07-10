@@ -86,6 +86,8 @@ void Menu_AddTransitionAnim(GOBJ *m, int anim_id);
 void Menu_GetSaveSize(MenuDesc *desc, int *size);
 void Option_GetSaveSize(OptionDesc *desc, int *size);
 
+void Menu_ExecAllOptionChange();
+void Menu_ExecOptionChange(MenuDesc *desc);
 void Option_CopyFromSave(GlobalMod *mod, char *menu_name, OptionDesc *desc);
 void Menu_CopyFromSave(GlobalMod *mod, char *menu_name, MenuDesc *desc);
 void Option_CopyToSave(GlobalMod *mod, char *menu_name, OptionDesc *desc);

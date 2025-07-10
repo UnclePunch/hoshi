@@ -1,11 +1,11 @@
 #include "reloc.h"
+#include "useful.h"
 
 void reloc(ModHeader *header)
 {
     Reloc *reloc_table = (Reloc *)((int)header + header->relocs_offset);
     void *code_ptr = (void *)((int)header + (int)header->code_offset);
 
-    // delocate
     for (int reloc_idx = 0; reloc_idx < header->relocs_num; reloc_idx++)
     {
         char cmd = reloc_table[reloc_idx].reloc_kind;
@@ -59,6 +59,9 @@ void reloc(ModHeader *header)
         }
         }
     }
+
+    // flush cache on code
+    TRK_FlushCache(code_ptr, header->code_size);
 }
 
 void get_func(ModHeader *header, void **func_array)

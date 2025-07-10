@@ -268,7 +268,7 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
         symbol_size = entry['size']
         symbol_lookup_data += struct.pack(">I I I", symbol_name_offset, entry['offset'], symbol_size)
         symbol_name_data += key.encode('ascii') + b'\x00'
-        print(f"{key:<18} starts at offset {entry['offset']:X} with size {entry['size']:X}")
+        # print(f"{key:<18} starts at offset {entry['offset']:X} with size {entry['size']:X}")
 
     # create reloc data
     encoded_relocs = bytearray()

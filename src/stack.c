@@ -32,7 +32,7 @@ void Stack_Print()
     else
         stc_dol_debug = Archive_GetPublicAddress(debug_archive, "mexDebug");
 
-    OSReport("Modloader v" STR(MODLOADER_VERSION_MAJOR) "." STR(MODLOADER_VERSION_MINOR) "\n");
+    OSReport("hoshi v" STR(MODLOADER_VERSION_MAJOR) "." STR(MODLOADER_VERSION_MINOR) "\n");
     OSReport((char *)0x80507bd4); // STACK text
     OSReport(" LR Save:   Symbol\n");
 

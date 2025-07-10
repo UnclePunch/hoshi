@@ -18,6 +18,7 @@ CODEPATCH_HOOKCREATE(0x804524c8, "mr 3, 27\n\t", Text_AlphaDraw, "", 0)
 
 void Patches_Apply()
 {
+    // add text transparency functionality
     CODEPATCH_HOOKAPPLY(0x80451fe4);
     CODEPATCH_HOOKAPPLY(0x804524c8);
 
@@ -39,4 +40,10 @@ void Patches_Apply()
     };
     for (int i = 0; i < GetElementsIn(misc_colors_offsets); i++)
         text_colors2[misc_colors_offsets[i]].a = 255;
+
+    // remove main menu input lockout
+    CODEPATCH_REPLACEINSTRUCTION(0x80018278, 0x48000010);
+    u8 *menu_mode_appear_timers = (u8 *)0x805d6670;
+    for (int i = 0; i < 5; i++)
+        menu_mode_appear_timers[i] /= 2;
 }

@@ -17,7 +17,7 @@
 #include "more_preload.h"
 #include "stack.h"
 #include "hash.h"
-#include "text_alpha.h"
+#include "patch_misc.h"
 #include "reloc/reloc.h"
 
 // Lib

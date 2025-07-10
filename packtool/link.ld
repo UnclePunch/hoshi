@@ -103,6 +103,8 @@ SECTIONS
   GXSetTevKColor = 0x803CEE20;
   GXLoadPosMtxImm = 0x803D073C;
   GXSetCurrentMtx = 0x803D07DC;
+  GXInvalidateVtxCache = 0x803cb728;
+  GXInvalidateTexAll = 0x803ce084;
   HSD_Free = 0x8041CEB4;
   HSD_GetHeapID = 0x80410338;
   HSD_ImageDescCopyFromEFB = 0x803F7A7C;
@@ -118,6 +120,8 @@ SECTIONS
   HSD_StateInvalidate = 0x803F898C;
   HSD_StateInitTev = 0x803F9028;
   HSD_StateInitDirect = 0x8040E390;
+  HSD_UpdateAllCObjs = 0x8042a1a8;
+  HSD_VICopyXFBASync = 0x804112b4;
   JObj_Alloc = 0x8040C774;
   JObj_AddAnim = 0x80409340;
   JObj_AddAnimAll = 0x80409480;
@@ -178,6 +182,11 @@ SECTIONS
   BGM_Stop = 0x8005E5D0;
   BGM_LowerVolume = 0x80061B44;
   BGM_RaiseVolume = 0x80061BA0;
+  cvt_sll_flt = 0x803ae03c;
+  cvt_dbl_usll = 0x803ae0f0;
+  OSCreateAlarm = 0x803d2e80;
+  OSSetPeriodicAlarm = 0x803d3148;
+  OSCancelAlarm = 0x803d31c4;
   OSCheckHeap = 0x803D3884;
   OSGetPhysicalMemSize = 0x803D7B30;
   OSGetConsoleType = 0x803D2470;

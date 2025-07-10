@@ -354,6 +354,7 @@ void HSD_PadRenewCopyStatus();
 void HSD_PadRenewUpdateStruct();
 void HSD_PadRumbleInterpret();
 void HSD_VIPostRetraceCallback(int unk);
+void HSD_UpdateAllCObjs();
 void GX_AllocImageData(_HSD_ImageDesc *image_desc, int width, int height, int fmt, int size); // image data buffer is stored to the image_desc
 void GXTexModeSync();
 void GXPixModeSync();

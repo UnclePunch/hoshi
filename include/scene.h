@@ -2,7 +2,6 @@
 #define MEX_H_SCENE
 
 #include "structs.h"
-#include "preload.h"
 #include "datatypes.h"
 
 // Scene Enums
@@ -30,7 +29,7 @@ typedef enum MinorKind
     MNRKIND_CITYPLYSELECT,         // City Trial CSS
     MNRKIND_11,                    //
     MNRKIND_12,                    //
-    MNRKIND_13,                    //
+    MNRKIND_CITYRESULT,            //
     MNRKIND_14,                    //
     MNRKIND_15,                    //
     MNRKIND_16,                    //

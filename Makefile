@@ -35,8 +35,6 @@ OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o, \
           $(patsubst %.S,$(BUILDDIR)/%.o, \
           $(ALL_SOURCES))))
 
-$(warning path is $(LIBCDIR))
-
 # === Default target ===
 all: $(TARGET_BIN)
 

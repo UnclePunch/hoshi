@@ -101,6 +101,11 @@ typedef enum GroundKind
     GRKIND_NUM,
 } GroundKind;
 
+typedef enum StageKind
+{
+    STAGEKIND_NUM,
+} StageKind;
+
 typedef enum RiderKind
 {
     RDKIND_KIRBY,
@@ -718,152 +723,122 @@ typedef struct GameData
     int x388;                        // 0x388
     int x38c;                        // 0x38c
     int x390;                        // 0x390
-    u16 time_seconds;                // 0x394
-    u8 menu_stadium_selection;       // 0x396, selected from settings, sub 1 to get StadiumGroup value
-    u8 game_tempo : 2;               // 0x397, 0xC0 (1 = normal = 2 is slow)
-    u8 events_enable : 1;            // 0x397, 0x20
-    u8 x397_x10 : 1;                 // 0x397, 0x10
-    u8 x397_x08 : 1;                 // 0x397, 0x08
-    u8 x397_x04 : 1;                 // 0x397, 0x04
-    u8 x397_x02 : 1;                 // 0x397, 0x02
-    u8 x397_x01 : 1;                 // 0x397, 0x01
-    u8 x398;                         // 0x398,
-    CityMode city_mode : 8;          // 0x399, which mode was selected from the menu
-    int x39c;                        // 0x39c
-    int x3a0;                        // 0x3a0
-    int x3a4;                        // 0x3a4
-    int x3a8;                        // 0x3a8
-    int x3ac;                        // 0x3ac
-    int x3b0;                        // 0x3b0
-    int x3b4;                        // 0x3b4
-    int x3b8;                        // 0x3b8
-    int x3bc;                        // 0x3bc
-    int x3c0;                        // 0x3c0
-    int x3c4;                        // 0x3c4
-    int x3c8;                        // 0x3c8
-    int x3cc;                        // 0x3cc
-    int x3d0;                        // 0x3d0
-    int x3d4;                        // 0x3d4
-    int x3d8;                        // 0x3d8
-    int x3dc;                        // 0x3dc
-    int x3e0;                        // 0x3e0
-    int x3e4;                        // 0x3e4
-    int x3e8;                        // 0x3e8
-    int x3ec;                        // 0x3ec
-    int x3f0;                        // 0x3f0
-    int x3f4;                        // 0x3f4
-    int x3f8;                        // 0x3f8
-    int x3fc;                        // 0x3fc
-    int x400;                        // 0x400
-    int x404;                        // 0x404
-    int x408;                        // 0x408
-    int x40c;                        // 0x40c
-    int x410;                        // 0x410
-    int x414;                        // 0x414
-    int x418;                        // 0x418
-    int x41c;                        // 0x41c
-    int x420;                        // 0x420
-    int x424;                        // 0x424
-    int x428;                        // 0x428
-    int x42c;                        // 0x42c
-    int x430;                        // 0x430
-    int x434;                        // 0x434
-    int x438;                        // 0x438
-    int x43c;                        // 0x43c
-    int x440;                        // 0x440
-    int x444;                        // 0x444
-    int x448;                        // 0x448
-    int x44c;                        // 0x44c
-    int x450;                        // 0x450
-    u8 is_bike[5];                   // 0x454
-    u8 machine_kind[5];              // 0x459
-    u8 prev_stadium_kind[5];         // 0x45e
-    int x464;                        // 0x464
-    int x468;                        // 0x468
-    int x46c;                        // 0x46c
-    int x470;                        // 0x470
-    int x474;                        // 0x474
-    int x478;                        // 0x478
-    int x47c;                        // 0x47c
-    int x480;                        // 0x480
-    int x484;                        // 0x484
-    int x488;                        // 0x488
-    int x48c;                        // 0x48c
-    int x490;                        // 0x490
-    int x494;                        // 0x494
-    int x498;                        // 0x498
-    int x49c;                        // 0x49c
-    int x4a0;                        // 0x4a0
-    int x4a4;                        // 0x4a4
-    int x4a8;                        // 0x4a8
-    int x4ac;                        // 0x4ac
-    int x4b0;                        // 0x4b0
-    int x4b4;                        // 0x4b4
-    int x4b8;                        // 0x4b8
-    int x4bc;                        // 0x4bc
-    int x4c0;                        // 0x4c0
-    int x4c4;                        // 0x4c4
-    int x4c8;                        // 0x4c8
-    int x4cc;                        // 0x4cc
-    int x4d0;                        // 0x4d0
-    int x4d4;                        // 0x4d4
-    int x4d8;                        // 0x4d8
-    int x4dc;                        // 0x4dc
-    int x4e0;                        // 0x4e0
-    int x4e4;                        // 0x4e4
-    int x4e8;                        // 0x4e8
-    int x4ec;                        // 0x4ec
-    int x4f0;                        // 0x4f0
-    int x4f4;                        // 0x4f4
-    int x4f8;                        // 0x4f8
-    int x4fc;                        // 0x4fc
-    int x500;                        // 0x500
-    int x504;                        // 0x504
-    int x508;                        // 0x508
-    int x50c;                        // 0x50c
-    int x510;                        // 0x510
-    int x514;                        // 0x514
-    int x518;                        // 0x518
-    int x51c;                        // 0x51c
-    int x520;                        // 0x520
-    int x524;                        // 0x524
-    int x528;                        // 0x528
-    int x52c;                        // 0x52c
-    int x530;                        // 0x530
-    int x534;                        // 0x534
-    int x538;                        // 0x538
-    int x53c;                        // 0x53c
-    int x540;                        // 0x540
-    int x544;                        // 0x544
-    int x548;                        // 0x548
-    int x54c;                        // 0x54c
-    int x550;                        // 0x550
-    int x554;                        // 0x554
-    int x558;                        // 0x558
-    int x55c;                        // 0x55c
-    int x560;                        // 0x560
-    int x564;                        // 0x564
-    int x568;                        // 0x568
-    int x56c;                        // 0x56c
-    int x570;                        // 0x570
-    int x574;                        // 0x574
-    int x578;                        // 0x578
-    int x57c;                        // 0x57c
-    int x580;                        // 0x580
-    int x584;                        // 0x584
-    int x588;                        // 0x588
-    int x58c;                        // 0x58c
-    int x590;                        // 0x590
-    int x594;                        // 0x594
-    int x598;                        // 0x598
-    int x59c;                        // 0x59c
-    int x5a0;                        // 0x5a0
-    int x5a4;                        // 0x5a4
-    int x5a8;                        // 0x5a8
-    u8 x5ac;                         // 0x5ac
-    u8 stadium_kind;                 // 0x5ad
-    u8 x5ae;                         // 0x5ae
-    u8 x5af;                         // 0x5af
+    struct                           // 0x394
+    {                                //
+        u16 time_seconds;            // 0x394
+        u8 menu_stadium_selection;   // 0x396, selected from settings, sub 1 to get StadiumGroup value
+        u8 game_tempo : 2;           // 0x397, 0xC0 (1 = normal = 2 is slow)
+        u8 events_enable : 1;        // 0x397, 0x20
+        u8 x397_x10 : 1;             // 0x397, 0x10
+        u8 x397_x08 : 1;             // 0x397, 0x08
+        u8 x397_x04 : 1;             // 0x397, 0x04
+        u8 x397_x02 : 1;             // 0x397, 0x02
+        u8 x397_x01 : 1;             // 0x397, 0x01
+        int x398 : 8;                // 0x398,
+        CityMode mode : 8;           // 0x399, which mode was selected from the menu
+        int x39a : 8;                // 0x39a,
+        int scene : 8;               // 0x39b, 3 = player select screen, 4 = in game, 5 = properties graph, 6 = stadium splash, 7 = stadium, 8 = results screen
+        int x39c;                    // 0x39c
+        float ply_stats[4][9];       // 0x3a0, copied from playerblock @ 80040024
+        int x430;                    // 0x430
+        int x434;                    // 0x434
+        int x438;                    // 0x438
+        int x43c;                    // 0x43c
+        int x440;                    // 0x440
+        int x444;                    // 0x444
+        int x448;                    // 0x448
+        int x44c;                    // 0x44c
+        int x450;                    // 0x450
+        u8 is_bike[5];               // 0x454
+        u8 machine_kind[5];          // 0x459
+        u8 prev_stadium_kind[5];     // 0x45e
+        int x464;                    // 0x464
+        int x468;                    // 0x468
+        int x46c;                    // 0x46c
+        int x470;                    // 0x470
+        int x474;                    // 0x474
+        int x478;                    // 0x478
+        int x47c;                    // 0x47c
+        int x480;                    // 0x480
+        int x484;                    // 0x484
+        int x488;                    // 0x488
+        int x48c;                    // 0x48c
+        int x490;                    // 0x490
+        int x494;                    // 0x494
+        int x498;                    // 0x498
+        int x49c;                    // 0x49c
+        int x4a0;                    // 0x4a0
+        int x4a4;                    // 0x4a4
+        int x4a8;                    // 0x4a8
+        int x4ac;                    // 0x4ac
+        int x4b0;                    // 0x4b0
+        int x4b4;                    // 0x4b4
+        int x4b8;                    // 0x4b8
+        int x4bc;                    // 0x4bc
+        int x4c0;                    // 0x4c0
+        int x4c4;                    // 0x4c4
+        int x4c8;                    // 0x4c8
+        int x4cc;                    // 0x4cc
+        int x4d0;                    // 0x4d0
+        int x4d4;                    // 0x4d4
+        int x4d8;                    // 0x4d8
+        int x4dc;                    // 0x4dc
+        int x4e0;                    // 0x4e0
+        int x4e4;                    // 0x4e4
+        int x4e8;                    // 0x4e8
+        int x4ec;                    // 0x4ec
+        int x4f0;                    // 0x4f0
+        int x4f4;                    // 0x4f4
+        int x4f8;                    // 0x4f8
+        int x4fc;                    // 0x4fc
+        int x500;                    // 0x500
+        int x504;                    // 0x504
+        int x508;                    // 0x508
+        int x50c;                    // 0x50c
+        int x510;                    // 0x510
+        int x514;                    // 0x514
+        int x518;                    // 0x518
+        int x51c;                    // 0x51c
+        int x520;                    // 0x520
+        int x524;                    // 0x524
+        int x528;                    // 0x528
+        int x52c;                    // 0x52c
+        int x530;                    // 0x530
+        int x534;                    // 0x534
+        int x538;                    // 0x538
+        int x53c;                    // 0x53c
+        int x540;                    // 0x540
+        int x544;                    // 0x544
+        int x548;                    // 0x548
+        int x54c;                    // 0x54c
+        int x550;                    // 0x550
+        int x554;                    // 0x554
+        int x558;                    // 0x558
+        int x55c;                    // 0x55c
+        int x560;                    // 0x560
+        int x564;                    // 0x564
+        int x568;                    // 0x568
+        int x56c;                    // 0x56c
+        int x570;                    // 0x570
+        int x574;                    // 0x574
+        int x578;                    // 0x578
+        int x57c;                    // 0x57c
+        int x580;                    // 0x580
+        int x584;                    // 0x584
+        int x588;                    // 0x588
+        int x58c;                    // 0x58c
+        int x590;                    // 0x590
+        int x594;                    // 0x594
+        int x598;                    // 0x598
+        int x59c;                    // 0x59c
+        int x5a0;                    // 0x5a0
+        int x5a4;                    // 0x5a4
+        int x5a8;                    // 0x5a8
+        u8 x5ac;                     // 0x5ac
+        u8 stadium_kind;             // 0x5ad
+        u8 x5ae;                     // 0x5ae
+        u8 stadium_round;            // 0x5af
+    } city;                          //
     int x5b0;                        // 0x5b0
     int x5b4;                        // 0x5b4
     int x5b8;                        // 0x5b8
@@ -1182,24 +1157,24 @@ typedef struct GameData
     u8 city_kind;                    // 0xa94, 5 = main city trial. stadium modes are derived here @ 8004051c (0xE is destruction derby)
     u8 xa95;                         // 0xa95
     u8 xa96;                         // 0xa96
-    u8 xa97;                         // 0xa97
+    u8 stage_kind;                   // 0xa97, StageKind
     u8 bgm_override;                 // 0xa98, when this is not 1, it plays it as the song id
     u8 is_always_ura_bgm;            // 0xa99
     u8 xa9a;                         // 0xa9a
     u8 xa9b;                         // 0xa9b
     int xa9c;                        // 0xa9c
     int xaa0;                        // 0xaa0
-    int xaa4;                        // 0xaa4
-    int xaa5;                        // 0xaa5
-    int xaa6;                        // 0xaa6
-    int xaa7_80 : 1;                 // 0xaa7, 0x80
-    int xaa7_40 : 1;                 // 0xaa7, 0x40
-    int is_play_music : 1;           // 0xaa7, 0x20
-    int xaa7_10 : 1;                 // 0xaa7, 0x10
-    int xaa7_08 : 1;                 // 0xaa7, 0x08
-    int xaa7_04 : 1;                 // 0xaa7, 0x04
-    int xaa7_02 : 1;                 // 0xaa7, 0x02
-    int xaa7_01 : 1;                 // 0xaa7, 0x01
+    u8 xaa4;                         // 0xaa4
+    u8 xaa5;                         // 0xaa5
+    u8 xaa6;                         // 0xaa6
+    u8 xaa7_80 : 1;                  // 0xaa7, 0x80
+    u8 xaa7_40 : 1;                  // 0xaa7, 0x40
+    u8 is_play_music : 1;            // 0xaa7, 0x20
+    u8 xaa7_10 : 1;                  // 0xaa7, 0x10
+    u8 xaa7_08 : 1;                  // 0xaa7, 0x08
+    u8 xaa7_04 : 1;                  // 0xaa7, 0x04
+    u8 xaa7_02 : 1;                  // 0xaa7, 0x02
+    u8 xaa7_01 : 1;                  // 0xaa7, 0x01
     int xaa8;                        // 0xaa8
     int xaac;                        // 0xaac
     int xab0;                        // 0xab0
@@ -1245,29 +1220,20 @@ typedef struct GameData
     int xbbc;                        // 0xbbc
     int xbc0;                        // 0xbc0
     int xbc4;                        // 0xbc4
-    int xbc8;                        // 0xbc8
-    int xbcc;                        // 0xbcc
-    int xbd0;                        // 0xbd0
-    int xbd4;                        // 0xbd4
-    int xbd8;                        // 0xbd8
-    int xbdc;                        // 0xbdc
-    int xbe0;                        // 0xbe0
-    int xbe4;                        // 0xbe4
-    int xbe8;                        // 0xbe8
-    int xbec;                        // 0xbec
-    int xbf0;                        // 0xbf0
-    int xbf4;                        // 0xbf4
-    int xbf8;                        // 0xbf8
-    int xbfc;                        // 0xbfc
-    int xc00;                        // 0xc00
-    int xc04;                        // 0xc04
-    int xc08;                        // 0xc08
-    int xc0c;                        // 0xc0c
-    int xc10;                        // 0xc10
-    int xc14;                        // 0xc14
-    int xc18;                        // 0xc18
-    int xc1c;                        // 0xc1c
-    int xc20;                        // 0xc20
+    struct                           //
+    {                                //
+        u8 ply_placement[4];         // 0xbc8
+        int xbcc;                    // 0xbcc
+        int ply_race_time[4];        // 0xbd0
+        int xbe0;                    // 0xbe0
+        int xbe4;                    // 0xbe4
+        int xbe8;                    // 0xbe8
+        int xbec;                    // 0xbec
+        int xbf0[4];                 // 0xbf0
+        u8 xc00[4];                  // 0xc00
+        int ply_points[4];           // 0xc04, 0x40
+        float ply_dist[4];           // 0xc14
+    } stadium;                       //
     int xc24;                        // 0xc24
     int xc28;                        // 0xc28
     int xc2c;                        // 0xc2c
@@ -2197,19 +2163,16 @@ typedef struct gmDataAll
     {
         int x0;                  // unk
         int weights[STKIND_NUM]; // 0x4, indexed by StadiumKind
-    } *stadium;
+    } *stadium_weights;
     struct // 0x8
     {
-        struct
-        {
-            u8 city_kind; // 0x0
-            u8 x1;        // 0x1
-            u8 x2;        // 0x2
-            u8 x3;        // 0x3
-            u8 x4;        // 0x4
-            u8 x5;        // 0x5
-        } unk[STKIND_NUM];
-    } *x8;
+        u8 city_kind; // 0x0
+        u8 gr_kind;   // 0x1
+        u8 x2;        // 0x2
+        u8 x3;        // 0x3
+        u8 x4;        // 0x4
+        u8 x5;        // 0x5
+    } *stadium_desc;  // array of these, STKIND_NUM
 } gmDataAll;
 
 typedef struct CharacterDesc
@@ -5605,8 +5568,12 @@ TitleScreenData *TitleScreen_GetData();
 GameData *Gm_GetGameData();
 Game3dData *Gm_Get3dData();
 GameClearData *Gm_GetGameClearData();
-StadiumGroup Gm_GetStadiumGroup(StadiumKind st_kind);
+StadiumGroup Gm_GetStadiumGroupFromKind(StadiumKind st_kind);
+StadiumKind Gm_GetCurrentStadiumKind();
 StadiumGroup Gm_GetCurrentStadiumGroup();
+StageKind Gm_GetCurrentStageKind();
+GroundKind Gm_GetCurrentGrKind();
+GroundKind Gm_GetGrKindFromStageKind(StageKind stage_kind);
 ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); // group: -1 = sky, 0 = blue box, 1 = green box, 2 = red box. r4 = -1 = everything, 0 = down only, 1 = up only. spawn_flags: 0x1 = ?, 0x2 = patch, 0x4 = box,
 GOBJ *Item_Create(void *spawn_desc);
 ItemCommonAttr *Item_GetCommonAttr(ItemKind it_kind);
@@ -5623,6 +5590,7 @@ void CityHUD_CreateStatChart(int ply, int ply2);
 void CityHUD_CreateStatBar(int ply, int ply2, int stat_kind);
 int Gm_StadiumIsDefaultUnlocked(StadiumKind kind);
 int Gm_StadiumIsUnlocked(StadiumKind kind);
+int Gm_StadiumRoundNum();
 int Gm_IsInCity();
 CharacterDesc *Character_GetDesc(CharacterKind ckind);
 GOBJ *Machine_Create(MachineSpawnDesc *desc);
@@ -5666,7 +5634,6 @@ int ClearChecker_GetClearKindFromRewardKind(GameMode gm, int clear_kind);
 int ClearChecker_GetRewardNum(GameMode gm);
 int ClearChecker_CheckUnlocked(GameMode gm, int clear_kind);
 u8 ClearChecker_GetClearData(GameMode gm, int clear_kind);
-GroundKind Gm_GetCurrentGrKind();
 int Gm_IsGrKindCity(GroundKind gr_kind);
 int Gm_IsDestructionDerby();
 void CitySelect_Cursor6Update(int ply, int color_idx);
@@ -5684,5 +5651,5 @@ int Gm_IsDamageEnabled();
 int KARPlus_WriteSave();
 int hash_32(const void *data, int size);
 int hash_32_str(const void *data);
-
+void Gm_LoadGroundFGMBank(GroundKind gr_kind); //
 #endif

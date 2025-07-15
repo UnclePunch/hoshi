@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include "datatypes.h"
+#include "game.h"
 
 #define PRELOADFLAG_FTCOSTUME (1 << 0) // 0x01, fighter costume files
 #define PRELOADFLAG_FTDAT (1 << 1)     // 0x02, main fighter PlX dat files
@@ -149,7 +150,7 @@ struct PreloadTable
     int is_cache_menus;      // 0xc, checked @ 80074908 and will cache game menus flagged in the stc_preload_menu_files array
     int x10;                 // 0x10
     int update_num;          // 0x14, used to know how up to date the cache is. incremented when Preload::heap_kind != MinorSceneDesc::heap_kind OR when calling Preload_Invalidate
-    int is_cache_everything; // 0x18, checked @ 800748ec
+    GroundKind gr_kind;      // 0x18, checked @ 800748ec
     int x1c;                 // 0x1c, checked @ 800748e0
     int x20;                 // 0x20, -1 to disable entirely? 800748d8
     int is_cache_alloc1;     // 0x24, alloc id 2001, not sure what uses this
@@ -187,6 +188,7 @@ void Preload_FreeUnneededInitializedArchivesInHeap(PreloadHeapKind heap_kind);  
 void Preload_Wait(int preload_flags);
 void *Preload_AllocFromHeap(PreloadHeapKind heap_kind, int size);
 void Preload_FreeToHeap(void *ptr, int size);
+void Preload_SetGrKind(GroundKind);
 
 int KARPlus_AddPreloadMenuFile(char *file_name);
 int KARPlus_AddPreloadGameFile(char *file_name);

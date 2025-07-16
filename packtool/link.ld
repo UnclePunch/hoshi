@@ -356,13 +356,13 @@ SECTIONS
   AirRideSelect_Cursor6Update = 0x80154874;
   JObj_SetAllMObjAnimFrameAndRate = 0x80115174;
   JObj_PauseAllTObjAnimFrame = 0x80115114;
-  KARPlus_GetMajorScenes = 0x80495154;
-  KARPlus_GetMinorScenes = 0x80495158;
-  KARPlus_InstallMajorScene = 0x8049515C;
-  KARPlus_InstallMinorScene = 0x80495160;
-  KARPlus_WriteSave = 0x80495164;
-  KARPlus_AddPreloadMenuFile = 0x80495168;
+  Hoshi_GetMajorScenes = 0x80495154;
+  Hoshi_GetMinorScenes = 0x80495158;
+  Hoshi_InstallMajorScene = 0x8049515C;
+  Hoshi_InstallMinorScene = 0x80495160;
+  Hoshi_WriteSave = 0x80495164;
+  Hoshi_AddPreloadMenuFile = 0x80495168;
   hash_32 = 0x8049516C;
   hash_32_str = 0x80495170;
-  KARPlus_AddPreloadGameFile = 0x80495174;
+  Hoshi_AddPreloadGameFile = 0x80495174;
 }

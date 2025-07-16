@@ -20,7 +20,7 @@ void Preload_Init()
     Preload_ApplyPatches();
 }
 
-// installed to the game under the name KARPlus_X
+// installed to the game under the name Hoshi_X
 // adds an arbitrary file to the preload table and is requested every scene
 // change until its zeroed by the game
 int Preload_AddCustomMenuFile(char *file_name)
@@ -178,8 +178,8 @@ void Preload_ApplyPatches()
     CODEPATCH_REPLACEFUNC(0x8013128c, Preload_ClearMenuEntries); // add hook to clear custom preload entries
 
     // install functions to add new preload entries
-    CODEPATCH_REPLACEFUNC(KARPlus_AddPreloadMenuFile, Preload_AddCustomMenuFile);
-    CODEPATCH_REPLACEFUNC(KARPlus_AddPreloadGameFile, Preload_AddCustomGameFile);
+    CODEPATCH_REPLACEFUNC(Hoshi_AddPreloadMenuFile, Preload_AddCustomMenuFile);
+    CODEPATCH_REPLACEFUNC(Hoshi_AddPreloadGameFile, Preload_AddCustomGameFile);
 
     return;
 }

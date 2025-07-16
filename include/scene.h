@@ -809,10 +809,10 @@ SceneDecide: run either Scene_SetNextMinor to enter another minor, OR Scene_SetN
 void Gm_Minor();
 MajorKind Scene_GetCurrentMajor();
 MinorKind Scene_GetCurrentMinor();
-MajorSceneDesc *KARPlus_GetMajorScenes();
-u8 KARPlus_InstallMajorScene(MajorSceneDesc *);
-MinorSceneDesc *KARPlus_GetMinorScenes();
-u8 KARPlus_InstallMinorScene(MinorSceneDesc *);
+MajorSceneDesc *Hoshi_GetMajorScenes();
+u8 Hoshi_InstallMajorScene(MajorSceneDesc *);
+MinorSceneDesc *Hoshi_GetMinorScenes();
+u8 Hoshi_InstallMinorScene(MinorSceneDesc *);
 void Scene_SetNextMajor(int major_id);  // run this in scene decide!
 void Scene_ExitMajor();                 // run this to cause a major scene change, usually ran in scene decide!
 void Scene_SetNextMinor(int minor_id);  // run this in scene decide!

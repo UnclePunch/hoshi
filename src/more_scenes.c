@@ -257,10 +257,10 @@ void Scenes_ApplyPatches()
         {0x80008c70, (int)&minor_scene_asm_5},
         {0x80008cc8, (int)&minor_scene_asm_6},
         {0x80008d78, (int)&minor_scene_asm_7},
-        {(int)KARPlus_GetMajorScenes, (int)&Scenes_GetMajorScenes},
-        {(int)KARPlus_GetMinorScenes, (int)&Scenes_GetMinorScenes},
-        {(int)KARPlus_InstallMajorScene, (int)&Scenes_InstallMajorScene},
-        {(int)KARPlus_InstallMinorScene, (int)&Scenes_InstallMinorScene},
+        {(int)Hoshi_GetMajorScenes, (int)&Scenes_GetMajorScenes},
+        {(int)Hoshi_GetMinorScenes, (int)&Scenes_GetMinorScenes},
+        {(int)Hoshi_InstallMajorScene, (int)&Scenes_InstallMajorScene},
+        {(int)Hoshi_InstallMinorScene, (int)&Scenes_InstallMinorScene},
     };
 
     for (int i = 0; i < GetElementsIn(branch_table); i++)

@@ -2443,7 +2443,7 @@ void Gm_ResumeAllSFX();
 
 void Gm_SetCameraNormal();
 int Gm_IsDamageEnabled();
-int KARPlus_WriteSave();
+int Hoshi_WriteSave();
 int hash_32(const void *data, int size);
 int hash_32_str(const void *data);
 void Gm_LoadGroundFGMBank(GroundKind gr_kind); //

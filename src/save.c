@@ -7,7 +7,7 @@
  *---------------------------------------------------------------------------*/
 
 #include "memcard.h"
-#include "useful.h"
+#include "os.h"
 #include "hsd.h"
 #include "inline.h"
 #include "game.h"

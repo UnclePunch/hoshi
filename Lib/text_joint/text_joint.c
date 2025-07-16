@@ -1,7 +1,7 @@
 // #include <math.h>
 #include "hsd.h"
 #include "inline.h"
-#include "useful.h"
+#include "os.h"
 #include "obj.h"
 #include "text.h"
 

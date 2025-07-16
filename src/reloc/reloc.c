@@ -1,5 +1,5 @@
 #include "reloc.h"
-#include "useful.h"
+#include "os.h"
 
 void reloc(ModHeader *header)
 {

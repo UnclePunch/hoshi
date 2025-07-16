@@ -3,7 +3,7 @@
 
 #include "structs.h"
 #include "datatypes.h"
-#include "useful.h"
+#include "os.h"
 
 typedef struct ItemData
 {

@@ -373,4 +373,7 @@ HSD_ObjAllocData *HSD_FObjGetAllocData();
 void HSD_IDInsertToTable(HSD_IDTable *id_table, u32 id, void *data);
 void HSD_IDRemoveByIDFromTable(HSD_IDTable *id_table, u32 id);
 void *HSD_IDGetDataFromTable(HSD_IDTable *id_table, u32 id, u8 *success);
+int HSD_GetHeapID();
+void HSD_SetHeapID(int heap);
+
 #endif

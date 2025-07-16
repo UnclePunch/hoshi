@@ -4,7 +4,7 @@
 #include "audio.h"
 #include "structs.h"
 #include "datatypes.h"
-#include "useful.h"
+#include "os.h"
 #include "scene.h"
 #include "obj.h"
 #include "stadium.h"

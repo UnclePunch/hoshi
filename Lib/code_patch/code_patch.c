@@ -10,7 +10,7 @@
  */
 //===================================================================================================
 
-#include "useful.h"
+#include "os.h"
 #include "code_patch.h"
 
 void _CodePatch_Apply(PatchDesc *patch_desc)

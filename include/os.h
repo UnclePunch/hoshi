@@ -1,5 +1,5 @@
-#ifndef MEX_H_USEFUL
-#define MEX_H_USEFUL
+#ifndef MEX_H_OS
+#define MEX_H_OS
 
 // #include <stdarg.h>
 
@@ -628,10 +628,6 @@ void MTH_Terminate();
 void MTH_Render(GOBJ *gobj, int pass); // 8001f67c
 void MTH_Advance();
 int MTH_CheckEnd();
-
-/*** HSD Library ***/
-int HSD_GetHeapID();
-void HSD_SetHeapID(int heap);
 
 /** String Library **/
 #define vsprintf(buffer, format, args) _vsprintf(buffer, -1, format, args)

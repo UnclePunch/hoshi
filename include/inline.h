@@ -6,7 +6,7 @@
 #include "datatypes.h"
 #include "gx.h"
 #include "hsd.h"
-#include "useful.h"
+#include "os.h"
 #include "scene.h"
 #include "preload.h"
 

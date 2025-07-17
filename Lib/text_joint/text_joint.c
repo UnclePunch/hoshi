@@ -70,7 +70,9 @@ Text *TextJoint_Create(JOBJ *j, int child_idx, int canvas_idx, char *string, int
     text->color = *color;
     // text->viewport_color = (GXColor){255, 0, 0, 255};
 
-    Text_AddSubtext(text, 0, -12, string);
+    char buf[256];
+    Text_Sanitize(string, buf, sizeof(buf));
+    Text_AddSubtext(text, 0, -12, buf);
 
     // add to lookup
     if (lookup->num >= GetElementsIn(lookup->entry))

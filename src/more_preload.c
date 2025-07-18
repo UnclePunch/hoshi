@@ -8,6 +8,8 @@
 #include "game.h"
 #include <string.h>
 
+#include "hoshi/log.h"
+
 #include "more_preload.h"
 #include "code_patch/code_patch.h"
 #include "fst/fst.h"
@@ -30,12 +32,12 @@ int Preload_AddCustomMenuFile(char *file_name)
         if (stc_custom_menu_files[i] == 0)
         {
             stc_custom_menu_files[i] = file_name;
-            OSReport("Preload: added menu file %s\n", file_name);
+            LOG_INFO("Preload: added menu file %s", file_name);
             return 1;
         }
         else if (strcmp(stc_custom_menu_files[i], file_name) == 0)
         {
-            OSReport("Preload: menu file %s already exists\n", file_name);
+            LOG_WARN("Preload: menu file %s already exists", file_name);
             return 0;
         }
     }
@@ -47,7 +49,7 @@ int Preload_AddCustomGameFile(char *file_name)
     // exit if at max
     if (stc_custom_game_files.num > GetElementsIn(stc_custom_game_files.file))
     {
-        OSReport("Preload: game file num over %d\n", GetElementsIn(stc_custom_game_files.file));
+        LOG_WARN("Preload: game file num over %d", GetElementsIn(stc_custom_game_files.file));
         return 0;
     }
 
@@ -56,7 +58,7 @@ int Preload_AddCustomGameFile(char *file_name)
     {
         if (strcmp(stc_custom_game_files.file[i].name, file_name) == 0)
         {
-            OSReport("Preload: game file %s already exists\n", file_name);
+            LOG_WARN("Preload: game file %s already exists", file_name);
             return 0;
         }
     }
@@ -67,7 +69,7 @@ int Preload_AddCustomGameFile(char *file_name)
     stc_custom_game_files.file[stc_custom_game_files.num].preload_kind = 4;
     stc_custom_game_files.num++;
 
-    OSReport("Preload: added game file %s\n", file_name);
+    LOG_INFO("Preload: added game file %s", file_name);
     return 1;
 
     return 0;
@@ -88,7 +90,7 @@ void Preload_IncreasePersistentHeapSize()
 
             newfiles_total_size = OSRoundUp32B(newfiles_total_size);
 
-            OSReport("[hoshi] Persistent heap size: %.2fkb -> %.2fkb\n",
+            LOG_INFO("Persistent heap size: %.2fkb -> %.2fkb",
                      BytesToKB(heap_descs->size),
                      BytesToKB((heap_descs->size + newfiles_total_size)));
 
@@ -155,7 +157,7 @@ void Preload_ClearMenuEntries()
     {
         if (stc_preload_menu_files[i])
         {
-            OSReport("Preload: removing %s\n", FST_GetFilenameFromEntrynum(stc_preload_menu_files[i]));
+            LOG_INFO("Preload: removing %s", FST_GetFilenameFromEntrynum(stc_preload_menu_files[i]));
             stc_preload_menu_files[i] = 0;
         }
     }
@@ -165,7 +167,7 @@ void Preload_ClearMenuEntries()
     {
         if (stc_custom_menu_files[i])
         {
-            OSReport("Preload: removing %s\n", stc_custom_menu_files[i]);
+            LOG_INFO("Preload: removing %s", stc_custom_menu_files[i]);
             stc_custom_menu_files[i] = 0;
         }
     }

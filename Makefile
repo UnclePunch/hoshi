@@ -5,8 +5,6 @@ LD = powerpc-eabi-ld
 # === Paths ===
 SRCDIR   		= src
 LIBDIR   		= Lib
-BUILDDIR 		= build
-BINDIR   		= out
 PACKDIR  		= packtool
 INSTALLDIR 		?= C:/Users/Vin/Documents/ROMs/KAR-Plus/files		#can override this on the command line: make install INSTALL_DIR=/path/to/your/mods
 
@@ -15,18 +13,38 @@ INCLUDES = -Iinclude -I$(LIBDIR) -I$(SRCDIR)
 
 CFLAGS = -O1 -mcpu=750 -meabi -msdata=none -mhard-float -ffreestanding \
          -fno-unwind-tables -fno-exceptions -fno-asynchronous-unwind-tables \
-         -fno-merge-constants -ffunction-sections -fdata-sections $(INCLUDES)
+         -fno-merge-constants -ffunction-sections -fdata-sections  -MMD -MP \
+		 $(INCLUDES)
+
+CFLAGS += $(ENABLE_LOGGING)
 
 LDFLAGS = -r -T$(PACKDIR)/link.ld
+
+# === Log Flags ===
+BUILD ?= release
+
+ifeq ($(BUILD),release)
+    CFLAGS += -DLOG_LEVEL=3
+endif
+ifeq ($(BUILD),debug)
+    CFLAGS += -DLOG_LEVEL=4
+endif
+
+# === Per Build Paths ===
+BUILDDIR 		= build/$(BUILD)
+BINDIR   		= out/$(BUILD)
 
 # === Mod type and output ===
 MODTYPE    = mdFunction
 LINKED_O   = $(BUILDDIR)/linked.o
 TARGET_BIN = $(BINDIR)/hoshi.bin
 
+# Recursive wildcard function
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+
 # === Collect source files ===
-SRC_FILES := $(shell find $(SRCDIR) -type f \( -name '*.c' -o -name '*.s' -o -name '*.S' \))
-LIB_FILES := $(shell find $(LIBDIR) -type f \( -name '*.c' -o -name '*.s' -o -name '*.S' \))
+SRC_FILES := $(call rwildcard,$(SRCDIR)/,*.c *.s *.S)
+LIB_FILES := $(call rwildcard,$(LIBDIR)/,*.c *.s *.S)
 ALL_SOURCES := $(SRC_FILES) $(LIB_FILES)
 
 # === Map each source file to a matching build object ===
@@ -51,11 +69,6 @@ $(BUILDDIR)/%.o: %.S
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# === Unified pattern rule for all ===
-$(BUILDDIR)/%.o: %
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 # === Link into relocatable object ===
 $(LINKED_O): $(OBJECTS)
 	$(LD) $(LDFLAGS) -o $@ $^
@@ -64,6 +77,8 @@ $(LINKED_O): $(OBJECTS)
 $(TARGET_BIN): $(LINKED_O)
 	mkdir -p $(BINDIR)
 	python $(PACKDIR)/main.py $< -m $(MODTYPE) -o $@
+
+-include $(OBJECTS:.o=.d)
 
 # --- Install Target ---
 # Copies the final .bin files from $(OUT_DIR) to $(INSTALLDIR)

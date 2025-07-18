@@ -8,6 +8,8 @@
 #include "game.h"
 #include <string.h>
 
+#include "hoshi/log.h"
+
 #include "stack.h"
 #include "hoshi.h"
 #include "reloc/reloc.h"
@@ -155,9 +157,8 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
 {
     char *symbol_name;
 
-    // OSReport("Searching for %p\n", lr);
-
-    // OSReport("Checking Modloader code...\n", lr);
+    LOG_DEBUG("Searching for %p", lr);
+    LOG_DEBUG("Checking Modloader code...", lr);
 
     // check hoshi code
     symbol_name = Mod_SearchForSymbol(stc_modloader_data->hoshi.mod_header, lr);
@@ -169,7 +170,7 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
     {
         ModHeader *mod_header = stc_modloader_data->mods[mod_idx].mod_header;
 
-        // OSReport("Checking %s code...\n", stc_modloader_data->mods[mod_idx].data.name);
+        LOG_DEBUG("Checking %s code...", stc_modloader_data->mods[mod_idx].data.name);
 
         char *symbol_name = Mod_SearchForSymbol(mod_header, lr);
 
@@ -180,7 +181,7 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
     // check dol
     if (stc_dol_debug && (u32)lr >= 0x80003100 && (u32)lr < 0x80535300) // hardcoded bounds, look into detecting regions from dol
     {
-        // OSReport("Checking dol code...\n");
+        LOG_DEBUG("Checking dol code...");
 
         // binary search to find the code section the addr lies in
         int symbol_idx_min = 0;

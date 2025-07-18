@@ -8,6 +8,8 @@
 #include "game.h"
 #include <string.h>
 
+#include "hoshi/log.h"
+
 #include "more_scenes.h"
 #include "code_patch/code_patch.h"
 
@@ -59,7 +61,7 @@ void Gm_MajorPatch()
 
         if (!this_major_desc)
         {
-            OSReport("scene: couldn't find major %d\n", gd->major_cur);
+            LOG_WARN("scene: couldn't find major %d\n", gd->major_cur);
             assert("0");
         }
 

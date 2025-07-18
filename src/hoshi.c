@@ -20,6 +20,9 @@
 #include "patch_misc.h"
 #include "reloc/reloc.h"
 
+// Hoshi
+#include "hoshi/log.h"
+
 // Lib
 #include "code_patch/code_patch.h"
 #include "fst/fst.h"
@@ -44,16 +47,21 @@ void Hook_SceneChange()
             this_mod->data.OnSceneChange();
     }
 
-    // watermark
-    int canvas_idx = Text_CreateCanvas(1, 0, 0, 0, 0, 63, 0, 63);
-    Text *t = Text_CreateText(1, canvas_idx);
-    t->kerning = 1;
-    t->use_aspect = 1;
-    t->viewport_scale = (Vec2){0.5, 0.5};
-    t->aspect = (Vec2){420, 32};
-    t->viewport_color = (GXColor){0, 0, 0, 128};
-    Text_AddSubtext(t, 0, 0, "KARDX Test Build " __DATE__);
+#ifdef LOG_LEVEL
+    if (LOG_LEVEL > LOG_LEVEL_INFO)
+    {
+        // watermark
+        int canvas_idx = Text_CreateCanvas(1, 0, 0, 0, 0, 63, 0, 63);
+        Text *t = Text_CreateText(1, canvas_idx);
+        t->kerning = 1;
+        t->use_aspect = 1;
+        t->viewport_scale = (Vec2){0.5, 0.5};
+        t->aspect = (Vec2){420, 32};
+        t->viewport_color = (GXColor){0, 0, 0, 128};
+        Text_AddSubtext(t, 0, 0, "KARDX Test Build " __DATE__);
+    }
 
+#endif
     return;
 };
 CODEPATCH_HOOKCREATE(0x8000678c, "", Hook_SceneChange, "", 0)
@@ -186,7 +194,7 @@ void OnFileLoad(ModHeader *file)
     // count number of mod files on disc
     int mod_num = 0;
     FST_ForEachInFolder("/mods", ".bin", 0, (void (*)(int, void *))Mods_CountFile, &mod_num);
-    OSReport("found %d mods\n", mod_num);
+    LOG_DEBUG("found %d mods", mod_num);
 
     // if mods were found, load them
     if (mod_num > 0)
@@ -209,7 +217,7 @@ void OnFileLoad(ModHeader *file)
             mods_size += file_info.length;
             DVDClose(&file_info);
         }
-        OSReport("[hoshi] Installed %d mods (%.2fkb) in %.2fms\n", mod_num, BytesToKB(mods_size), MillisecondsSinceTick(tick));
+        LOG_INFO("Installed %d mods (%.2fkb) in %.2fms", mod_num, BytesToKB(mods_size), MillisecondsSinceTick(tick));
 
         Preload_IncreasePersistentHeapSize(); // increase size of persistent heap to fit any new files
         OSReport("\n");
@@ -278,7 +286,7 @@ void *Mods_LoadFile(int entrynum)
     while (!is_loaded)
         ;
 
-    OSReport("Loaded mod file: %s (0x%08x)\n", FST_GetFilenameFromEntrynum(entrynum), file_buffer);
+    LOG_INFO("Loaded mod file: %s (0x%08x)", FST_GetFilenameFromEntrynum(entrynum), file_buffer);
 
     return file_buffer;
 }
@@ -300,19 +308,22 @@ void Mods_LoadGlobal(int entrynum)
     // save ptr to mexFunction so we can access debug data
     this_mod->mod_header = file;
 
-    OSReport("~~~~~~~~~~~~~~~~~~~~~\n");
-    OSReport("[hoshi] Installing global mod...\n");
-    OSReport("   Name:\t\t%s\n", this_mod->data.name);
-    OSReport("   Author:\t\t%s\n", this_mod->data.author);
-    OSReport("   Version:\t\t%s\n", this_mod->data.version);
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
+    LOG_INFO("   Installing global mod...");
+    LOG_INFO("   Name:\t\t%s", this_mod->data.name);
+    LOG_INFO("   Author:\t\t%s", this_mod->data.author);
+    LOG_INFO("   Version:\t\t%s", this_mod->data.version);
+
     OSReport("\n");
 
     // exec init function
     if (this_mod->data.OnBoot)
         this_mod->data.OnBoot(file);
 
-    OSReport("Finished installing %s.\n", this_mod->data.name);
-    OSReport("~~~~~~~~~~~~~~~~~~~~~\n");
+    OSReport("\n");
+
+    LOG_INFO("Finished installing %s.", this_mod->data.name);
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~\n");
 
     // inc
     stc_modloader_data->mod_num++;
@@ -330,7 +341,7 @@ GlobalMod *Mods_GetFromName(char *name)
     return 0;
 }
 
-void Modloader_InitSaveData()
+void Mods_InitSaveData()
 {
     int req_write = 0;
 
@@ -351,7 +362,7 @@ void Modloader_InitSaveData()
     // // if a save file was initialized, write it out to card asap
     // if (req_write)
     // {
-    //     OSReport("a save needed to be init'd, writing to memcard\n");
+    //     LOG_DEBUG("a save needed to be init'd, writing to memcard");
     //     KARPlusSave_Write();
     // }
 
@@ -360,8 +371,8 @@ void Modloader_InitSaveData()
 }
 int Mod_InitSaveData(GlobalMod *mod)
 {
-    OSReport("~~~~~~~~~~~~~~~~~~~~~\n");
-    OSReport("%s:\n", mod->data.name);
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
+    LOG_INFO("%s:", mod->data.name);
 
     int req_init;
 
@@ -381,14 +392,14 @@ int Mod_InitSaveData(GlobalMod *mod)
         // check if save data exists on card
         if (is_exists)
         {
-            OSReport("Save data found.\n", mod->data.name);
+            LOG_INFO("Save data found.", mod->data.name);
 
             // re-alloc if current version of the mod demands more storage
             req_init = KARPlusSave_VerifySize(mod, menu_size, user_size);
         }
         else
         {
-            OSReport("Save data created.\n", mod->data.name);
+            LOG_INFO("Save data created.", mod->data.name);
 
             // alloc save
             KARPlusSave_Alloc(mod, menu_size, user_size);
@@ -396,14 +407,14 @@ int Mod_InitSaveData(GlobalMod *mod)
         }
 
         if (mod->save.menu_data)
-            OSReport("menu_data: %x (0x%x)\n",
-                     mod->save.menu_data,
-                     mod->save.menu_num * sizeof(MenuSave));
+            LOG_DEBUG("menu_data: %x (0x%x)",
+                      mod->save.menu_data,
+                      mod->save.menu_num * sizeof(MenuSave));
 
         if (mod->save.user_data)
-            OSReport("user_data: %x (0x%x)\n",
-                     mod->save.user_data,
-                     mod->save.user_size);
+            LOG_DEBUG("user_data: %x (0x%x)",
+                      mod->save.user_data,
+                      mod->save.user_size);
 
         if (!req_init)
             Mod_CopyFromSave(mod); // copy saved menu settings to the mod
@@ -412,17 +423,19 @@ int Mod_InitSaveData(GlobalMod *mod)
 
         if (mod->data.OnSaveInit)
         {
-            OSReport("Exec save init func...\n", mod->data.name);
+            LOG_INFO("Exec save init func...\n", mod->data.name);
             mod->data.OnSaveInit(mod->save.user_data, req_init);
+            OSReport("\n");
+            LOG_INFO("Done.", mod->data.name);
         }
     }
     else
     {
-        OSReport("No save data.\n", mod->data.name);
+        LOG_INFO("No save data.", mod->data.name);
         req_init = 0;
     }
 
-    OSReport("~~~~~~~~~~~~~~~~~~~~~\n\n");
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~\n");
 
     return req_init;
 }

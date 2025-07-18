@@ -18,6 +18,8 @@
 #include "hash.h"
 #include "hoshi.h"
 
+#include "hoshi/log.h"
+
 #include "code_patch/code_patch.h"
 
 static char *save_name = "KAR-Plus";
@@ -38,9 +40,8 @@ Returns:        none.
 void KARPlusSave_OnSaveCreateOrLoad()
 {
 
-    OSReport("---------------------\n");
-    OSReport("[hoshi] Initializing save...\n");
-    OSReport("\n");
+    LOG_INFO("---------------------");
+    LOG_INFO("[hoshi] Initializing save...");
 
     // check if main save was created
     if (Memcard_GetState() == MEMCARD_SUCCESS && Memcard_GetSaveStatus() == CARDSAVE_EXIST)
@@ -59,11 +60,10 @@ void KARPlusSave_OnSaveCreateOrLoad()
     }
     // main save file wasn't created, we're not creating a KARPlus save file, init the mod save data here
     else
-        Modloader_InitSaveData();
+        Mods_InitSaveData();
 
-    OSReport("Finished initializing save.\n");
-    OSReport("---------------------\n");
-    OSReport("\n");
+    LOG_INFO("Finished initializing save.");
+    LOG_INFO("---------------------\n");
 
     return;
 }
@@ -107,7 +107,7 @@ void KARPlusSave_OnNoSave()
         Memcard_SetSaveStatus(CARDSAVE_IGNORE);
 
         // init mod save data (default values)
-        Modloader_InitSaveData();
+        Mods_InitSaveData();
 
         // skip all tutorial vids
         GameData *gd = Gm_GetGameData();
@@ -203,7 +203,7 @@ int KARPlusSave_CreateOrLoad()
     cardResult = CARDMount(0, (void *)0x805a7e80, 0);
     if (cardResult != CARD_RESULT_READY)
     {
-        OSReport("Failed to mount memory card.\n");
+        LOG_WARN("Failed to mount memory card.");
         return 0;
     }
 
@@ -213,47 +213,47 @@ int KARPlusSave_CreateOrLoad()
     // no exist
     if (cardResult == CARD_RESULT_NOFILE)
     {
-        OSReport("No save file found, creating one...\n");
+        LOG_DEBUG("No save file found, creating one...");
 
         // create save file
         cardResult = CARDCreate(0, save_name, SAVE_SIZE, &fileInfo);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Error creating save file.\n");
+            LOG_WARN("Error creating save file.");
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return 0;
         }
 
-        OSReport("Save file created with size 0x%x\n", SAVE_SIZE);
+        LOG_DEBUG("Save file created with size 0x%x", SAVE_SIZE);
 
         // initialize mods' save data
-        Modloader_InitSaveData();
+        Mods_InitSaveData();
 
         // write to card
         cardResult = CARDWrite(&fileInfo, stc_Hoshi_save, SAVE_SIZE, 0);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Error initializing save file (result %d).\n", cardResult);
+            LOG_WARN("Error initializing save file (result %d).", cardResult);
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return 0;
         }
 
-        OSReport("Created save file on card.\n");
+        LOG_DEBUG("Created save file on card.");
 
         is_created = 1;
     }
     // exists
     else if (cardResult == CARD_RESULT_READY)
     {
-        OSReport("Save file found.\n");
+        LOG_DEBUG("Save file found.");
 
         // Get file status to retrieve size in blocks
         cardResult = CARDGetStatus(0, fileInfo.fileNo, &stat);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Failed to get file status.\n");
+            LOG_WARN("Failed to get file status.");
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return 0;
@@ -262,25 +262,25 @@ int KARPlusSave_CreateOrLoad()
         // ensure this save file is the size we expect it to be
         if (stat.length != SAVE_SIZE)
         {
-            OSReport("Error, expected file to be size %d, is %d\n", SAVE_SIZE, stat.length);
+            LOG_WARN("Error, expected file to be size %d, is %d", SAVE_SIZE, stat.length);
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return 0;
         }
 
-        OSReport("Loading it\n");
+        LOG_DEBUG("Loading it");
 
         cardResult = CARDRead(&fileInfo, stc_Hoshi_save, OSRoundUp512B(SAVE_SIZE), 0);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Failed to read save data.\n");
+            LOG_WARN("Failed to read save data.");
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return 0;
         }
 
         // initialize mods' save data
-        Modloader_InitSaveData();
+        Mods_InitSaveData();
     }
 
     CARDClose(&fileInfo);
@@ -320,7 +320,7 @@ int KARPlusSave_Write()
         cardResult = CARDMount(0, (void *)0x805a7e80, 0);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Failed to mount memory card.\n");
+            LOG_DEBUG("Failed to mount memory card.");
             return cardResult;
         }
 
@@ -329,7 +329,7 @@ int KARPlusSave_Write()
 
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Failed to open save file.\n");
+            LOG_DEBUG("Failed to open save file.");
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return cardResult;
@@ -339,7 +339,7 @@ int KARPlusSave_Write()
         cardResult = CARDWrite(&fileInfo, stc_Hoshi_save, SAVE_SIZE, 0);
         if (cardResult != CARD_RESULT_READY)
         {
-            OSReport("Error updating save file.\n");
+            LOG_WARN("Error updating save file.");
             CARDClose(&fileInfo);
             CARDUnmount(0);
             return cardResult;
@@ -371,7 +371,7 @@ void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
     if (stc_Hoshi_save->mod_num > GetElementsIn(stc_Hoshi_save->metadata))
     {
         // to-do, free something and ensure it gets alloc'd
-        OSReport("Save: mod_num over %d\n", GetElementsIn(stc_Hoshi_save->metadata));
+        LOG_ERROR("Save: mod_num over %d", GetElementsIn(stc_Hoshi_save->metadata));
         return 0;
     }
 
@@ -406,11 +406,11 @@ void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
     if (user_size > 0)
         save_data_ptr = (void *)((int)stc_Hoshi_save + user_offset);
 
-    OSReport("alloc'd mod %s index %d hash 0x%x metadata @ %p\n",
-             mod->data.name,
-             stc_Hoshi_save->mod_num,
-             stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].mod_hash,
-             &stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num]);
+    LOG_DEBUG("alloc'd mod %s index %d hash 0x%x metadata @ %p",
+              mod->data.name,
+              stc_Hoshi_save->mod_num,
+              stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].mod_hash,
+              &stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num]);
 
     stc_Hoshi_save->mod_num++;
 
@@ -449,7 +449,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
 
             if (new_size > saved_size)
             {
-                OSReport("Current version save is larger (0x%08x / 0x%08x).\n",
+                LOG_WARN("Current version save is larger (0x%08x / 0x%08x).",
                          new_size,
                          saved_size);
 
@@ -459,7 +459,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                 // resize
                 if (free_size >= new_size)
                 {
-                    OSReport("Resizing save...\n");
+                    LOG_INFO("Resizing save...");
 
                     // shift other data
                     for (int j = stc_Hoshi_save->mod_num - 1; j > i; j--)
@@ -478,7 +478,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                     int old_menusave_size = stc_Hoshi_save->metadata[i].menu_data.size;
                     if (menu_size > old_menusave_size)
                     {
-                        OSReport("Nulling additional menu saves.\n");
+                        LOG_DEBUG("Nulling additional menu saves.");
                         memset(&stc_Hoshi_save->data[stc_Hoshi_save->metadata[i].menu_data.offset + old_menusave_size], -1, menu_size - old_menusave_size); // fill with -1's to indicate unused space
                     }
 
@@ -492,15 +492,15 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                 // unable to resize
                 else
                 {
-                    OSReport("not enough free space to resize (0x%08x / 0x%08x)\n", new_size, free_size);
+                    LOG_WARN("Not enough free space to resize 0x%08x -> 0x%08x.", new_size, free_size);
                 }
             }
             else if (new_size < saved_size)
             {
-                OSReport("Current version save is smaller (0x%08x / 0x%08x).\n",
+                LOG_WARN("Current version save is smaller than expected. (0x%08x / 0x%08x).",
                          new_size,
                          saved_size);
-                OSReport("Resizing save...\n");
+                LOG_WARN("Resizing save...");
 
                 int shift_amt = new_size - saved_size;
 
@@ -521,7 +521,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                 int old_menusave_size = stc_Hoshi_save->metadata[i].menu_data.size;
                 if (menu_size < old_menusave_size)
                 {
-                    OSReport("Nulling all menu saves.\n");
+                    LOG_DEBUG("Nulling all menu saves.");
                     memset(&stc_Hoshi_save->data[stc_Hoshi_save->metadata[i].menu_data.offset], -1, menu_size); // fill with -1's to indicate unused space
                 }
 
@@ -542,11 +542,11 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
             mod->save.user_data = (MenuSave *)(&((u8 *)&stc_Hoshi_save->data)[user_data_offset]);
             mod->save.user_size = user_size;
 
-            OSReport("verified mod %s index %d hash 0x%x metadata @ %p\n",
-                     mod->data.name,
-                     i,
-                     stc_Hoshi_save->metadata[i].mod_hash,
-                     &stc_Hoshi_save->metadata[i]);
+            LOG_DEBUG("verified mod %s index %d hash 0x%x metadata @ %p",
+                      mod->data.name,
+                      i,
+                      stc_Hoshi_save->metadata[i].mod_hash,
+                      &stc_Hoshi_save->metadata[i]);
 
             break;
         }

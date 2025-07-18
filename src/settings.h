@@ -3,8 +3,6 @@
 
 #include "hoshi/settings.h" // public headers
 
-#define SETTINGS_DEBUG 1
-
 #define MENU_PLINK 31
 #define MODSETTINGS_GXLINK 4
 #define OPTION_GXPRI 1
@@ -12,12 +10,6 @@
 #define CURSOR_GXPRI 2
 
 #define OPTION_NUM 5
-
-#if SETTINGS_DEBUG == 1
-#define LOG(...) OSReport(__VA_ARGS__)
-#else
-#define LOG(...) (sizeof(void *))
-#endif
 
 typedef enum MenuState
 {

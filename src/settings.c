@@ -13,6 +13,8 @@
 #include "settings.h"
 #include "save.h"
 
+#include "hoshi/log.h"
+
 #include "code_patch/code_patch.h"
 #include "text_joint/text_joint.h"
 
@@ -35,13 +37,15 @@ void Settings_Init(ModloaderData *mod_data)
 {
     // build a menu at runtime consisting of the base settings and each active mods' settings
 
+    LOG_INFO("Building hoshi settings...");
+
     // count number of mod settings
     int mod_settings_num = 0;
     for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
     {
         if (mod_data->mods[mod_idx].data.option_desc)
         {
-            OSReport("Mod %s has settings menu\n", mod_data->mods[mod_idx].data.name);
+            LOG_INFO("  * Installing %s to settings menu.", mod_data->mods[mod_idx].data.name);
             mod_settings_num++;
         }
     }
@@ -67,6 +71,8 @@ void Settings_Init(ModloaderData *mod_data)
         // sort optiondesc arr
         qsort((u8 *)&main_menu->options, main_menu->option_num, sizeof(OptionDesc *), Settings_SortCallback);
     }
+
+    LOG_INFO("Done.\n");
 
     return;
 }
@@ -703,7 +709,7 @@ void OptionText_GX(GOBJ *g, int pass)
 
     if (!j)
     {
-        OSReport("no joint found for text %p\n", t);
+        LOG_WARN("no joint found for text %p\n", t);
         assert("text_joint");
     }
 
@@ -844,18 +850,18 @@ void Option_CopyFromSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
         // copy save value
         if (save[i].hash == opt_hash)
         {
-            LOG("copying val %d from save for option %s.\n", save[i].val, desc->name);
+            LOG_DEBUG("copying val %d from save for option %s.\n", save[i].val, desc->name);
             *desc->val = save[i].val;
             return;
         }
         else if (save[i].hash == (u16)-1)
         {
-            LOG("%s hash not found.\n", desc->name);
+            LOG_DEBUG("%s hash not found.\n", desc->name);
             return;
         }
     }
 
-    LOG("%s hash not found.\n", desc->name);
+    LOG_DEBUG("%s hash not found.\n", desc->name);
 
     return;
 }
@@ -893,16 +899,16 @@ void Option_CopyToSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
         // copy save value
         if (save[i].hash == opt_hash)
         {
-            LOG(" %s hash found, update value %d in save.\n",
-                desc->name,
-                *desc->val);
+            LOG_DEBUG(" %s hash found, update value %d in save.\n",
+                      desc->name,
+                      *desc->val);
             save[i].val = *desc->val;
             break;
         }
         else if (save[i].hash == (u16)-1)
         {
             // free space, insert it
-            LOG(" %s hash created, copying value %d to save.\n", desc->name, *desc->val);
+            LOG_DEBUG(" %s hash created, copying value %d to save.", desc->name, *desc->val);
             save[i].hash = opt_hash;
             save[i].val = *desc->val;
             break;
@@ -936,7 +942,7 @@ void Menu_CopyToSave(GlobalMod *mod, char *menu_name, MenuDesc *desc)
 }
 u16 Option_Hash(char *menu_name, char *option_name)
 {
-    // OSReport("hashing %s + %s\n", menu_name, option_name);
+    LOG_DEBUG("hashing %s + %s", menu_name, option_name);
 
     int menu_name_len = strlen(menu_name);
     int opt_name_len = strlen(option_name);

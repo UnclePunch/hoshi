@@ -1,5 +1,6 @@
 #include "reloc.h"
 #include "os.h"
+#include "hoshi/log.h"
 
 void reloc(ModHeader *header)
 {

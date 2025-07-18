@@ -64,9 +64,11 @@ void Mods_LoadFile_Callback(int r3, int *is_loaded);
 void *Mods_LoadFile(int entrynum);
 void Mods_LoadGlobal(int entrynum);
 void Mods_LoadVS(int entrynum);
-void Modloader_InitSaveData();
 GlobalMod *Mods_GetFromName(char *name);
+
+void Mods_InitSaveData();
 int Mod_InitSaveData(GlobalMod *mod);
+
 int _hash_32(const void *data, int size);
 
 void Mod_CopyFromSave(GlobalMod *mod);

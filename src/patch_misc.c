@@ -2,6 +2,8 @@
 #include "text.h"
 #include "code_patch/code_patch.h"
 
+#include "hoshi/log.h"
+
 void Text_AlphaCopy(Text *t)
 {
     t->temp.color.a = t->color.a;

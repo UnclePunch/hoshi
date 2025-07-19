@@ -1,12 +1,47 @@
 //====================================================================================================
 /*
  * Description:
- * This library injects code to a .dol address.
+ * This library facilitates injecting and executing code at a given memory address.
+ * 4 methods of code execution are supported:
  *
- * Usage Instructions:
- * - Include "lib/code_patch/code_patch.c" in your code.
- * - ???
- * - profit
+ *  1. Instruction Replacement - the instruction at the memory address is substituted
+ *      with the instruction provided.
+ *              Usage:
+ *              - Execute the macro CODEPATCH_REPLACEINSTRUCTION
+ *
+ *  2. Function Call Replacement - the call to the function (bl instruction) at the
+ *      memory address is replaced with a call to the C function provided.
+ *              Usage:
+ *              - Define your C function.
+ *              - Execute the macro CODEPATCH_REPLACECALL
+ *
+ *  3. Function Replacement - All calls to the function at this memory address are redirected to
+ *      to the C function provided.
+ *              Usage:
+ *              - Define your C function.
+ *              - Execute the macro CODEPATCH_REPLACEFUNCTION
+ *
+ *  4. Injection - Executes arbitrary asm instructions before and after calling the C function
+ *      provided. The instruction at the selected memory address is executed after the C function.
+ *              Usage:
+ *              - Define your C function.
+ *              - Below your C function define a hook using one of the following macros:
+ *                      CODEPATCH_HOOKCREATE
+ *                          - _dol_addr     - hexadecimal address to inject code at.
+ *                          - _prologue     - string containing assembly instructions to be executed before the C function. Each instruction must end in "\n\t".
+ *                          - _func         - pointer to the C function
+ *                          - _epilogue     - string containing assembly instructions to be executed after the C function. Each instruction must end in "\n\t".
+ *                          - _exit_addr    - hexadecimal address to branch back to. (set to 0 to automatically branch back to the injection site)
+ *
+ *                      CODEPATCH_HOOKCONDITIONALCREATE
+ *                          - _dol_addr      - hexadecimal address to inject code at.
+ *                          - _prologue      - string containing assembly instructions to be executed before the C function. Each instruction must end in "\n\t".
+ *                          - _func          - pointer to the C function. Must return an int. This value dictates the memory address to return to.
+ *                          - _epilogue      - string containing assembly instructions to be executed after the C function. Each instruction must end in "\n\t".
+ *                          - _exit_addr     - hexadecimal address to branch back to when the C function returns 0. (set to 0 to automatically branch back to the injection site)
+ *                          - _exit_addr_alt - hexadecimal address to branch back to when the C function returns 1.
+ *
+ *              - Execute the macro CODEPATCH_HOOKCREATE.
  */
 //===================================================================================================
 

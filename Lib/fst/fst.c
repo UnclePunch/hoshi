@@ -1,3 +1,20 @@
+//====================================================================================================
+/*
+ * Description:
+ * This library provides functions to faciliate interacting with the Filesystem Tree.
+ *
+ * FST_ForEachInFolder:
+ *  - search the FST and execute a callback on all entries that match the conditions provided.
+ *
+ * FST_GetFilenameFromEntrynum:
+ *  - returns a string containing the filename for the entrynum provided
+ *
+ * FST_GetFilePathFromEntrynum:
+ *  - returns a string containing the full path for the entrynum provided
+ *
+ */
+//===================================================================================================
+
 #include "os.h"
 #include "inline.h"
 

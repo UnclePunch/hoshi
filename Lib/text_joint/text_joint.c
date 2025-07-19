@@ -1,3 +1,18 @@
+//====================================================================================================
+/*
+ * Description:
+ * This library allows you to place text on HSD_JointObject bones. The text will inherit the
+ * position, scale, rotation, and visibility of the bone it is attached to.
+ *
+ * Usage:
+ *  1. Call TextJoint_Init one time within the scope of your code's execution.
+ *  2. Create an HSD_JointObject.
+ *  3. Call TextJoint_Create with the desired parameters to return a text object.
+ *  4. To destroy any text objects created with this library, you must use TextJoint_Destroy
+ *
+ */
+//===================================================================================================
+
 // #include <math.h>
 #include "hsd.h"
 #include "inline.h"

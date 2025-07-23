@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description="Compile and pack C/ASM files into 
 parser.add_argument("linked_obj", help="Linked object file")
 parser.add_argument("-l", "--link", required=False, help="Needed to link .dol functions")
 parser.add_argument("-m", "--modtype", required=True, help="Will populate a lookup with this mod type's symbols")
-parser.add_argument("-o", "--output", default="output.modbin", help="Output MODBIN file path")
+parser.add_argument("-o", "--output", default="output.bin", help="Output BIN file path")
 
 RELOC_TYPE_ENUM = {
     "R_PPC_REL24":     1,
@@ -24,8 +24,6 @@ RELOC_TYPE_ENUM = {
     "R_PPC_ADDR16_LO": 4,
     "R_PPC_REL32":     5,
 }
-
-## To-do: do not pack executable if [!] Symbol X not found warning goes off
 
 def main():
 
@@ -47,6 +45,8 @@ def main():
     relocs_txt = os.path.join(build_dir, "relocs.txt")
     with open(relocs_txt, "w") as f:
         subprocess.run([objdump, "-r", linked_obj], stdout=f)
+
+    # compiler_name = get_compiler_info(linked_obj)
 
     all_sections = extract_sections_and_data(linked_obj)
 
@@ -105,7 +105,23 @@ def extract_sections_and_data(file_path):
         print(f"Extracted {len(sections)} sections")
 
         return sections
-    
+
+def get_compiler_info(obj_path):
+    with open(obj_path, 'rb') as f:
+        elf = ELFFile(f)
+
+        # Look for .comment section
+        comment_section = elf.get_section_by_name('.comment')
+        if comment_section is None:
+            return None
+
+        # Read the raw bytes and split on null terminators
+        data = comment_section.data()
+        comments = data.split(b'\x00')
+
+        # Decode strings and filter non-empty ones
+        return [entry.decode('utf-8', errors='ignore') for entry in comments if entry]
+
 def parse_symbols(symbols_path):
     symbols = {}
 
@@ -340,7 +356,6 @@ def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbo
         f.write(symbol_name_data)
         
         print(f"Wrote {f.tell()} bytes of data to {output_path}")
-
 
 if __name__ == "__main__":
     main()

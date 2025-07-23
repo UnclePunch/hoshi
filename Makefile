@@ -1,6 +1,10 @@
+ifeq ($(strip $(DEVKITPPC)),)
+$(error "Please set DEVKITPPC in your environment.")
+endif
+
 # === Tools ===
-CC = powerpc-eabi-gcc
-LD = powerpc-eabi-ld
+CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc
+LD = $(DEVKITPPC)/bin/powerpc-eabi-ld
 
 # === Paths ===
 SRCDIR   		= src

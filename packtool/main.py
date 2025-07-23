@@ -6,10 +6,17 @@ import os
 import struct
 import argparse
 
-from elftools.elf.elffile import ELFFile
+try:
+    from elftools.elf.elffile import ELFFile
+except ImportError:
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "pyelftools"])
+    from elftools.elf.elffile import ELFFile
 
 build_dir = "_build"
-objdump="powerpc-eabi-objdump"
+
+objdump_path = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-objdump")
 
 parser = argparse.ArgumentParser(description="Compile and pack C/ASM files into GC format.")
 parser.add_argument("linked_obj", help="Linked object file")
@@ -40,11 +47,11 @@ def main():
     # Dump symbols and relocs
     symbols_txt = os.path.join(build_dir, "symbols.txt")
     with open(symbols_txt, "w") as f:
-        subprocess.run([objdump, "-t", linked_obj], stdout=f)
+        subprocess.run([objdump_path, "-t", linked_obj], stdout=f)
 
     relocs_txt = os.path.join(build_dir, "relocs.txt")
     with open(relocs_txt, "w") as f:
-        subprocess.run([objdump, "-r", linked_obj], stdout=f)
+        subprocess.run([objdump_path, "-r", linked_obj], stdout=f)
 
     # compiler_name = get_compiler_info(linked_obj)
 
@@ -71,13 +78,15 @@ def strip_linked_obj(linked_obj, lookup_symbols):
     if not lookup_symbols:
         print(f"No symbols found for the chosen modtype.")
 
+    ld_path = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-ld")
+
     # Build -u symbol args
     u_args = []
     for symbol in lookup_symbols:
         u_args += ["-u", symbol]
 
     linked_stripped = os.path.join(build_dir, "linked_stripped.o")
-    cmd = ["powerpc-eabi-ld", "-r", "--gc-sections"] + u_args + ["-o", linked_stripped, linked_obj]
+    cmd = [ld_path, "-r", "--gc-sections"] + u_args + ["-o", linked_stripped, linked_obj]
     subprocess.run(cmd, check=True)
     return linked_stripped
 

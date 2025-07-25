@@ -48,7 +48,7 @@ typedef struct EventCheckData
         } *param;                                    //
     } *data;
     int state; // 0 = no event, 1 = event starting, 2 = event active, 3 = event ending
-    int x8;
+    EventKind cur_kind;
     int xc;
     int timer;             // 0x10, counts up
     int event_time;        // 0x14, event triggers when timer matches this number

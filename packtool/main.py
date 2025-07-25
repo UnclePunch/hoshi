@@ -9,8 +9,6 @@ import argparse
 try:
     from elftools.elf.elffile import ELFFile
 except ImportError:
-    import subprocess
-    import sys
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pyelftools"])
     from elftools.elf.elffile import ELFFile
 

@@ -1,25 +1,33 @@
-# Hoshi
+# hoshi
 
-**Hoshi** is a powerful and flexible modloader designed for Kirby Air Ride (NTSC). It allows modders to load custom mod files off disc, hook into game code with callbacks, manage mod save data, and extend game behavior with custom menus and scenes.
+**hoshi** is a powerful and flexible modloader designed for Kirby Air Ride (NTSC). 
 
 ---
 
 ## Features
 
 - **Mod File Loading**  
-  **Hoshi** automatically detects and loads all compatible mod binaries placed in the `mods` folder on the game disc. Modders do not need to hardcode any mod paths or registration logic. **Hoshi** handles discovery and initialization automatically.
+  **hoshi** automatically detects and loads all compatible mod binaries placed in the `mods` folder on the game disc. Modders do not need to hardcode any mod paths or registration logic. **hoshi** handles discovery and initialization automatically.
 
 - **Code Hooking**  
   Define callback functions for injecting code at key points in game execution.
 
 - **Unique Save File System**  
-  Hoshi creates and manages its own save file, automatically handling save slots for each mod.
+  **hoshi** creates and manages its own save file, automatically handling save slots for each mod.
 
 - **Custom Settings Menu**  
   Add your own toggles and menus to a shared in-game settings menu, allowing users to easily configure your mod.
 
 - **Scene Injection Support**  
   Register new major and minor scenes to integrate fully with the game’s flow and scene manager.
+
+---
+
+## Installation
+
+1. Place the [hoshi.bin](https://github.com/UnclePunch/hoshi/raw/refs/heads/main/out/release/hoshi.bin) in the root directory of your NTSC Kirby Air RIde iso.
+
+2. Install the entrypoint [gecko code](https://github.com/UnclePunch/hoshi/blob/main/entrypoint/out/codes.txt) or [.gct file](https://github.com/UnclePunch/hoshi/blob/main/entrypoint/out/codes.gct) by your preferred means. This will kickstart the hoshi framework. I recommend using the .gct with [@JoshuaMKW](https://github.com/JoshuaMKW)'s [GeckoLoader](https://github.com/JoshuaMKW/GeckoLoader/releases), as it is a reliable and permanent installation within your .dol file.
 
 ---
 

@@ -31,7 +31,7 @@ To develop your own module, clone the mod template repo [here](https://github.co
 
 ## Build Instructions
 
-See [BUILD](BUILD.md) file for details.
+To build the hoshi modloader binary, see [BUILD](BUILD.md) file for details.
 
 ---
 

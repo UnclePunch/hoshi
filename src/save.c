@@ -22,9 +22,9 @@
 
 #include "code_patch/code_patch.h"
 
-static char *save_name = "KAR-Plus";
-static KARPlusSave *stc_Hoshi_save;
-static int stc_Hoshi_save_hash;
+static char *save_name = "hoshi";
+static KARPlusSave *stc_hoshi_save;
+static int stc_hoshi_save_hash;
 
 /*---------------------------------------------------------------------*
 Name:           KARPlusSave_OnSaveCreateOrLoad
@@ -50,7 +50,7 @@ void KARPlusSave_OnSaveCreateOrLoad()
         int is_created = KARPlusSave_CreateOrLoad(); // create/load the save file
 
         // update hash
-        stc_Hoshi_save_hash = _hash_32(stc_Hoshi_save, SAVE_SIZE);
+        stc_hoshi_save_hash = _hash_32(stc_hoshi_save, SAVE_SIZE);
 
         // enter a new scene and ask the user if they just created a custom save
         if (is_created)
@@ -160,13 +160,13 @@ Returns:        none.
 void KARPlusSave_Init()
 {
 
-    stc_Hoshi_save = HSD_MemAlloc(SAVE_SIZE); // alloc save data
-    stc_Hoshi_save_hash = -1;
+    stc_hoshi_save = HSD_MemAlloc(SAVE_SIZE); // alloc save data
+    stc_hoshi_save_hash = -1;
 
     // init save data
-    stc_Hoshi_save->version_major = VERSION_MAJOR;
-    stc_Hoshi_save->version_minor = VERSION_MINOR;
-    stc_Hoshi_save->mod_num = 0;
+    stc_hoshi_save->version_major = VERSION_MAJOR;
+    stc_hoshi_save->version_minor = VERSION_MINOR;
+    stc_hoshi_save->mod_num = 0;
 
     // install functions
     CODEPATCH_HOOKAPPLY(0x80047834);
@@ -231,7 +231,7 @@ int KARPlusSave_CreateOrLoad()
         Mods_InitSaveData();
 
         // write to card
-        cardResult = CARDWrite(&fileInfo, stc_Hoshi_save, SAVE_SIZE, 0);
+        cardResult = CARDWrite(&fileInfo, stc_hoshi_save, SAVE_SIZE, 0);
         if (cardResult != CARD_RESULT_READY)
         {
             LOG_WARN("Error initializing save file (result %d).", cardResult);
@@ -270,7 +270,7 @@ int KARPlusSave_CreateOrLoad()
 
         LOG_DEBUG("Loading it");
 
-        cardResult = CARDRead(&fileInfo, stc_Hoshi_save, OSRoundUp512B(SAVE_SIZE), 0);
+        cardResult = CARDRead(&fileInfo, stc_hoshi_save, OSRoundUp512B(SAVE_SIZE), 0);
         if (cardResult != CARD_RESULT_READY)
         {
             LOG_WARN("Failed to read save data.");
@@ -303,10 +303,10 @@ int KARPlusSave_Write()
 {
 
     // check if save contents were modified
-    int cur_hash = _hash_32(stc_Hoshi_save, SAVE_SIZE);
-    if (cur_hash != stc_Hoshi_save_hash)
+    int cur_hash = _hash_32(stc_hoshi_save, SAVE_SIZE);
+    if (cur_hash != stc_hoshi_save_hash)
     {
-        stc_Hoshi_save_hash = cur_hash;
+        stc_hoshi_save_hash = cur_hash;
 
         // to-do: put this on a thread and make operations async
         if (Memcard_GetSaveStatus() == CARDSAVE_NOEXIST)
@@ -336,7 +336,7 @@ int KARPlusSave_Write()
         }
 
         // write save data
-        cardResult = CARDWrite(&fileInfo, stc_Hoshi_save, SAVE_SIZE, 0);
+        cardResult = CARDWrite(&fileInfo, stc_hoshi_save, SAVE_SIZE, 0);
         if (cardResult != CARD_RESULT_READY)
         {
             LOG_WARN("Error updating save file.");
@@ -368,56 +368,56 @@ void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
 {
     int mod_hash = _hash_32_str(mod->data.name);
 
-    if (stc_Hoshi_save->mod_num > GetElementsIn(stc_Hoshi_save->metadata))
+    if (stc_hoshi_save->mod_num > GetElementsIn(stc_hoshi_save->metadata))
     {
         // to-do, free something and ensure it gets alloc'd
-        LOG_ERROR("Save: mod_num over %d", GetElementsIn(stc_Hoshi_save->metadata));
+        LOG_ERROR("Save: mod_num over %d", GetElementsIn(stc_hoshi_save->metadata));
         return 0;
     }
 
     // copy mod hash
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].mod_hash = mod_hash;
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].mod_hash = mod_hash;
 
     // get data offset
     int menu_offset;
-    if (stc_Hoshi_save->mod_num == 0)
-        menu_offset = (int)&stc_Hoshi_save->data - (int)stc_Hoshi_save;
+    if (stc_hoshi_save->mod_num == 0)
+        menu_offset = (int)&stc_hoshi_save->data - (int)stc_hoshi_save;
     else
     {
-        menu_offset = stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num - 1].user_data.offset +
-                      stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num - 1].user_data.size;
+        menu_offset = stc_hoshi_save->metadata[stc_hoshi_save->mod_num - 1].user_data.offset +
+                      stc_hoshi_save->metadata[stc_hoshi_save->mod_num - 1].user_data.size;
     }
     int user_offset = menu_offset + menu_size;
 
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].is_present = 1; // set mod as present
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].is_present = 1; // set mod as present
 
     // init menu
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].menu_data.offset = menu_offset;
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].menu_data.size = menu_size;
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].menu_data.offset = menu_offset;
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].menu_data.size = menu_size;
     if (menu_size > 0)
-        memset(&stc_Hoshi_save->data[menu_offset], -1, menu_size); // fill with -1's to indicate unused space
+        memset(&stc_hoshi_save->data[menu_offset], -1, menu_size); // fill with -1's to indicate unused space
 
     // init user
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].user_data.offset = user_offset;
-    stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].user_data.size = user_size;
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].user_data.offset = user_offset;
+    stc_hoshi_save->metadata[stc_hoshi_save->mod_num].user_data.size = user_size;
 
     // get mem ptr
     void *save_data_ptr = 0;
     if (user_size > 0)
-        save_data_ptr = (void *)((int)stc_Hoshi_save + user_offset);
+        save_data_ptr = (void *)((int)stc_hoshi_save + user_offset);
 
     LOG_DEBUG("alloc'd mod %s index %d hash 0x%x metadata @ %p",
               mod->data.name,
-              stc_Hoshi_save->mod_num,
-              stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num].mod_hash,
-              &stc_Hoshi_save->metadata[stc_Hoshi_save->mod_num]);
+              stc_hoshi_save->mod_num,
+              stc_hoshi_save->metadata[stc_hoshi_save->mod_num].mod_hash,
+              &stc_hoshi_save->metadata[stc_hoshi_save->mod_num]);
 
-    stc_Hoshi_save->mod_num++;
+    stc_hoshi_save->mod_num++;
 
     // save pointers to mod data
-    mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_Hoshi_save->data)[menu_offset]);
+    mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_hoshi_save->data)[menu_offset]);
     mod->save.menu_num = menu_size / sizeof(MenuSave);
-    mod->save.user_data = (MenuSave *)(&((u8 *)&stc_Hoshi_save->data)[user_offset]);
+    mod->save.user_data = (MenuSave *)(&((u8 *)&stc_hoshi_save->data)[user_offset]);
     mod->save.user_size = user_size;
 
     return save_data_ptr;
@@ -441,11 +441,11 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
     int new_size = menu_size + user_size;
 
     // find this save
-    for (int i = 0; i < stc_Hoshi_save->mod_num; i++)
+    for (int i = 0; i < stc_hoshi_save->mod_num; i++)
     {
-        if (mod_hash == stc_Hoshi_save->metadata[i].mod_hash)
+        if (mod_hash == stc_hoshi_save->metadata[i].mod_hash)
         {
-            int saved_size = stc_Hoshi_save->metadata[i].menu_data.size + stc_Hoshi_save->metadata[i].user_data.size;
+            int saved_size = stc_hoshi_save->metadata[i].menu_data.size + stc_hoshi_save->metadata[i].user_data.size;
 
             if (new_size > saved_size)
             {
@@ -462,29 +462,29 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                     LOG_INFO("Resizing save...");
 
                     // shift other data
-                    for (int j = stc_Hoshi_save->mod_num - 1; j > i; j--)
+                    for (int j = stc_hoshi_save->mod_num - 1; j > i; j--)
                     {
                         // shift data
-                        int data_size_old = stc_Hoshi_save->metadata[j].menu_data.size + stc_Hoshi_save->metadata[j].user_data.size;
-                        u8 *data_ptr_old = &stc_Hoshi_save->data[stc_Hoshi_save->metadata[j].menu_data.offset];
+                        int data_size_old = stc_hoshi_save->metadata[j].menu_data.size + stc_hoshi_save->metadata[j].user_data.size;
+                        u8 *data_ptr_old = &stc_hoshi_save->data[stc_hoshi_save->metadata[j].menu_data.offset];
                         memmove(data_ptr_old + shift_amt, data_ptr_old, data_size_old);
 
                         // update metadata
-                        stc_Hoshi_save->metadata[j].menu_data.offset += shift_amt;
-                        stc_Hoshi_save->metadata[j].user_data.offset += shift_amt;
+                        stc_hoshi_save->metadata[j].menu_data.offset += shift_amt;
+                        stc_hoshi_save->metadata[j].user_data.offset += shift_amt;
                     }
 
                     // fill new menu data with -1
-                    int old_menusave_size = stc_Hoshi_save->metadata[i].menu_data.size;
+                    int old_menusave_size = stc_hoshi_save->metadata[i].menu_data.size;
                     if (menu_size > old_menusave_size)
                     {
                         LOG_DEBUG("Nulling additional menu saves.");
-                        memset(&stc_Hoshi_save->data[stc_Hoshi_save->metadata[i].menu_data.offset + old_menusave_size], -1, menu_size - old_menusave_size); // fill with -1's to indicate unused space
+                        memset(&stc_hoshi_save->data[stc_hoshi_save->metadata[i].menu_data.offset + old_menusave_size], -1, menu_size - old_menusave_size); // fill with -1's to indicate unused space
                     }
 
                     // update metadata
-                    stc_Hoshi_save->metadata[i].menu_data.size = menu_size;
-                    stc_Hoshi_save->metadata[i].user_data.size = user_size;
+                    stc_hoshi_save->metadata[i].menu_data.size = menu_size;
+                    stc_hoshi_save->metadata[i].user_data.size = user_size;
 
                     // re-init data?
                     is_size_changed = 1;
@@ -505,48 +505,48 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
                 int shift_amt = new_size - saved_size;
 
                 // shift other data
-                for (int j = i + 1; j > stc_Hoshi_save->mod_num; j++)
+                for (int j = i + 1; j > stc_hoshi_save->mod_num; j++)
                 {
                     // shift data
-                    int data_size_old = stc_Hoshi_save->metadata[j].menu_data.size + stc_Hoshi_save->metadata[j].user_data.size;
-                    u8 *data_ptr_old = &stc_Hoshi_save->data[stc_Hoshi_save->metadata[j].menu_data.offset];
+                    int data_size_old = stc_hoshi_save->metadata[j].menu_data.size + stc_hoshi_save->metadata[j].user_data.size;
+                    u8 *data_ptr_old = &stc_hoshi_save->data[stc_hoshi_save->metadata[j].menu_data.offset];
                     memmove(data_ptr_old + shift_amt, data_ptr_old, data_size_old);
 
                     // update metadata
-                    stc_Hoshi_save->metadata[j].menu_data.offset += shift_amt;
-                    stc_Hoshi_save->metadata[j].user_data.offset += shift_amt;
+                    stc_hoshi_save->metadata[j].menu_data.offset += shift_amt;
+                    stc_hoshi_save->metadata[j].user_data.offset += shift_amt;
                 }
 
                 // fill all menu data with -1 if menu size changed
-                int old_menusave_size = stc_Hoshi_save->metadata[i].menu_data.size;
+                int old_menusave_size = stc_hoshi_save->metadata[i].menu_data.size;
                 if (menu_size < old_menusave_size)
                 {
                     LOG_DEBUG("Nulling all menu saves.");
-                    memset(&stc_Hoshi_save->data[stc_Hoshi_save->metadata[i].menu_data.offset], -1, menu_size); // fill with -1's to indicate unused space
+                    memset(&stc_hoshi_save->data[stc_hoshi_save->metadata[i].menu_data.offset], -1, menu_size); // fill with -1's to indicate unused space
                 }
 
                 // update metadata
-                stc_Hoshi_save->metadata[i].menu_data.size = menu_size;
-                stc_Hoshi_save->metadata[i].user_data.size = user_size;
+                stc_hoshi_save->metadata[i].menu_data.size = menu_size;
+                stc_hoshi_save->metadata[i].user_data.size = user_size;
 
                 // re-init data?
                 is_size_changed = 1;
             }
 
-            int menu_data_offset = stc_Hoshi_save->metadata[i].menu_data.offset;
-            int user_data_offset = stc_Hoshi_save->metadata[i].user_data.offset;
+            int menu_data_offset = stc_hoshi_save->metadata[i].menu_data.offset;
+            int user_data_offset = stc_hoshi_save->metadata[i].user_data.offset;
 
             // save pointers
-            mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_Hoshi_save->data)[menu_data_offset]);
+            mod->save.menu_data = (MenuSave *)(&((u8 *)&stc_hoshi_save->data)[menu_data_offset]);
             mod->save.menu_num = menu_size / sizeof(MenuSave);
-            mod->save.user_data = (MenuSave *)(&((u8 *)&stc_Hoshi_save->data)[user_data_offset]);
+            mod->save.user_data = (MenuSave *)(&((u8 *)&stc_hoshi_save->data)[user_data_offset]);
             mod->save.user_size = user_size;
 
             LOG_DEBUG("verified mod %s index %d hash 0x%x metadata @ %p",
                       mod->data.name,
                       i,
-                      stc_Hoshi_save->metadata[i].mod_hash,
-                      &stc_Hoshi_save->metadata[i]);
+                      stc_hoshi_save->metadata[i].mod_hash,
+                      &stc_hoshi_save->metadata[i]);
 
             break;
         }
@@ -569,9 +569,9 @@ int KARPlusSave_CheckModDataExists(GlobalMod *mod)
 {
     int mod_hash = _hash_32(mod->data.name, strlen(mod->data.name));
 
-    for (int i = 0; i < stc_Hoshi_save->mod_num; i++)
+    for (int i = 0; i < stc_hoshi_save->mod_num; i++)
     {
-        if (mod_hash == stc_Hoshi_save->metadata[i].mod_hash)
+        if (mod_hash == stc_hoshi_save->metadata[i].mod_hash)
             return 1;
     }
 
@@ -592,8 +592,8 @@ int KARPlusSave_CheckFreeData()
 {
     int size_used = 0;
 
-    for (int i = 0; i < stc_Hoshi_save->mod_num; i++)
-        size_used += stc_Hoshi_save->metadata[i].user_data.size + stc_Hoshi_save->metadata[i].menu_data.size;
+    for (int i = 0; i < stc_hoshi_save->mod_num; i++)
+        size_used += stc_hoshi_save->metadata[i].user_data.size + stc_hoshi_save->metadata[i].menu_data.size;
 
     return SAVE_SIZE - offsetof(KARPlusSave, data) - size_used;
 }
@@ -610,5 +610,5 @@ Returns:        KARPlusSave ptr.
 *---------------------------------------------------------------------*/
 KARPlusSave *KARPlusSave_Get()
 {
-    return stc_Hoshi_save;
+    return stc_hoshi_save;
 }

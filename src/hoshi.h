@@ -5,8 +5,8 @@
 #include "hoshi/settings.h"        // public header
 #include "code_patch/code_patch.h" //
 
-#define MODLOADER_VERSION_MAJOR 0
-#define MODLOADER_VERSION_MINOR 5
+#define MODLOADER_VERSION_MAJOR 1
+#define MODLOADER_VERSION_MINOR 0
 
 typedef struct MenuDesc MenuDesc;
 typedef struct MenuSave MenuSave;

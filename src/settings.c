@@ -163,7 +163,7 @@ void Settings_Think()
     if (desc->option_num > OPTION_NUM)
         max_onscreen_opt_num = OPTION_NUM;
 
-    if (rapid & PAD_BUTTON_UP)
+    if (rapid & (PAD_BUTTON_UP | PAD_BUTTON_DPAD_UP))
     {
         int is_moved = 0;
 
@@ -190,7 +190,7 @@ void Settings_Think()
             Settings_UpdateCurrentMenu();
         }
     }
-    else if (rapid & PAD_BUTTON_DOWN)
+    else if (rapid & (PAD_BUTTON_DOWN | PAD_BUTTON_DPAD_DOWN))
     {
         int is_moved = 0;
 
@@ -223,7 +223,7 @@ void Settings_Think()
     // left and right
     if (opt_desc->kind == OPTKIND_VALUE)
     {
-        if (rapid & PAD_BUTTON_LEFT)
+        if (rapid & (PAD_BUTTON_LEFT | PAD_BUTTON_DPAD_LEFT))
         {
             int is_moved = 0;
 
@@ -247,7 +247,7 @@ void Settings_Think()
                 Settings_UpdateCurrentMenu();
             }
         }
-        else if (rapid & PAD_BUTTON_RIGHT)
+        else if (rapid & (PAD_BUTTON_RIGHT | PAD_BUTTON_DPAD_RIGHT))
         {
             int is_moved = 0;
 

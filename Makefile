@@ -10,7 +10,7 @@ LD = $(DEVKITPPC)/bin/powerpc-eabi-ld
 SRCDIR   		= src
 LIBDIR   		= Lib
 PACKDIR  		= packtool
-INSTALLDIR 		?= 	#can override this in the command line: make install INSTALL_DIR=/path/to/your/mods
+INSTALL_DIR 	?= 	#can override this in the command line: make install INSTALL_DIR=/path/to/your/files
 
 # === Compiler Flags ===
 INCLUDES = -Iinclude -I$(LIBDIR) -I$(SRCDIR)
@@ -85,11 +85,11 @@ $(TARGET_BIN): $(LINKED_O)
 -include $(OBJECTS:.o=.d)
 
 # --- Install Target ---
-# Copies the final .bin files from $(OUT_DIR) to $(INSTALLDIR)
+# Copies the final .bin files from $(OUT_DIR) to $(INSTALL_DIR)
 install: all
 	@echo ""
-	@echo "--- Installing hoshi to "$(INSTALLDIR)" ---"
-	cp "$(TARGET_BIN)" "$(strip $(INSTALLDIR))"
+	@echo "--- Installing hoshi to "$(INSTALL_DIR)" ---"
+	cp "$(TARGET_BIN)" "$(strip $(INSTALL_DIR))"
 	@echo ""
 	@echo "Installation complete."
 

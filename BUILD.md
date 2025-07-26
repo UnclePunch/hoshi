@@ -32,9 +32,3 @@ This will:
 * Compile and link the source files.
 * Pack the hoshi modloader into a `.bin` file using the Python script.
 * Output `.bin` the bin file to the `out/release/` directory.
-
----
-
-## Output
-
-Built files are placed in the `/out/release/` directory. This file should be placed in the root directory of your hoshi iso.

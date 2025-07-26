@@ -43,6 +43,11 @@ To build the hoshi modloader binary, see [BUILD](BUILD.md) file for details.
 
 ---
 
+## Special Thanks
+[@Ploaj](https://github.com/ploaj) - Symbol generation tooling.
+
+---
+
 ## License
 
 This project is licensed under the [GPLv3](./LICENSE).

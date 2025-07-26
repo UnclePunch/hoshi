@@ -10,7 +10,7 @@ LD = $(DEVKITPPC)/bin/powerpc-eabi-ld
 SRCDIR   		= src
 LIBDIR   		= Lib
 PACKDIR  		= packtool
-INSTALLDIR 		?= C:/Users/Vin/Documents/ROMs/KAR-Plus/files		#can override this on the command line: make install INSTALL_DIR=/path/to/your/mods
+INSTALLDIR 		?= 	#can override this in the command line: make install INSTALL_DIR=/path/to/your/mods
 
 # === Compiler Flags ===
 INCLUDES = -Iinclude -I$(LIBDIR) -I$(SRCDIR)

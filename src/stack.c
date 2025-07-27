@@ -28,11 +28,15 @@ void Stack_Print()
 {
     OSReport("\n");
 
-    HSD_Archive *debug_archive = Archive_LoadFile("MxDb.dat");
-    if (!debug_archive)
-        OSReport("MxDb.dat not found, DOL symbols will not be identified\n\n");
-    else
-        stc_dol_debug = Archive_GetPublicAddress(debug_archive, "mexDebug");
+    // attempt to load dol symbol names
+    if (OSCheckHeap(HSD_GetHeapID()) > File_GetSize("MxDb.dat"))
+    {
+        HSD_Archive *debug_archive = Archive_LoadFile("MxDb.dat");
+        if (!debug_archive)
+            OSReport("MxDb.dat not found, DOL symbols will not be identified\n\n");
+        else
+            stc_dol_debug = Archive_GetPublicAddress(debug_archive, "mexDebug");
+    }
 
     OSReport("hoshi v" STR(MODLOADER_VERSION_MAJOR) "." STR(MODLOADER_VERSION_MINOR) "\n");
     OSReport((char *)0x80507bd4); // STACK text

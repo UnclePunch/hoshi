@@ -4,6 +4,7 @@
 
 #include "hoshi/log.h"
 
+// Text
 void Text_AlphaCopy(Text *t)
 {
     t->temp.color.a = t->color.a;
@@ -17,6 +18,22 @@ void Text_AlphaDraw(Text *t)
 }
 CODEPATCH_HOOKCREATE(0x80451fe4, "mr 3, 27\n\t", Text_AlphaCopy, "", 0)
 CODEPATCH_HOOKCREATE(0x804524c8, "mr 3, 27\n\t", Text_AlphaDraw, "", 0)
+
+// MemAlloc Assert
+void *MemAlloc_Error(void *addr, int size)
+{
+    if (!addr)
+    {
+        int heap_index = HSD_GetHeapID();
+        LOG_ERROR("Could not alloc %.2fkb / %.2fkb from heap %d",
+                  BytesToKB(size),
+                  BytesToKB(OSCheckHeap(heap_index)),
+                  heap_index);
+    }
+
+    return addr;
+}
+CODEPATCH_HOOKCREATE(0x804101e0, "mr 4, 31\n\t", MemAlloc_Error, "", 0)
 
 void Patches_Apply()
 {
@@ -48,4 +65,7 @@ void Patches_Apply()
     u8 *menu_mode_appear_timers = (u8 *)0x805d6670;
     for (int i = 0; i < 5; i++)
         menu_mode_appear_timers[i] /= 2;
+
+    // MemAlloc
+    CODEPATCH_HOOKAPPLY(0x804101e0);
 }

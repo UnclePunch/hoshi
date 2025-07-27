@@ -12,6 +12,7 @@
 #include "machine.h"
 #include "stage.h"
 #include "event.h"
+#include "item.h"
 #include "menu.h"
 
 //////////////////////
@@ -89,114 +90,6 @@ typedef enum CharacterKind
     CKIND_DEDEDE,
     CKIND_METAKNIGHT,
 } CharacterKind;
-
-typedef enum BoxKind
-{
-    BOXKIND_ALL = -1,
-    BOXKIND_BLUE,
-    BOXKIND_GREEN,
-    BOXKIND_RED,
-    BOXKIND_NUM,
-} BoxKind;
-
-typedef enum BoxSize
-{
-    BOXSIZE_SMALL,  // spawns 1 item @ 80250bcc
-    BOXSIZE_MEDIUM, // spawns 2 items @ 80250bb4
-    BOXSIZE_LARGE,  // spawns 4 item @ 80250bc4
-} BoxSize;
-
-typedef enum ItemType
-{
-    ITTYPE_NULL = -1, //
-    ITTYPE_PATCH,     //
-    ITTYPE_QUICKFIX,  //
-    ITTYPE_COPY,      //
-    ITTYPE_NUM,       //
-} ItemType;
-
-typedef enum ItemGroup
-{
-    ITGROUP_ALL = -1, //
-    ITGROUP_BAD,      //
-    ITGROUP_GOOD,     //
-    ITGROUP_FAKE,     //
-    ITGROUP_NUM,      //
-} ItemGroup;
-
-typedef enum ItemKind
-{
-    ITKIND_BOXBLUE,
-    ITKIND_BOXGREEN,
-    ITKIND_BOXRED,
-    ITKIND_ACCEL,
-    ITKIND_ACCELDOWN,
-    ITKIND_TOPSPEED,
-    ITKIND_TOPSPEEDDOWN,
-    ITKIND_OFFENSE,
-    ITKIND_OFFENSEDOWN,
-    ITKIND_DEFENSE,
-    ITKIND_DEFENSEDOWN,
-    ITKIND_TURN,
-    ITKIND_TURNDOWN,
-    ITKIND_GLIDE,
-    ITKIND_GLIDEDOWN,
-    ITKIND_CHARGE,
-    ITKIND_CHARGEDOWN,
-    ITKIND_WEIGHT,
-    ITKIND_WEIGHTDOWN,
-    ITKIND_HP,
-    ITKIND_ALLUP,
-    ITKIND_SPEEDMAX,
-    ITKIND_SPEEDMIN,
-    ITKIND_OFFENSEMAX,
-    ITKIND_DEFENSEMAX,
-    ITKIND_CHARGEMAX,
-    ITKIND_CHARGENONE,
-    ITKIND_CANDY,
-    ITKIND_COPYBOMB,
-    ITKIND_COPYFIRE,
-    ITKIND_COPYICE,
-    ITKIND_COPYSLEEP,
-    ITKIND_COPYTIRE,
-    ITKIND_COPYBIRD,
-    ITKIND_COPYPLASMA,
-    ITKIND_COPYTORNADO,
-    ITKIND_COPYSWORD,
-    ITKIND_COPYSPIKE,
-    ITKIND_COPYMIC,
-    ITKIND_FOODMAXIMTOMATO,
-    ITKIND_FOODENERGYDRINK,
-    ITKIND_FOODICECREAM,
-    ITKIND_FOODRICEBALL,
-    ITKIND_FOODCHICKEN,
-    ITKIND_FOODCURRY,
-    ITKIND_FOODRAMEN,
-    ITKIND_FOODOMELET,
-    ITKIND_FOODHAMBURGER,
-    ITKIND_FOODSUSHI,
-    ITKIND_FOODHOTDOG,
-    ITKIND_FOODAPPLE,
-    ITKIND_FIREWORKS,
-    ITKIND_PANICSPIN,
-    ITKIND_TIMEBOMB,
-    ITKIND_GORDO,
-    ITKIND_HYDRA1,
-    ITKIND_HYDRA2,
-    ITKIND_HYDRA3,
-    ITKIND_DRAGOON1,
-    ITKIND_DRAGOON2,
-    ITKIND_DRAGOON3,
-    ITKIND_ACCELFAKE,
-    ITKIND_TOPSPEEDFAKE,
-    ITKIND_OFFENSEFAKE,
-    ITKIND_DEFENSEFAKE,
-    ITKIND_TURNFAKE,
-    ITKIND_GLIDEFAKE,
-    ITKIND_CHARGEFAKE,
-    ITKIND_WEIGHTFAKE,
-    ITKIND_NUM,
-} ItemKind;
 
 typedef enum AirRideMode
 {
@@ -1970,77 +1863,6 @@ typedef struct LegendaryPieceData           // 80ae2cec
     } machine[2];
 } LegendaryPieceData; //
 
-typedef struct ItemCommonAttr
-{
-    int x0;
-    int x4;
-    int x8;
-    int xc;
-    int x10;
-    int x14;
-    int x18;
-    BoxKind box_kind; // 0x1c, type of box this item spawns from
-    int x20;
-    int x24;
-    struct
-    {
-        int x0;
-        int x4;
-        ItemGroup group;
-    } *x28;
-} ItemCommonAttr;
-
-typedef struct itCommonDataAll
-{
-    struct
-    {
-        float x0;
-    } *x0;
-    struct
-    {
-        float x0;
-    } *x4;
-    struct
-    {
-        ItemCommonAttr *attr;
-        struct
-        {
-            int x0;
-        } *unique_attr;
-        struct
-        {
-            JOBJ *j;
-            int x4;
-        } *model;
-        struct
-        {
-            AnimJointDesc *joint_anim;
-            MatAnimJointDesc *mat_anim;
-            void *script;
-            int joint_num;
-        } *anim_data;
-        struct
-        {
-            int x0;
-        } *coll;
-        struct
-        {
-            int joint_idx;
-            int x4;
-            float scale;
-            Vec3 offset;
-        } *bounding;
-    } *itData;
-} itCommonDataAll;
-
-typedef struct ItemFallDesc
-{
-    float match_progress; // time
-    int item_max;         // maximum amount of items present
-    int spawn_time_min;   // min
-    int spawn_time_max;   // max
-} ItemFallDesc;
-
 typedef struct grBoxGeneObj              // r13 + 0x608
 {                                        //
     struct                               //
@@ -2393,9 +2215,6 @@ GameData *Gm_GetGameData();
 Game3dData *Gm_Get3dData();
 GameClearData *Gm_GetGameClearData();
 
-ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); // group: -1 = sky, 0 = blue box, 1 = green box, 2 = red box. r4 = -1 = everything, 0 = down only, 1 = up only. spawn_flags: 0x1 = ?, 0x2 = patch, 0x4 = box,
-GOBJ *Item_Create(void *spawn_desc);
-ItemCommonAttr *Item_GetCommonAttr(ItemKind it_kind);
 void CityTrial_DecideStadium();
 
 void Gm_HidePauseHUD();

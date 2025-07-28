@@ -59,7 +59,17 @@ typedef struct EventCheckData
     int reserve_kind_num;  // 0xc4. max is 16 (Gr_EventGene_Reserve_Num)
 } EventCheckData;
 
+typedef struct EventGlobal
+{
+    u8 x0[0x42];
+    u8 x42_80 : 1;          // 0x42, 0x80
+    u8 x42_40 : 1;          // 0x42, 0x40
+    u8 x42_20 : 1;          // 0x42, 0x20
+    u8 is_song_playing : 1; // 0x42, 0x10
+} EventGlobal;
+
 static GOBJ **stc_eventcheck_gobj = (GOBJ **)(0x805dd0e0 + 0x618);
 static int *stc_event_machineformation_loadnum = (int *)(0x805dd0e0 + 0x750); // number of machines spawned for the machine formation event
+static EventGlobal *stc_event_global = (EventGlobal *)0x80538088;
 
 #endif

@@ -393,7 +393,7 @@ void Audio_RequestSSMLoad(int ssm_id);
 void Audio_SyncLoadAll();
 void BGM_DecideMenuBGM();
 int BGM_GetMenuBGM();
-void BGM_PlayFile(char *filename, int volume, int pan, int unk);
+void BGM_PlayFile(char *filename, int volume, int pan, int stream_index);
 void BGM_Play(int hpsID);
 void BGM_Stop();
 void BGM_Pause();

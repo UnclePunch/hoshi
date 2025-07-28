@@ -66,6 +66,9 @@ void Patches_Apply()
     for (int i = 0; i < 5; i++)
         menu_mode_appear_timers[i] /= 2;
 
+    // remove pause input lockout
+    CODEPATCH_REPLACEINSTRUCTION(0x80040ea8, 0x48000010);
+
     // MemAlloc
     CODEPATCH_HOOKAPPLY(0x804101e0);
 }

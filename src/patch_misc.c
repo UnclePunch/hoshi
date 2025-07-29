@@ -69,6 +69,9 @@ void Patches_Apply()
     // remove pause input lockout
     CODEPATCH_REPLACEINSTRUCTION(0x80040ea8, 0x48000010);
 
+    // enter city trial with 1p
+    CODEPATCH_REPLACEINSTRUCTION(0x80037a04, 0x41800078);
+
     // MemAlloc
     CODEPATCH_HOOKAPPLY(0x804101e0);
 }

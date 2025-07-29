@@ -208,6 +208,7 @@ SECTIONS
   Gm_GetPauseKind = 0x80005D04;
   Preload_CreateEntry = 0x80072C90;
   Preload_CreateEntryByEntrynum = 0x80072AD8;
+  Preload_CreateAllMEntry = 0x8019065c;
   Preload_Update = 0x80073FBC;
   Preload_Invalidate = 0x80073FA4;
   Preload_SetGrKind = 0x800726f0;

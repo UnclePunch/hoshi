@@ -32,13 +32,16 @@ typedef enum PreloadEntryInitKind // 0x3 of PreloadEntry
 
 typedef enum PreloadHeapKind // 0x2 of PreloadEntry
 {
-    PRELOADHEAPKIND_MAINDRAM,   // main DRAM heap
-    PRELOADHEAPKIND_1,          //
-    PRELOADHEAPKIND_CARDICON,   // memcard banner and icon files
-    PRELOADHEAPKIND_GAMECOMMON, // IfAll, ItCommon, RdCommon, etc
-    PRELOADHEAPKIND_ACTORS,     // game files like rider dat, animations, stage. also stage and special allocations (entrynum 2000+)
-    PRELOADHEAPKIND_5,          //
-    PRELOADHEAPKIND_ARAM,       // misc files in ARAM, transferred over DMA when needed. contents vary based on scene
+    PRELOADHEAPKIND_HSD,    // main DRAM heap
+    PRELOADHEAPKIND_ARAM,   //
+    PRELOADHEAPKIND_INIT,   // memcard banner and icon files
+    PRELOADHEAPKIND_STAY,   // IfAll, ItCommon, RdCommon, etc
+    PRELOADHEAPKIND_ALLM,   // game files like rider dat, animations, stage. also stage and special allocations (entrynum 2000+)
+    PRELOADHEAPKIND_NET,    //
+    PRELOADHEAPKIND_ALLA,   //
+    PRELOADHEAPKIND_STAY2D, //
+    PRELOADHEAPKIND_ALL2D,  //
+    PRELOADHEAPKIND_DAT,    //
 } PreloadHeapKind;
 
 typedef enum PreloadFileKind // 0x1 of PreloadEntry
@@ -173,23 +176,24 @@ static PreloadHeapLookup *stc_preload_heaps_lookup = (PreloadHeapLookup *)0x8053
 static PreloadHeapDesc *stc_preload_heap_descs = (PreloadHeapDesc *)0x80497ed0; // kind 10 is the terminator
 
 /*** Functions ***/
-void Preload_Update();                                                                                                                                                       // checks for new files to preload and begins loading them synchronously
-void Preload_Invalidate();                                                                                                                                                   // invalidates cache, this is usually used from scene prep on CSS's
-Preload *Preload_GetTable();                                                                                                                                                 // gets preload table
-PreloadEntry *Preload_CreateEntry(PreloadFileKind file_kind, char *filename, int r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int r9, int flags);      // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
-PreloadEntry *Preload_CreateEntryByEntrynum(PreloadFileKind file_kind, int entrynum, int r5, int heap_kind, int file_size, int is_init_archive, int r9, int flags, int r11); // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
-void Preload_RequestLoadEntry(int preload_entry_index);                                                                                                                      //
-void Preload_FreeEntry(int preload_entry_index);                                                                                                                             // 800174e8
-HSD_Archive *Preload_GetArchive_Init_ReturnSymbols(int unk, char *filename, void *symbol_return, ...);                                                                       // variadic args are symbol strings, terminate the variadic args with a 0
-HSD_Archive *Preload_GetArchiveByEntrynum(int entrynum);                                                                                                                     // will wait if the file isnt loaded yet
-int Preload_CheckFileStatus(int entrynum);                                                                                                                                   // 0 = not loading, 1 = loading, 2 = loaded
-int Preload_CheckIfFilesAreLoading(int preload_flags);                                                                                                                       // use PRELOADFLAG_ definitions
-void Preload_FreeUnneededInitializedArchivesInHeap(PreloadHeapKind heap_kind);                                                                                               // arg is heap_kind in PreloadEntry
+void Preload_Update();                                                                                                                                                                               // checks for new files to preload and begins loading them synchronously
+void Preload_Invalidate();                                                                                                                                                                           // invalidates cache, this is usually used from scene prep on CSS's
+Preload *Preload_GetTable();                                                                                                                                                                         // gets preload table
+PreloadEntry *Preload_CreateEntry(PreloadFileKind file_kind, char *filename, PreloadHeapKind r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int r9, int flags);                  // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
+PreloadEntry *Preload_CreateEntryByEntrynum(PreloadFileKind file_kind, int entrynum, PreloadHeapKind r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int r9, int flags, int r11); // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
+PreloadEntry *Preload_CreateAllMEntry(char *file_name);                                                                                                                                              // must be called during Preload_Update
+void Preload_RequestLoadEntry(int preload_entry_index);                                                                                                                                              //
+void Preload_FreeEntry(int preload_entry_index);                                                                                                                                                     // 800174e8
+HSD_Archive *Preload_GetArchive_Init_ReturnSymbols(int unk, char *filename, void *symbol_return, ...);                                                                                               // variadic args are symbol strings, terminate the variadic args with a 0
+HSD_Archive *Preload_GetArchiveByEntrynum(int entrynum);                                                                                                                                             // will wait if the file isnt loaded yet
+int Preload_CheckFileStatus(int entrynum);                                                                                                                                                           // 0 = not loading, 1 = loading, 2 = loaded
+int Preload_CheckIfFilesAreLoading(int preload_flags);                                                                                                                                               // use PRELOADFLAG_ definitions
+void Preload_FreeUnneededInitializedArchivesInHeap(PreloadHeapKind heap_kind);                                                                                                                       // arg is heap_kind in PreloadEntry
 void Preload_Wait(int preload_flags);
 void *Preload_AllocFromHeap(PreloadHeapKind heap_kind, int size);
 void Preload_FreeToHeap(void *ptr, int size);
 void Preload_SetGrKind(GroundKind);
 
 int Hoshi_AddPreloadMenuFile(char *file_name);
-int Hoshi_AddPreloadGameFile(char *file_name);
+int Hoshi_AddPreloadGameFile(char *file_name, PreloadHeapKind heap_kind);
 #endif

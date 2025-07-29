@@ -172,10 +172,15 @@ CODEPATCH_HOOKCREATE(0x8003b48c, "", Hook_PlayerSelectLoad, "", 0)
 
 void OnFileLoad(ModHeader *file)
 {
+    void *hoshi_data_start = *(void **)0x805de290;
+
     // replace hsd_memalloc for the duration of this callback
     // this allows us to make persistent allocations by simply calling hsd_memalloc
     int alloc_instr = *(int *)(HSD_MemAlloc);
     CODEPATCH_REPLACEFUNC(HSD_MemAlloc, MemAllocPersistent);
+
+    // if (LOG_LEVEL >= LOG_LEVEL_DEBUG)
+    //     (*stc_dblevel) = DB_DEVELOP;
 
     Patches_Apply();    // apply code patches
     Scenes_Init();      // init scene expansion
@@ -239,6 +244,13 @@ void OnFileLoad(ModHeader *file)
 
     // restore hsd_memalloc
     CODEPATCH_REPLACEINSTRUCTION(HSD_MemAlloc, alloc_instr);
+
+    // log out memory used by hoshi
+    void *hoshi_data_end = (*(void **)0x805de290);
+    int hoshi_data_size = ((int)hoshi_data_end - (int)hoshi_data_start) + OSRoundUp32B(File_GetSize("hoshi.bin"));
+    int remaining_size = *(int *)0x805de294 - *(int *)0x805de290;
+    LOG_INFO("hoshi + mods using %.2fkb.", BytesToKB(hoshi_data_size));
+    LOG_INFO("Remaining memory: %.2fkb.", BytesToKB(remaining_size));
 
     return;
 }

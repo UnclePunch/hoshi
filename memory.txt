@@ -1,0 +1,23 @@
+KAR Memory Map
+
+0x80000000 -> 0x80003100
+	System
+0x80003100 -> 0x805ED870
+	DOL
+0x805ED870 -> 0x805f6720
+	Stack
+0x805f6720 -> 0x805f8740
+	OSReport Log
+0x805f8740 -> 0x80678740
+	Audio Heap
+0x80678740 -> 0x80824740
+	XFB Buffers (2 of these each with a size of 0x96000) (alloc'd @ 8040fdd4)
+0x80824740 -> 0x808531c0
+	Hoshi
+0x808531c0 -> 0x817fd260
+	Heap
+0x817fd260 -> 0x817fffff
+	FST
+
+Memory Optimization
+1. Audio Heap Shrink - 311kb sit free in vanilla KAR. adjust size at 80059d84 and 80059dc8. Ideally this would be adjusted to X + sizeof(airride.sem) but this code executes before hoshi is loaded, so a dol overwrite will have to do.

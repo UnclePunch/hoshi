@@ -44,7 +44,7 @@ int Preload_AddCustomMenuFile(char *file_name)
 
     return 0;
 }
-int Preload_AddCustomGameFile(char *file_name)
+int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind)
 {
     // exit if at max
     if (stc_custom_game_files.num > GetElementsIn(stc_custom_game_files.file))
@@ -58,21 +58,22 @@ int Preload_AddCustomGameFile(char *file_name)
     {
         if (strcmp(stc_custom_game_files.file[i].name, file_name) == 0)
         {
-            LOG_WARN("Preload: game file %s already exists", file_name);
+            LOG_WARN("Preload: game file %s already exists in heap %d",
+                     file_name,
+                     stc_custom_game_files.file[i].heap_kind);
             return 0;
         }
     }
 
     // add
     stc_custom_game_files.file[stc_custom_game_files.num].name = file_name;
-    stc_custom_game_files.file[stc_custom_game_files.num].kind = 2;
+    stc_custom_game_files.file[stc_custom_game_files.num].file_kind = 2;
     stc_custom_game_files.file[stc_custom_game_files.num].preload_kind = 4;
+    stc_custom_game_files.file[stc_custom_game_files.num].heap_kind = heap_kind;
     stc_custom_game_files.num++;
 
-    LOG_INFO("Preload: added game file %s", file_name);
+    LOG_INFO("Preload: added game file %s to heap %d", file_name, heap_kind);
     return 1;
-
-    return 0;
 }
 
 // Adjusts the size of PRELOADHEAPKIND_GAMECOMMON
@@ -81,12 +82,15 @@ void Preload_IncreasePersistentHeapSize()
     PreloadHeapDesc *heap_descs = stc_preload_heap_descs;
     while (heap_descs->kind != 10)
     {
-        if (heap_descs->kind == PRELOADHEAPKIND_GAMECOMMON)
+        if (heap_descs->kind == PRELOADHEAPKIND_STAY)
         {
             int newfiles_total_size = 0;
 
             for (int i = 0; i < stc_custom_game_files.num; i++)
-                newfiles_total_size += File_GetSize(stc_custom_game_files.file[i].name);
+            {
+                if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY)
+                    newfiles_total_size += File_GetSize(stc_custom_game_files.file[i].name);
+            }
 
             newfiles_total_size = OSRoundUp32B(newfiles_total_size);
 
@@ -131,23 +135,36 @@ void Preload_LoadCustomGameFile()
     // loop through all custom game files
     for (int i = 0; i < stc_custom_game_files.num; i++)
     {
-        // if entry exists and it matches our current preload kind
-        if (p->updated.is_cache_game_files) // game has raised flag to begin preloading common game files
+        int is_requested = 0;
+
+        if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY &&
+            p->updated.is_cache_game_files) // game has raised flag to begin preloading common game files
         {
-            Preload_CreateEntry(stc_custom_game_files.file[i].kind,
+            is_requested = 1;
+            Preload_CreateEntry(stc_custom_game_files.file[i].file_kind,
                                 stc_custom_game_files.file[i].name,
-                                PRELOADHEAPKIND_GAMECOMMON, // 4
-                                PRELOADHEAPKIND_GAMECOMMON, // 4
+                                PRELOADHEAPKIND_STAY, // 4
+                                PRELOADHEAPKIND_STAY, // 4
                                 0,
                                 1,
                                 2,     // 5
                                 0x40); // 0x20
         }
+
+        else if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM &&
+                 p->updated.gr_kind != 59) // copied from 800748ec
+        {
+            is_requested = 1;
+            Preload_CreateAllMEntry(stc_custom_game_files.file[i].name);
+        }
+
+        if (is_requested)
+            LOG_DEBUG("Preloading %s", stc_custom_game_files.file[i].name);
     }
 
     return;
 }
-CODEPATCH_HOOKCREATE(0x80074e0c, "", Preload_LoadCustomGameFile, "", 0)
+CODEPATCH_HOOKCREATE(0x80074e04, "", Preload_LoadCustomGameFile, "", 0)
 
 // runs in a few places: entering top level of main menu, title screen, etc
 void Preload_ClearMenuEntries()
@@ -175,8 +192,8 @@ void Preload_ClearMenuEntries()
 
 void Preload_ApplyPatches()
 {
-    CODEPATCH_HOOKAPPLY(0x801317ec);                             // add hook to load custom preload entries
-    CODEPATCH_HOOKAPPLY(0x80074e0c);                             // add load custom game file
+    CODEPATCH_HOOKAPPLY(0x801317ec);                             // add hook to load custom menu files
+    CODEPATCH_HOOKAPPLY(0x80074e04);                             // add load custom game file
     CODEPATCH_REPLACEFUNC(0x8013128c, Preload_ClearMenuEntries); // add hook to clear custom preload entries
 
     // install functions to add new preload entries

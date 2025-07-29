@@ -18,8 +18,8 @@ char *strrchr(const char *, int);
 #define OSTicksToMilliseconds(ticks) ((ticks) / ((os_info->bus_clock / 4) / 1000))
 #define OSTicksToMicroseconds(ticks) ((ticks) / ((os_info->bus_clock / 4) / 1000000))
 #define MillisecondsSinceTick(ticks) ((float)OSTicksToMicroseconds(OSGetTick() - ticks) / 1000) // returns microseconds between tick given and the current tick
-#define BytesToKB(bytes) ((float)bytes / 1000.0)
-#define BytesToMB(bytes) ((float)bytes / 1000000.0)
+#define BytesToKB(bytes) ((float)(bytes) / 1000.0)
+#define BytesToMB(bytes) ((float)(bytes) / 1000000.0)
 #define BitCheck(num, bit) !!((num) & (1 << (bit))) // returns 0 or 1
 #define BitCheck(num, bit) !!((num) & (1 << (bit))) // returns 0 or 1
 #define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
@@ -38,6 +38,9 @@ char *strrchr(const char *, int);
 #define M_PI (3.14159265358979323846)
 #define M_1DEGREE (0.0174533)
 #define M_NAN ((float)(INFINITY * 0.0F))
+
+/** Heap Definitions */ //
+#define OS_MAX_HEAPS 16
 
 /** Console Definitions */ //
 #define OS_CONSOLE_RETAIL4 0x00000004
@@ -292,6 +295,12 @@ struct OSContext
     u64 gqrs[4];             // 0x1a4
     u64 pairedSingles[0x20]; // starting at 0x1c8
 };
+typedef struct OSHeap
+{
+    int size;
+    void *start;
+    void *end;
+} OSHeap;
 
 struct CARDStat
 {
@@ -546,6 +555,7 @@ typedef struct OSReportData
 
 /*** Static Vars ***/
 static OSInfo *os_info = (OSInfo *)0x80000000;
+static OSHeap **__OSHeapTable = (OSHeap **)0x805ddeb0;
 static int *stc_fst_totalentrynum = (int *)0x805ddd94;
 static FSTEntry **stc_fst_entries = (FSTEntry **)0x805ddd8c; // indexed by entrynum (0 is always the root directory)
 static char **stc_fst_filenames = (char **)0x805ddd90;       // use FSTEntry.filename_offset to find an entrynums name

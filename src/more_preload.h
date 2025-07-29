@@ -6,9 +6,10 @@ typedef struct PreloadCustomGameFiles
     int num;
     struct
     {
-        char *name;           //
-        PreloadFileKind kind; //
-        int preload_kind;     // dictates during which scenes this file will be cached
+        char *name;                //
+        PreloadFileKind file_kind; //
+        int preload_kind;          // dictates during which scenes this file will be cached
+        PreloadHeapKind heap_kind; // which heap the file will be loaded to
     } file[32];
 } PreloadCustomGameFiles;
 

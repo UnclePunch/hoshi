@@ -587,6 +587,14 @@ void OSClearContext(OSContext *ctx);
 int DVDConvertPathToEntrynum(char *file);
 int DVDFastOpen(s32 entrynum, DVDFileInfo *dvdFileInfo);
 int DVDClose(DVDFileInfo *dvdFileInfo);
+s32 DVDReadAbsAsyncPrio(
+    DVDCommandBlock *block,                              // Command block used for the request
+    void *addr,                                          // Destination buffer (must be 32-byte aligned)
+    s32 length,                                          // Number of bytes to read (must be multiple of 32)
+    s32 offset,                                          // Absolute offset on the disc (in bytes, must be multiple of 2048)
+    void (*callback)(int result, DVDFileInfo *fileInfo), // Callback function when read completes
+    s32 prio                                             // Priority (1 = lowest, 2+ = higher priority)
+);
 int DVDWaitForRead();
 int File_Read(int entrynum, int file_offset, void *buffer, int read_size, int flags, int unk_index, void (*cb)(int r3, int *arg), void *cb_arg2); // just use 0x21 for flags if dram, 0x23 if aram, 1 for unk_index
 int File_ReadSync(int entrynum, int file_offset, void *buffer, int read_size, int flags, int unk_index);                                          // just use 0x21 for flags if dram, 0x23 if aram, 1 for unk_index

@@ -62,6 +62,7 @@ void Hook_SceneChange()
     }
 
 #endif
+
     return;
 };
 CODEPATCH_HOOKCREATE(0x8000678c, "", Hook_SceneChange, "", 0)
@@ -239,8 +240,8 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80113a30);
     CODEPATCH_HOOKAPPLY(0x80015274);
 
-    MainMenu_ApplyPatches();
     Settings_Init(stc_modloader_data);
+    MainMenu_ApplyPatches();
 
     // restore hsd_memalloc
     CODEPATCH_REPLACEINSTRUCTION(HSD_MemAlloc, alloc_instr);
@@ -377,6 +378,8 @@ void Mods_InitSaveData()
     //     LOG_DEBUG("a save needed to be init'd, writing to memcard");
     //     KARPlusSave_Write();
     // }
+
+    LOG_INFO("Audio Heap: %.2fkb / %.2fkb.", BytesToKB(OSCheckHeap(0)), BytesToKB((*__OSHeapTable)[0].size));
 
     // clear OSReports
     OSClearReports();

@@ -27,7 +27,7 @@ static MatAnimJointDesc *stc_preview_matanimjointdesc = 0;
 static int deflicker_enabled = 0;
 static int resolution_kind = 0;
 
-MenuDesc *main_menu;
+MenuDesc *main_menu = 0;
 
 //////////////
 // Settings //
@@ -816,6 +816,9 @@ void Option_GetSaveSize(OptionDesc *desc, int *size)
 
 void Menu_ExecAllOptionChange()
 {
+    if (!main_menu)
+        return;
+
     Menu_ExecOptionChange(main_menu);
 }
 void Menu_ExecOptionChange(MenuDesc *desc)
@@ -1093,6 +1096,9 @@ void MainMenu_ApplyPatches()
 {
     // inject @ 80149118 and replace the matanim with a custom one,
     // insert new texture on frame 44 (option idx 4 for menu 4)
+
+    if (!main_menu)
+        return;
 
     stc_menu_select->menu_desc[3].option_num = 5;
     stc_menu_select->menu_option_desc[3].option[4].description_idx = 3;

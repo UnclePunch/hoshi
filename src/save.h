@@ -1,5 +1,5 @@
-#ifndef CITYSAVE_H
-#define CITYSAVE_H
+#ifndef SAVE_H
+#define SAVE_H
 
 #include "hoshi.h"
 

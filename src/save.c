@@ -27,6 +27,24 @@ static KARPlusSave *stc_hoshi_save;
 static int stc_hoshi_save_hash;
 
 /*---------------------------------------------------------------------*
+Name:           KARPlusSave_OnSetDefault
+
+Description:    Inserted after initializing default save file settings.
+
+Arguments:      none.
+
+Returns:        none.
+
+*---------------------------------------------------------------------*/
+void KARPlusSave_OnSetDefault()
+{
+    LOG_INFO("Initializing default save values...");
+    Mods_SetDefaultSaveData();
+    LOG_INFO("Done.");
+}
+CODEPATCH_HOOKCREATE(0x80007630, "", KARPlusSave_OnSetDefault, "", 0)
+
+/*---------------------------------------------------------------------*
 Name:           KARPlusSave_OnSaveCreateOrLoad
 
 Description:    Inserted at the end of vanilla memcard initialization.
@@ -58,9 +76,8 @@ void KARPlusSave_OnSaveCreateOrLoad()
             ;
         }
     }
-    // main save file wasn't created, we're not creating a KARPlus save file, init the mod save data here
-    else
-        Mods_InitSaveData();
+
+    Mods_OnLoadSaveData();
 
     LOG_INFO("Finished initializing save.");
     LOG_INFO("---------------------\n");
@@ -106,8 +123,8 @@ void KARPlusSave_OnNoSave()
         // set as no save to skip prompt
         Memcard_SetSaveStatus(CARDSAVE_IGNORE);
 
-        // init mod save data (default values)
-        Mods_InitSaveData();
+        // run on load callbacks
+        Mods_OnLoadSaveData();
 
         // skip all tutorial vids
         GameData *gd = Gm_GetGameData();
@@ -144,39 +161,6 @@ void KARPlusSave_OnNoSave()
     // otherwise card is inserted but has no save file, so continue to prompt
 }
 CODEPATCH_HOOKCREATE(0x80047718, "", KARPlusSave_OnNoSave, "", 0)
-
-/*---------------------------------------------------------------------*
-Name:           KARPlusSave_Init
-
-Description:    Allocates save file runtime struct. Places branches
-                to save related functions in game memory.
-
-Arguments:      none.
-
-Returns:        none.
-
-*---------------------------------------------------------------------*/
-void KARPlusSave_Init()
-{
-
-    stc_hoshi_save = HSD_MemAlloc(SAVE_SIZE); // alloc save data
-    stc_hoshi_save_hash = -1;
-
-    // init save data
-    stc_hoshi_save->version_major = VERSION_MAJOR;
-    stc_hoshi_save->version_minor = VERSION_MINOR;
-    stc_hoshi_save->mod_num = 0;
-
-    // install functions
-    CODEPATCH_HOOKAPPLY(0x80047834);
-    CODEPATCH_HOOKAPPLY(0x80047720);
-    CODEPATCH_HOOKAPPLY(0x80047718);
-
-    CODEPATCH_HOOKAPPLY(0x800189a4);
-    CODEPATCH_REPLACEFUNC(Hoshi_WriteSave, KARPlusSave_Write);
-
-    return;
-}
 
 /*---------------------------------------------------------------------*
 Name:           KARPlusSave_CreateOrLoad
@@ -226,9 +210,6 @@ int KARPlusSave_CreateOrLoad()
 
         LOG_DEBUG("Save file created with size 0x%x", SAVE_SIZE);
 
-        // initialize mods' save data
-        Mods_InitSaveData();
-
         // write to card
         cardResult = CARDWrite(&fileInfo, stc_hoshi_save, SAVE_SIZE, 0);
         if (cardResult != CARD_RESULT_READY)
@@ -277,9 +258,6 @@ int KARPlusSave_CreateOrLoad()
             CARDUnmount(0);
             return 0;
         }
-
-        // initialize mods' save data
-        Mods_InitSaveData();
     }
 
     CARDClose(&fileInfo);
@@ -610,4 +588,38 @@ Returns:        KARPlusSave ptr.
 KARPlusSave *KARPlusSave_Get()
 {
     return stc_hoshi_save;
+}
+
+/*---------------------------------------------------------------------*
+Name:           KARPlusSave_Init
+
+Description:    Allocates save file runtime struct. Places branches
+                to save related functions in game memory.
+
+Arguments:      none.
+
+Returns:        none.
+
+*---------------------------------------------------------------------*/
+void KARPlusSave_Init()
+{
+
+    stc_hoshi_save = HSD_MemAlloc(SAVE_SIZE); // alloc save data
+    stc_hoshi_save_hash = -1;
+
+    // init save data
+    stc_hoshi_save->version_major = VERSION_MAJOR;
+    stc_hoshi_save->version_minor = VERSION_MINOR;
+    stc_hoshi_save->mod_num = 0;
+
+    // install functions
+    CODEPATCH_HOOKAPPLY(0x80047834);
+    CODEPATCH_HOOKAPPLY(0x80047720);
+    CODEPATCH_HOOKAPPLY(0x80047718);
+
+    CODEPATCH_HOOKAPPLY(0x800189a4);
+    CODEPATCH_REPLACEFUNC(Hoshi_WriteSave, KARPlusSave_Write);
+    CODEPATCH_HOOKAPPLY(0x80007630);
+
+    return;
 }

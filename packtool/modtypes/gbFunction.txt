@@ -1,11 +1,13 @@
 ModName
 ModAuthor
 ModVersion
+ModSave
 ModSaveSize
 ModSettings
 OnBoot
 OnSceneChange
 OnSaveInit
+OnSaveLoaded
 On3DLoad
 On3DPause
 On3DUnpause

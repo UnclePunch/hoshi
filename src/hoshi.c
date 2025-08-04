@@ -4,6 +4,7 @@
 #include "preload.h"
 #include "game.h"
 #include "scene.h"
+#include "memcard.h"
 #include "inline.h"
 
 #include <stdarg.h>
@@ -354,72 +355,34 @@ GlobalMod *Mods_GetFromName(char *name)
     return 0;
 }
 
-void Mods_InitSaveData()
+void Mods_SetDefaultSaveData()
 {
-    int req_write = 0;
-
-    // // init default settings
-    // Mod_InitSaveData(Menu_GetMod());
+    LOG_DEBUG("Setting default save values.");
 
     // init each mod's settings
     for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
     {
         GlobalMod *mod = &stc_modloader_data->mods[mod_idx];
-
-        if (Mod_InitSaveData(mod))
-            req_write = 1;
+        Mod_SetDefaultSaveData(mod);
     }
-
-    Menu_ExecAllOptionChange();
-
-    // // if a save file was initialized, write it out to card asap
-    // if (req_write)
-    // {
-    //     LOG_DEBUG("a save needed to be init'd, writing to memcard");
-    //     KARPlusSave_Write();
-    // }
-
-    LOG_INFO("Audio Heap: %.2fkb / %.2fkb.", BytesToKB(OSCheckHeap(0)), BytesToKB((*__OSHeapTable)[0].size));
-
-    // clear OSReports
-    OSClearReports();
 }
-int Mod_InitSaveData(GlobalMod *mod)
+void Mod_SetDefaultSaveData(GlobalMod *mod)
 {
-    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
-    LOG_INFO("%s:", mod->data.name);
-
-    int req_init;
+    LOG_DEBUG("~~~~~~~~~~~~~~~~~~~~~");
+    LOG_DEBUG("%s:", mod->data.name);
 
     // get save data sizes as dictated by the currently installed mod version
     int menu_size = 0, user_size = 0;
     Option_GetSaveSize(mod->data.option_desc, &menu_size);
 
-    if ((mod->data.save_size != 0) && (*mod->data.save_size) > 0)
+    if ((mod->data.save_size) && (*mod->data.save_size) > 0)
         user_size = *mod->data.save_size;
 
     // if mod has save data
     if (menu_size > 0 || user_size > 0)
     {
-        int is_exists = KARPlusSave_CheckModDataExists(mod);
-        void *mod_user_data;
-
-        // check if save data exists on card
-        if (is_exists)
-        {
-            LOG_INFO("Save data found.", mod->data.name);
-
-            // re-alloc if current version of the mod demands more storage
-            req_init = KARPlusSave_VerifySize(mod, menu_size, user_size);
-        }
-        else
-        {
-            LOG_INFO("Save data created.", mod->data.name);
-
-            // alloc save
-            KARPlusSave_Alloc(mod, menu_size, user_size);
-            req_init = 1;
-        }
+        // alloc save
+        KARPlusSave_Alloc(mod, menu_size, user_size);
 
         if (mod->save.menu_data)
             LOG_DEBUG("menu_data: %x (0x%x)",
@@ -431,26 +394,133 @@ int Mod_InitSaveData(GlobalMod *mod)
                       mod->save.user_data,
                       mod->save.user_size);
 
-        if (!req_init)
-            Mod_CopyFromSave(mod); // copy saved menu settings to the mod
-        else
-            Mod_CopyToSave(mod); // copy default menu settings to the save
+        Mod_CopyToSave(mod); // copy default menu settings to the save
+
+        // update the mod's pointer to its save file data
+        if (mod->data.save_ptr)
+            (*mod->data.save_ptr) = mod->save.user_data;
 
         if (mod->data.OnSaveInit)
         {
-            LOG_INFO("Exec save init func...\n", mod->data.name);
-            mod->data.OnSaveInit(mod->save.user_data, req_init);
+            LOG_DEBUG("Exec save default func...", mod->data.name);
+            mod->data.OnSaveInit();
             OSReport("\n");
-            LOG_INFO("Done.", mod->data.name);
+            LOG_DEBUG("Done.", mod->data.name);
         }
     }
     else
     {
-        LOG_INFO("No save data.", mod->data.name);
-        req_init = 0;
+        LOG_DEBUG("No save data.", mod->data.name);
     }
 
-    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~\n");
+    LOG_DEBUG("~~~~~~~~~~~~~~~~~~~~~\n");
+}
+
+void Mods_OnLoadSaveData()
+{
+    // init each mod's settings
+    for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
+    {
+        GlobalMod *mod = &stc_modloader_data->mods[mod_idx];
+        Mod_OnLoadSaveData(mod);
+    }
+
+    Menu_ExecAllOptionChange();
+
+    LOG_INFO("Audio Heap: %.2fkb / %.2fkb.", BytesToKB(OSCheckHeap(0)), BytesToKB((*__OSHeapTable)[0].size));
+
+    // clear OSReports
+    OSClearReports();
+}
+int Mod_OnLoadSaveData(GlobalMod *mod)
+{
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
+    LOG_INFO("%s:", mod->data.name);
+
+    int req_init;
+
+    // skip save file verification if no memcard is present, we can assume the defaults we created are valid.
+    if (Memcard_GetSaveStatus() == CARDSAVE_IGNORE)
+    {
+        if (mod->data.OnSaveLoaded)
+        {
+            LOG_INFO("Exec save loaded func...\n", mod->data.name);
+            mod->data.OnSaveLoaded(mod->save.user_data);
+            OSReport("\n");
+            LOG_INFO("Done.", mod->data.name);
+        }
+
+        req_init = 0;
+    }
+    else
+    {
+
+        // get save data sizes as dictated by the currently installed mod version
+        int menu_size = 0, user_size = 0;
+        Option_GetSaveSize(mod->data.option_desc, &menu_size);
+
+        if ((mod->data.save_size != 0) && (*mod->data.save_size) > 0)
+            user_size = *mod->data.save_size;
+
+        // if mod has save data
+        if (menu_size > 0 || user_size > 0)
+        {
+            int is_exists = KARPlusSave_CheckModDataExists(mod);
+            void *mod_user_data;
+
+            // check if save data exists on card
+            if (is_exists)
+            {
+                LOG_INFO("Save data found.", mod->data.name);
+
+                // re-alloc if current version of the mod demands more storage
+                req_init = KARPlusSave_VerifySize(mod, menu_size, user_size);
+            }
+            else
+            {
+                LOG_INFO("Save data created.", mod->data.name);
+
+                // alloc save
+                KARPlusSave_Alloc(mod, menu_size, user_size);
+                req_init = 1;
+            }
+
+            if (mod->save.menu_data)
+                LOG_DEBUG("menu_data: %x (0x%x)",
+                          mod->save.menu_data,
+                          mod->save.menu_num * sizeof(MenuSave));
+
+            if (mod->save.user_data)
+                LOG_DEBUG("user_data: %x (0x%x)",
+                          mod->save.user_data,
+                          mod->save.user_size);
+
+            if (!req_init)
+                Mod_CopyFromSave(mod); // copy saved menu settings to the mod
+            else
+                Mod_CopyToSave(mod); // copy default menu settings to the save
+
+            // update the mod's pointer to its save file data
+            if (mod->data.save_ptr)
+                (*mod->data.save_ptr) = mod->save.user_data;
+
+            if (mod->data.OnSaveLoaded)
+            {
+                LOG_INFO("Exec save loaded func...\n", mod->data.name);
+                mod->data.OnSaveLoaded(mod->save.user_data);
+                OSReport("\n");
+                LOG_INFO("Done.", mod->data.name);
+            }
+        }
+        else
+        {
+            LOG_INFO("No save data.", mod->data.name);
+            req_init = 0;
+        }
+    }
+
+    LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
+    OSReport("\n");
 
     return req_init;
 }

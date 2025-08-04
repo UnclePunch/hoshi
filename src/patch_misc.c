@@ -35,6 +35,22 @@ void *MemAlloc_Error(void *addr, int size)
 }
 CODEPATCH_HOOKCREATE(0x804101e0, "mr 4, 31\n\t", MemAlloc_Error, "", 0)
 
+// FGM Load
+void *MainMenu_LoadFGM()
+{
+    // In vanilla, these were loading upon entering the title screen.
+    // This worked because you had to pass through the title screen to
+    // get to the game modes (which need the files), but we want to support
+    // booting to the main menu so we're moving it here.
+
+    // void *buffer = (void *)0x8056f280;
+    // int buffer_size = OSRoundUp32B(0x8057b160 - 0x8056f280);
+    // DCFlushRange(buffer, buffer_size);
+    // DCInvalidateRange(buffer, buffer_size);
+    FGM_LoadInGameBanks();
+}
+CODEPATCH_HOOKCREATE(0x80015bd8, "", MainMenu_LoadFGM, "", 0)
+
 void Patches_Apply()
 {
     // add text transparency functionality
@@ -74,4 +90,7 @@ void Patches_Apply()
 
     // MemAlloc
     CODEPATCH_HOOKAPPLY(0x804101e0);
+
+    // FGM Load
+    CODEPATCH_HOOKAPPLY(0x80015bd8);
 }

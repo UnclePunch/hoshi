@@ -265,6 +265,8 @@ SECTIONS
   Text_SetText = 0x8045031C;
   TitleScreen_GetData = 0x8000cdbc;
   TRK_FlushCache = 0x803BFFD8;
+  DCInvalidateRange = 0x803d3ef8;
+  DCFlushRange = 0x803d3f24;
   VECScale = 0x803D20E0;
   VECAdd = 0x803D2098;
   VECSubtract = 0x803D20BC;

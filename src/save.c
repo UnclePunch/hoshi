@@ -137,7 +137,6 @@ void KARPlusSave_OnNoSave()
         memset(city_checklist, -1, 0x78);
 
         MainMenu_InitAllVariables();
-        FGM_LoadInGameBanks();
         Scene_SetNextMajor(MJRKIND_MENU);
         Scene_ExitMajor();
     }

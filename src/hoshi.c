@@ -445,7 +445,7 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
         if (mod->data.OnSaveLoaded)
         {
             LOG_INFO("Exec save loaded func...\n", mod->data.name);
-            mod->data.OnSaveLoaded(mod->save.user_data);
+            mod->data.OnSaveLoaded();
             OSReport("\n");
             LOG_INFO("Done.", mod->data.name);
         }
@@ -507,7 +507,7 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
             if (mod->data.OnSaveLoaded)
             {
                 LOG_INFO("Exec save loaded func...\n", mod->data.name);
-                mod->data.OnSaveLoaded(mod->save.user_data);
+                mod->data.OnSaveLoaded();
                 OSReport("\n");
                 LOG_INFO("Done.", mod->data.name);
             }

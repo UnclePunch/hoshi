@@ -22,8 +22,7 @@ typedef struct gbFunction
     void (*OnBoot)(ModHeader *mod_header);
     void (*OnSceneChange)();
     void (*OnSaveInit)();
-    void (*OnSaveLoaded)(void *save_ptr);
-    void (*OnSaveInit)(void *save_ptr);
+    void (*OnSaveLoaded)();
     void (*On3DLoad)();
     void (*On3DPause)(int pause_ply);
     void (*On3DUnpause)(int pause_ply);

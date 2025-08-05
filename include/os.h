@@ -15,7 +15,7 @@ char *strrchr(const char *, int);
 #define OSRoundDown32B(x) (((u32)(x)) & ~(32 - 1))
 #define OSRoundUp512B(x) (((u32)(x) + 512 - 1) & ~(512 - 1)) // using this for card reads
 #define OSRoundDown512B(x) (((u32)(x)) & ~(512 - 1))         // using this for card reads
-#define OSTicksToMilliseconds(ticks) ((ticks) / ((os_info->bus_clock / 4) / 1000))
+#define OSTicksToMilliseconds(ticks) ((float)(ticks) / ((os_info->bus_clock / 4) / 1000))
 #define OSTicksToMicroseconds(ticks) ((ticks) / ((os_info->bus_clock / 4) / 1000000))
 #define MillisecondsSinceTick(ticks) ((float)OSTicksToMicroseconds(OSGetTick() - ticks) / 1000) // returns microseconds between tick given and the current tick
 #define BytesToKB(bytes) ((float)(bytes) / 1000.0)

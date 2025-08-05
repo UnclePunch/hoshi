@@ -82,9 +82,6 @@ void KARPlusSave_OnSaveCreateOrLoad()
     LOG_INFO("Finished initializing save.");
     LOG_INFO("---------------------\n");
 
-    // clear OSReports
-    OSClearReports();
-
     return;
 }
 CODEPATCH_HOOKCREATE(0x80047834, "", KARPlusSave_OnSaveCreateOrLoad, "", 0)

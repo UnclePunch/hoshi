@@ -428,6 +428,8 @@ void Mods_OnLoadSaveData()
     Menu_ExecAllOptionChange();
 
     LOG_INFO("Audio Heap: %.2fkb / %.2fkb.", BytesToKB(OSCheckHeap(0)), BytesToKB((*__OSHeapTable)[0].size));
+
+    OSClearReports();
 }
 int Mod_OnLoadSaveData(GlobalMod *mod)
 {

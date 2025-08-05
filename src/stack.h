@@ -3,7 +3,7 @@
 
 #include "reloc/reloc.h"
 
-#define STACK_MAX_DEPTH_LOG 16
+#define STACK_MAX_DEPTH_LOG 15
 
 typedef struct StackChain StackChain;
 

@@ -174,7 +174,7 @@ void Preload_ClearMenuEntries()
     {
         if (stc_preload_menu_files[i])
         {
-            LOG_INFO("Preload: removing %s", FST_GetFilenameFromEntrynum(stc_preload_menu_files[i]));
+            LOG_DEBUG("Preload: removing menu file %s", FST_GetFilenameFromEntrynum(stc_preload_menu_files[i]));
             stc_preload_menu_files[i] = 0;
         }
     }
@@ -184,7 +184,7 @@ void Preload_ClearMenuEntries()
     {
         if (stc_custom_menu_files[i])
         {
-            LOG_INFO("Preload: removing %s", stc_custom_menu_files[i]);
+            LOG_DEBUG("Preload: removing custom menu file %s", stc_custom_menu_files[i]);
             stc_custom_menu_files[i] = 0;
         }
     }

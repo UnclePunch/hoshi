@@ -33,8 +33,6 @@ void Gm_MajorPatch()
     // r30 = GmData
     // r31 = major_scene_descs (yes again 80008378)
 
-    OSClearReports();
-
     // not present in vanilla, im adding this to allow booting to scenes other than the title screen
     Scene_InitHeaps();
 

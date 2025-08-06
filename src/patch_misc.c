@@ -4,7 +4,7 @@
 
 #include "hoshi/log.h"
 
-// Text
+// Text Transparency
 void Text_AlphaCopy(Text *t)
 {
     t->temp.color.a = t->color.a;
@@ -18,6 +18,27 @@ void Text_AlphaDraw(Text *t)
 }
 CODEPATCH_HOOKCREATE(0x80451fe4, "mr 3, 27\n\t", Text_AlphaCopy, "", 0)
 CODEPATCH_HOOKCREATE(0x804524c8, "mr 3, 27\n\t", Text_AlphaDraw, "", 0)
+
+// Text Alignment
+void Text_AlignSubtext(Text *t)
+{
+    static u8 align_cmds[] = {
+        TEXTCMD_ALIGNLEFT,
+        TEXTCMD_ALIGNCENTER,
+        TEXTCMD_ALIGNRIGHT,
+    };
+
+    (*t->alloc->end) = align_cmds[t->align];
+    t->alloc->end++;
+}
+CODEPATCH_HOOKCREATE(0x80450030, "mr 3, 28\n\t", Text_AlignSubtext, "", 0)
+u8 *Text_SetTextAlign(Text *t, int idx)
+{
+    return Text_GetSubtext(t->text_start, idx);
+}
+CODEPATCH_HOOKCREATE(0x8045038c, "mr 3, 25\n\t"
+                                 "mr 4, 12\n\t",
+                     Text_SetTextAlign, "mr 7, 3\n\t", 0x804503d4)
 
 // MemAlloc Assert
 void *MemAlloc_Error(void *addr, int size)
@@ -75,6 +96,12 @@ void Patches_Apply()
     };
     for (int i = 0; i < GetElementsIn(misc_colors_offsets); i++)
         text_colors2[misc_colors_offsets[i]].a = 255;
+
+    // subtext alignment
+    CODEPATCH_REPLACEINSTRUCTION(0x8044ffa4, 0x38030000 | (17 + 1)); // add an extra byte for align command
+    CODEPATCH_HOOKAPPLY(0x80450030);
+    CODEPATCH_HOOKAPPLY(0x8045038c);
+    CODEPATCH_REPLACEFUNC(0x80450774, Text_SetScale);
 
     // remove main menu input lockout
     CODEPATCH_REPLACEINSTRUCTION(0x80018278, 0x48000010);

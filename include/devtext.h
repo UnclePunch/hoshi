@@ -21,9 +21,9 @@ struct DevText
     int x20;                  // 0x20
     char x24;                 // 0x24
     char x25;                 // 0x25
-    char show_text : 1;       // 0x26
-    char show_background : 1; // 0x26
-    char show_cursor : 1;     // 0x26
+    char hide_text : 1;       // 0x26
+    char hide_background : 1; // 0x26
+    char hide_cursor : 1;     // 0x26
     char x27;                 // 0x27
     u8 *text_data;            // 0x28
     int x2c;                  // 0x2c

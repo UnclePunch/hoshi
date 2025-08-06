@@ -27,6 +27,14 @@ typedef enum TextCmdOpcode
     TEXTCMD_13,
     TEXTCMD_SCALE,
     TEXTCMD_15,
+    TEXTCMD_ALIGNCENTER,
+    TEXTCMD_ALIGNCENTEREND,
+    TEXTCMD_ALIGNLEFT,
+    TEXTCMD_ALIGNLEFTEND,
+    TEXTCMD_ALIGNRIGHT,
+    TEXTCMD_ALIGNRIGHTEND,
+    TEXTCMD_KERNING,
+    TEXTCMD_KERNINGEND,
     TEXTCMD_NUM,
 } TextCmdOpcode;
 
@@ -79,10 +87,10 @@ struct Text
     u8 *text_end;                             // 0x60, stops parsing text data at this ptr
     struct                                    //
     {                                         //
-        int x0;                               //
-        void *x4;                             //
+        u8 *end;                              //
+        u8 *start;                            //
         int size;                             // size of the text alloc
-    } *allocInfo;                             // 0x64
+    } *alloc;                                 // 0x64
     void *x68;                                // 0x68, some alloc used for dialogue?
     u16 x6c;                                  // 0x6c, flags of some kind
     u16 x6e;                                  // 0x6e
@@ -146,6 +154,14 @@ static u8 *Text_GetSubtext(u8 *text_data, int idx)
         3,
         0,
         4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
     };
 
     while (1)
@@ -171,20 +187,78 @@ static u8 *Text_GetSubtext(u8 *text_data, int idx)
         text_data++;
     }
 }
+static u8 *Text_GetCommand(Text *text, int idx, TextCmdOpcode cmd)
+{
+    u8 *subtext = Text_GetSubtext(text->text_start, idx);
+
+    if (!subtext)
+        return 0;
+
+    int cur_idx = 0;
+
+    static u8 opcode_sizes[] = {
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        4,
+        1,
+        1,
+        4,
+        0,
+        3,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    };
+
+    while (1)
+    {
+        u8 opcode = subtext[0];
+
+        if (opcode == 0)
+            return 0;
+        else if (opcode == cmd)
+            return &subtext[1];
+
+        if (opcode >= GetElementsIn(opcode_sizes))
+            subtext++;
+        else
+            subtext += opcode_sizes[opcode];
+
+        subtext++;
+    }
+}
 static void Text_SetColor(Text *text, int idx, GXColor *col)
 {
+    TextCmdColor *col_cmd = (TextCmdColor *)Text_GetCommand(text, idx, TEXTCMD_COLOR);
 
-    u8 *subtext = Text_GetSubtext(text->text_start, idx);
-    subtext[6] = col->r;
-    subtext[7] = col->g;
-    subtext[8] = col->b;
+    if (!col_cmd)
+        return;
+
+    col_cmd->r = col->r;
+    col_cmd->g = col->g;
+    col_cmd->b = col->b;
 }
 static void Text_SetScale(Text *text, int idx, float x, float y)
 {
-    u8 *subtext = Text_GetSubtext(text->text_start, idx);
-    TextCmdScale *scale = (TextCmdScale *)&subtext[10];
-    scale->x = x * 256;
-    scale->y = y * 256;
+    TextCmdScale *scale_cmd = (TextCmdScale *)Text_GetCommand(text, idx, TEXTCMD_SCALE);
+
+    if (!scale_cmd)
+        return;
+
+    scale_cmd->x = x * 256;
+    scale_cmd->y = y * 256;
 }
 static void Text_GetWidthAndHeight(Text *t, float *width, float *height)
 {

@@ -2,7 +2,7 @@ SECTIONS
 {
   __assert = 0x804284B8;
   memmove = 0x803B4714;
-  _vsprintf = 0x803B4C74;
+  vsnprintf = 0x803b4c74;
   AOBJ_ReqAnim = 0x803FB280;
   AOBJ_SetRate = 0x803FDA3C;
   AOBJ_StopAnim = 0x803FB2C0;

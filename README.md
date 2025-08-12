@@ -7,7 +7,7 @@
 ## Features
 
 - **Mod File Loading**  
-  **hoshi** automatically detects and loads all compatible mod binaries placed in the `mods` folder on the game disc. Modders do not need to hardcode any mod paths or registration logic. **hoshi** handles discovery and initialization automatically.
+  **hoshi** automatically detects and loads all compatible mod binaries placed in the `mods` folder on the game disc. Modders do not need to hardcode any mod paths. **hoshi** handles discovery and initialization automatically.
 
 - **Code Hooking**  
   Define callback functions for injecting code at key points in game execution.

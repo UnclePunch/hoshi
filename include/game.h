@@ -303,19 +303,19 @@ typedef struct GameData
         u8 color[4];       // 0x221
         u8 x225;           // 0x225
         int x228;          // 0x228
+        int x22c;          // 0x22c
+        int x230;          // 0x230
+        struct
+        {
+            u8 x234;           // 0x234, total number of machines selectable
+            u8 num;            // 0x235, total number of machines selectable
+            u8 c_kind_arr[20]; // 0x236, 0x66, array of c_kind indices
+        } machine_select;
+        int x24c; // 0x24c
+        int x250; // 0x250
+        int x254; // 0x254
+        int x258; // 0x258
     } city_select_ply;
-    int x22c;                        // 0x22c
-    int x230;                        // 0x230
-    int x234;                        // 0x234
-    int x238;                        // 0x238
-    int x23c;                        // 0x23c
-    int x240;                        // 0x240
-    int x244;                        // 0x244
-    int x248;                        // 0x248
-    int x24c;                        // 0x24c
-    int x250;                        // 0x250
-    int x254;                        // 0x254
-    int x258;                        // 0x258
     int x25c;                        // 0x25c
     int x260;                        // 0x260
     int x264;                        // 0x264

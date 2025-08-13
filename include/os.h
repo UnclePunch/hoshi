@@ -6,6 +6,8 @@
 #include "structs.h"
 #include "datatypes.h"
 
+#include <math.h>
+
 typedef s64 OSTime;
 
 char *strrchr(const char *, int);
@@ -34,8 +36,8 @@ char *strrchr(const char *, int);
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s))) // mask the first w bits of v before lshifting
 #define _SHIFTR(v, s, w) ((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1))) // rshift v and mask the first w bits afterwards
 
-#define INFINITY ((float)(HUGE_ENUF * HUGE_ENUF))
-#define M_PI (3.14159265358979323846)
+// #define INFINITY ((float)(HUGE_ENUF * HUGE_ENUF))
+// #define M_PI (3.14159265358979323846)
 #define M_1DEGREE (0.0174533)
 #define M_NAN ((float)(INFINITY * 0.0F))
 
@@ -662,10 +664,10 @@ int MTH_CheckEnd();
 /** Math **/
 /*** Functions ***/
 // float fmod(float a, float b);
-float atan(float in);
-float atan2(float y, float x);
-float sin(float x);
-float cos(float x);
+// float atan(float in);
+// float atan2(float y, float x);
+// float sin(float x);
+// float cos(float x);
 void MTXOrtho(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f); //
 void MTXLookAt(Mtx *dest, Vec3 *eye, Vec3 *up, Vec3 *target);
 void MTXRotAxisRad(Mtx *m, Vec3 *axis, float rad); // Sets a matrix for rotation about an arbitrary axis whose ( x, y, z ) components are specified by axis.

@@ -245,6 +245,7 @@ SECTIONS
   FGM_ResumeKind = 0x80444FE0;
   FGM_LoadInGameBanks = 0x8005A348;
   Gm_LoadGroundFGMBank = 0x8005a474;
+  ceil = 0x803bcb64;
   fmod = 0x803BD408;
   sin = 0x803BD53C;
   log = 0x803BD428;

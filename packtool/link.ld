@@ -305,6 +305,7 @@ SECTIONS
   Gm_IsInCity = 0x8000ACB0;
   Gm_IsGrKindCity = 0x80262574;
   Gm_IsDestructionDerby = 0x80191900;
+  Gr_StateChange = 0x800f5548;
   Ply_GetCityStatNum = 0x8000AB48;
   Gm_PlayPauseSFX = 0x80061658;
   Gm_PauseAllSFX = 0x80061A44;

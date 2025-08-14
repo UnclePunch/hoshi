@@ -68,8 +68,17 @@ typedef struct EventGlobal
     u8 is_song_playing : 1; // 0x42, 0x10
 } EventGlobal;
 
+typedef struct EventFunction
+{
+    void *x0;
+    void *x4;
+    void *x8;
+    void *xc;
+    int (*check)(GOBJ *g);
+} EventFunction;
+
 static GOBJ **stc_eventcheck_gobj = (GOBJ **)(0x805dd0e0 + 0x618);
 static int *stc_event_machineformation_loadnum = (int *)(0x805dd0e0 + 0x750); // number of machines spawned for the machine formation event
 static EventGlobal *stc_event_global = (EventGlobal *)0x80538088;
-
+static EventFunction (*stc_event_function)[EVKIND_NUM] = (void *)0x804a5410;
 #endif

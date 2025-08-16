@@ -76,17 +76,19 @@ typedef struct YakumonoData
     int state;            // 0x74
 } YakumonoData;
 
-typedef struct GrModelMotion // exists in the stage file
-{                            //
-    struct
-    {
-        AnimJointDesc *anim_joint;
-        MatAnimJointDesc *matanim_joint;
-        int x8;
-        int xc;
-        int x10;
-    } anim[];
-} GrModelMotion; //
+typedef struct GrModelMotionAnim
+{
+    AnimJointDesc *anim_joint;
+    MatAnimJointDesc *matanim_joint;
+    int x8;
+    int xc;
+    int x10;
+} GrModelMotionAnim;
+
+typedef struct GrModelMotion  // exists in the stage file
+{                             //
+    GrModelMotionAnim anim[]; // variable amount of these depending on the stage
+} GrModelMotion;              //
 
 typedef struct GrData // exists in the stage file
 {                     //

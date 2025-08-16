@@ -34,7 +34,8 @@ void Stack_Print()
     OSReport("\n");
 
     // attempt to load dol symbol names
-    if (OSCheckHeap(HSD_GetHeapID()) > File_GetSize("MxDb.dat"))
+    if (stc_preload_heaps_lookup->heap_arr[0].is_disabled == 0 &&
+        OSCheckHeap(HSD_GetHeapID()) > File_GetSize("MxDb.dat"))
     {
         HSD_Archive *debug_archive = Archive_LoadFile("MxDb.dat");
         if (!debug_archive)
@@ -167,8 +168,8 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
 {
     char *symbol_name;
 
-    LOG_DEBUG("Searching for %p", lr);
-    LOG_DEBUG("Checking Modloader code...", lr);
+    // LOG_DEBUG("Searching for %p", lr);
+    // LOG_DEBUG("Checking Modloader code...", lr);
 
     // check hoshi code
     symbol_name = Mod_SearchForSymbol(stc_modloader_data->hoshi.mod_header, lr);
@@ -180,7 +181,7 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
     {
         ModHeader *mod_header = stc_modloader_data->mods[mod_idx].mod_header;
 
-        LOG_DEBUG("Checking %s code...", stc_modloader_data->mods[mod_idx].data.name);
+        // LOG_DEBUG("Checking %s code...", stc_modloader_data->mods[mod_idx].data.name);
 
         char *symbol_name = Mod_SearchForSymbol(mod_header, lr);
 
@@ -191,7 +192,7 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
     // check dol
     if (stc_dol_debug && (u32)lr >= 0x80003100 && (u32)lr < 0x80535300) // hardcoded bounds, look into detecting regions from dol
     {
-        LOG_DEBUG("Checking dol code...");
+        // LOG_DEBUG("Checking dol code...");
 
         // binary search to find the code section the addr lies in
         int symbol_idx_min = 0;
@@ -218,7 +219,6 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
 
 void Stack_ApplyPatches()
 {
-
     CODEPATCH_REPLACEINSTRUCTION(0x8043ff60, 0x60000000); // skip setting exception handler
     CODEPATCH_REPLACEINSTRUCTION(0x8043f848, 0x48000268); // skip over pad check on crash
     CODEPATCH_REPLACEINSTRUCTION(0x8043fd58, 0x60000000); // skip unknown XFB call that gets stuck?

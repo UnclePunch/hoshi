@@ -52,15 +52,15 @@ typedef enum DebugLevel
 
 typedef enum PauseKind
 {
-    PAUSEKIND_NONE,     // not paused
     PAUSEKIND_SYS,      // debug pause (uses Z to frame advance)
     PAUSEKIND_GAME,     // match pause (i dont think any other scene uses this?) allows p_links 0(sys),2,16,18(matchcam),19(misccam),20(hudcam),21(coincam),22(screenflashcam),24(devtext)+ to run
-    PAUSEKIND_3,        // unknown what uses this, it whitelists everything
+    PAUSEKIND_2,        // unknown what uses this, it whitelists everything
     PAUSEKIND_MATCHEND, // is used when the match ends, it allows p_links 0(sys),2,12(effect2),13(mapmisc),14(misc),15(hud),16,17,18(matchcam),19,20,21,22,24+ to run
+    PAUSEKIND_3,        //
+    PAUSEKIND_4,        //
     PAUSEKIND_5,        //
     PAUSEKIND_6,        //
     PAUSEKIND_7,        //
-    PAUSEKIND_8,        //
 } PauseKind;
 
 /*** Structs ***/
@@ -164,43 +164,20 @@ struct HSD_Pads
 
 struct HSD_Update
 {
-    // 0x80479d58
-    u32 sys_frames_pre;                   // 0x0
-    u32 sys_frames_post;                  // 0x4
-    u32 engine_frames;                    // 0x8
-    u32 change_scene;                     // 0xC
-    u8 pause_kind;                        // 0x10, see enum PauseKind
-    unsigned char flag9 : 1;              // 0x11 - 0x80
-    unsigned char flag10 : 1;             // 0x11 - 0x40
-    unsigned char flag11 : 1;             // 0x11 - 0x20
-    unsigned char flag12 : 1;             // 0x11 - 0x10
-    unsigned char flag13 : 1;             // 0x11 - 0x08
-    unsigned char flag14 : 1;             // 0x11 - 0x04
-    unsigned char pause_game_prev : 1;    // 0x11 - 0x02
-    unsigned char pause_develop_prev : 1; // 0x11 - 0x01
-    unsigned char flag17 : 1;             // 0x12 - 0x80
-    unsigned char flag18 : 1;             // 0x12 - 0x40
-    unsigned char flag19 : 1;             // 0x12 - 0x20
-    unsigned char flag20 : 1;             // 0x12 - 0x10
-    unsigned char flag21 : 1;             // 0x12 - 0x08
-    unsigned char flag22 : 1;             // 0x12 - 0x04
-    unsigned char flag23 : 1;             // 0x12 - 0x02
-    unsigned char advance : 1;            // 0x12 - 0x01
-    unsigned char flag24 : 1;             // 0x12 - 0x80
-    unsigned char flag25 : 1;             // 0x12 - 0x40
-    unsigned char flag26 : 1;             // 0x12 - 0x20
-    unsigned char flag27 : 1;             // 0x12 - 0x10
-    unsigned char flag28 : 1;             // 0x12 - 0x08
-    unsigned char flag29 : 1;             // 0x12 - 0x04
-    unsigned char flag30 : 1;             // 0x12 - 0x02
-    unsigned char advance_prev : 1;       // 0x12 - 0x01
-    int (*checkPause)();                  // 0x14 returns 1 when toggling pause
-    int (*checkAdvance)();                // 0x18 returns 1 when advancing frame
-    u32 x1c;                              // 0x1C
-    u64 plink_whitelist;                  // 0x20, code @ 801a4eac determines which gobj plinks to allow when changing the pause state.
-    u32 x28;
-    u32 x2c;
-    void (*onFrame)(); // 0x30
+    int x7e0;                       // 0x7e0
+    u32 engine_frames;              // 0x0
+    u32 sys_frames;                 // 0x4
+    u32 x7ec;                       // 0x7ec,
+    u8 pause_kind;                  // 0x7f0, 1 << PauseKind
+    u8 pause_kind_prev;             // 0x7f1, 1 << PauseKind
+    u8 is_frame_advance;            // 0x7f2, 0 = none, 1 = advance
+    u8 is_frame_advance_prev;       // 0x7f3, 0 = none, 1 = advance
+    int (*isRequestPause)();        // 0x7f4,
+    int (*isRequestFrameAdvance)(); // 0x7f8,
+    int x7fc;                       // 0x7fc
+    u64 plink_whitelist;            // 0x800, code @ 801a4eac determines which gobj plinks to allow when changing the pause state.
+    u64 plink_whitelist_prev;       // 0x808
+    void *funcs;                    // 0x810
 };
 
 struct HSD_VI
@@ -288,7 +265,7 @@ static HSD_VI *stc_HSD_VI = (HSD_VI *)0x8046b0f0;
 static HSD_Update *stc_hsd_update = (HSD_Update *)0x80479d58;
 static int **stc_rng_seed = (int **)0x804D5F94;
 static HSD_Pad *stc_engine_pads = (HSD_Pad *)0x8058b634;
-static u64 *stc_pause_plink_whitelists = (u64 *)0x803da888; // array of u64 bitfields defining which gobj p_links should run for the corresponding PauseKind
+static u64 *stc_pause_plink_whitelists = (u64 *)0x80494f68; // array of u64 bitfields defining which gobj p_links should run for the corresponding PauseKind
 static HSD_PollData *stc_hsd_polldata = (HSD_PollData *)0x804c1f78;
 static GXPixelFmt *stc_hsd_pixelfmt = (GXPixelFmt *)0x804d76c8;
 static DebugLevel *stc_dblevel = (DebugLevel *)0x805DD630;

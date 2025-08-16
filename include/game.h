@@ -7,6 +7,7 @@
 #include "os.h"
 #include "scene.h"
 #include "obj.h"
+#include "hsd.h"
 #include "stadium.h"
 #include "rider.h"
 #include "machine.h"
@@ -655,19 +656,7 @@ typedef struct GameData
     u8 request_major_exit;           // 0x7d6
     int x7d8;                        // 0x7d8
     int x7dc;                        // 0x7dc
-    int x7e0;                        // 0x7e0
-    int x7e4;                        // 0x7e4
-    int x7e8;                        // 0x7e8
-    int x7ec;                        // 0x7ec
-    int x7f0;                        // 0x7f0
-    int x7f4;                        // 0x7f4
-    int x7f8;                        // 0x7f8
-    int x7fc;                        // 0x7fc
-    int x800;                        // 0x800
-    int x804;                        // 0x804
-    int x808;                        // 0x808
-    int x80c;                        // 0x80c
-    int x810;                        // 0x810
+    HSD_Update update;               // 0x7e0
     int x814;                        // 0x814
     int x818;                        // 0x818
     int x81c;                        // 0x81c

@@ -166,6 +166,22 @@ void Hook_PlayerSelectLoad()
 };
 CODEPATCH_HOOKCREATE(0x8003b48c, "", Hook_PlayerSelectLoad, "", 0)
 
+// runs every tick
+void Hook_OnFrame()
+{
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->data.OnFrame)
+            this_mod->data.OnFrame();
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x80006844, "", Hook_OnFrame, "", 0)
+
 ////////////////////////////////////////////
 //                                        //
 //       Main program entrypoint.         //
@@ -240,6 +256,7 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80041160);
     CODEPATCH_HOOKAPPLY(0x80113a30);
     CODEPATCH_HOOKAPPLY(0x80015274);
+    CODEPATCH_HOOKAPPLY(0x80006844);
 
     Settings_Init(stc_modloader_data);
     MainMenu_ApplyPatches();

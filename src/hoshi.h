@@ -6,7 +6,7 @@
 #include "code_patch/code_patch.h" //
 
 #define MODLOADER_VERSION_MAJOR 1
-#define MODLOADER_VERSION_MINOR 1
+#define MODLOADER_VERSION_MINOR 2
 
 typedef struct MenuDesc MenuDesc;
 typedef struct MenuSave MenuSave;
@@ -29,6 +29,7 @@ typedef struct gbFunction
     void (*On3DExit)();
     void (*OnMainMenuLoad)();
     void (*OnPlayerSelectLoad)();
+    void (*OnFrame)();
 } gbFunction;
 
 typedef struct GlobalMod

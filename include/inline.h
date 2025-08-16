@@ -401,36 +401,11 @@ static void C_QUATMtx(Vec4 *r, Mtx m)
     }
 }
 
-static HSD_Pad *PadGet(int playerIndex, int padType)
+static HSD_Pad *PadGetSys(int idx)
 {
-    HSD_Pads *pads = 0;
+    HSD_Pad *pads = (HSD_Pad *)0x8058b0e4;
 
-    // get the correct pad
-    if (padType == PADGET_MASTER)
-        pads = (HSD_Pads *)0x804c1fac;
-    else if (padType == PADGET_ENGINE)
-        pads = (HSD_Pads *)0x804c21cc;
-
-    if (pads == 0)
-        return 0;
-
-    return (&pads->pad[playerIndex]);
-}
-static int Pad_GetDownSys(int pad_idx)
-{
-    HSD_Pad *pads = (HSD_Pad *)0x804c1fac;
-
-    int down;
-
-    if (pad_idx < 4)
-        down = pads[pad_idx].down;
-    else
-    {
-        for (int i = 0; i < 4; i++)
-            down |= pads[i].down;
-    }
-
-    return down;
+    return (&pads[idx]);
 }
 
 static JOBJ *JObj_GetIndex(JOBJ *j, int idx)

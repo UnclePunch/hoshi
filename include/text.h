@@ -260,9 +260,14 @@ static void Text_SetScale(Text *text, int idx, float x, float y)
     scale_cmd->x = x * 256;
     scale_cmd->y = y * 256;
 }
-static void Text_GetWidthAndHeight(Text *t, float *width, float *height)
+static void Text_GetWidthAndHeight(Text *t, int subtext_idx, float *width, float *height)
 {
     void _Text_DetermineWidthHeight(u8 * text_data, Text * text, float *width, float *height); // note: text_data must not start at the 7 opcode, skip past it by passing &text->text_start[5]
+
+    u8 *subtext_ptr = Text_GetSubtext(t->text_start, subtext_idx);
+
+    if (!subtext_ptr)
+        return;
 
     // update temp variables that only the gx cb update
     t->temp.x78 = t->x3c;
@@ -271,7 +276,163 @@ static void Text_GetWidthAndHeight(Text *t, float *width, float *height)
     t->temp.kerning = t->kerning;
     t->temp.align = t->align;
 
-    _Text_DetermineWidthHeight(&t->text_start[5], t, width, height);
+    _Text_DetermineWidthHeight(&subtext_ptr[5], t, width, height);
+}
+
+static int Text_CharToCommand(char c)
+{
+    // numbers
+    if (c >= '0' && c <= '9')
+    {
+        return 0x2000 + (c - '0');
+    }
+    // capitals
+    else if (c >= 'A' && c <= 'Z')
+    {
+        return 0x200a + (c - 'A');
+    }
+    // lower case
+    else if (c >= 'a' && c <= 'z')
+    {
+        return 0x2024 + (c - 'a');
+    }
+    else
+    {
+        // symbol lookup
+        struct ASCIISymbolLookup
+        {
+            u8 ascii;
+            u16 text_code;
+        };
+
+        static struct ASCIISymbolLookup symbol_lookup[] = {
+            {
+                .ascii = ' ',
+                .text_code = 0x20e3,
+            },
+            {
+                .ascii = '!',
+                .text_code = 0x20ec,
+            },
+            {
+                .ascii = '"',
+                .text_code = 0x20f4,
+            },
+            {
+                .ascii = '#',
+                .text_code = 0x2106,
+            },
+            {
+                .ascii = '$',
+                .text_code = 0x2104,
+            },
+            {
+                .ascii = '%',
+                .text_code = 0x2105,
+            },
+            {
+                .ascii = '&',
+                .text_code = 0x2107,
+            },
+            {
+                .ascii = '(',
+                .text_code = 0x20f5,
+            },
+            {
+                .ascii = ')',
+                .text_code = 0x20f6,
+            },
+            {
+                .ascii = '*',
+                .text_code = 0x2108,
+            },
+            {
+                .ascii = '+',
+                .text_code = 0x20fd,
+            },
+            {
+                .ascii = ',',
+                .text_code = 0x20e6,
+            },
+            {
+                .ascii = '-',
+                .text_code = 0x20fe,
+            },
+            {
+                .ascii = '.',
+                .text_code = 0x20e7,
+            },
+            {
+                .ascii = '/',
+                .text_code = 0x20f0,
+            },
+            {
+                .ascii = ':',
+                .text_code = 0x20e9,
+            },
+            {
+                .ascii = ';',
+                .text_code = 0x20ea,
+            },
+            {
+                .ascii = '=',
+                .text_code = 0x2100,
+            },
+            {
+                .ascii = '?',
+                .text_code = 0x20eb,
+            },
+            {
+                .ascii = '@',
+                .text_code = 0x2109,
+            },
+            {
+                .ascii = '_',
+                .text_code = 0x20ee,
+            },
+        };
+
+        // find symbol
+        u16 text_code = 0xFFFF;
+        for (int i = 0; i < GetElementsIn(symbol_lookup); i++)
+        {
+            if (symbol_lookup[i].ascii == c)
+            {
+                text_code = symbol_lookup[i].text_code;
+                break;
+            }
+        }
+
+        // write out symbol
+        if (text_code != 0xFFFF)
+            return text_code;
+        else
+            return -1;
+    }
+}
+static float Text_GetStringWidth(char *s, float scale)
+{
+    struct KerningData
+    {
+        u8 x0;
+        u8 x1;
+    };
+    struct KerningData *kerning_data = (struct KerningData *)0x80509dc0;
+
+    int width = 0;
+
+    while (*s != '\0')
+    {
+        int character_cmd = Text_CharToCommand(*s);
+        int kerning_idx = character_cmd & 0xFF;
+        width += 32 - ((kerning_data[kerning_idx].x1 - 2) + kerning_data[kerning_idx].x0);
+        s++;
+    }
+
+    // scale gets floored as an int in the text library, mimic this for accuracy
+    float text_scale_adjusted = (int)(scale * (256.0)) * (1.0 / 256.0);
+
+    return (float)width * text_scale_adjusted;
 }
 
 /*** Functions ***/

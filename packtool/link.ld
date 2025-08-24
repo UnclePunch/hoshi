@@ -79,6 +79,7 @@ SECTIONS
   ROBJ_RemoveAll = 0x80419B2C;
   Archive_LoadFile = 0x800596B4;
   Archive_Init = 0x8041E224;
+  Archive_Free = 0x80059628;
   Archive_GetPublicAddress = 0x8041E390;
   File_GetPreloadedFile = 0x80073BA0;
   File_LoadSync = 0x80059364;

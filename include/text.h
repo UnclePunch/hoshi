@@ -38,6 +38,13 @@ typedef enum TextCmdOpcode
     TEXTCMD_NUM,
 } TextCmdOpcode;
 
+typedef enum TextAlignKind
+{
+    TEXTALIGN_LEFT,
+    TEXTALIGN_CENTER,
+    TEXTALIGN_RIGHT,
+} TextAlignKind;
+
 struct SISData
 {
     u8 *image_data_arr;   // array of I4 image data for characters, stride is (32*32) / 2

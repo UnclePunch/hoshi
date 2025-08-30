@@ -360,6 +360,8 @@ int Text_Sanitize(char *in, char *out, int buffer_size)
             out++;
             out_size++;
         }
+        else if (this_char == '\n')
+            in++;
         else
         {
             int is_found = 0;

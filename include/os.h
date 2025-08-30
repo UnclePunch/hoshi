@@ -297,11 +297,18 @@ struct OSContext
     u64 gqrs[4];             // 0x1a4
     u64 pairedSingles[0x20]; // starting at 0x1c8
 };
+struct OSHeapCell
+{
+    OSHeapCell *prev;
+    OSHeapCell *next;
+    int size;
+};
+
 typedef struct OSHeap
 {
     int size;
-    void *start;
-    void *end;
+    OSHeapCell *free;
+    OSHeapCell *allocated;
 } OSHeap;
 
 struct CARDStat

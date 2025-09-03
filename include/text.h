@@ -51,6 +51,13 @@ struct SISData
     u8 *kerning_data_arr; // array of kerning data for characters, stride is 0x2, kerning is at 0x0
 };
 
+struct TextHeapCell
+{
+    TextHeapCell *next;
+    void *alloc;
+    int size;
+};
+
 struct TextCanvas
 {
     TextCanvas *next; // 0x0
@@ -87,18 +94,13 @@ struct Text
     u8 hidden;                                // 0x4D
     u8 is_scissor;                            // 0x4E, crops the text within the bounding box 803a88e8
     u8 sis_id;                                // 0x4F, id of the premade text file to use
-    void *x50;                                // some buffer alloc'd @ 803a5ba0
+    Text *next;                               // some buffer alloc'd @ 803a5ba0
     GOBJ *gobj;                               // 0x54
     void (*render_callback)(GOBJ *text_gobj); // 0x58, read at 803a878c
     u8 *text_start;                           // 0x5C, start parsing text data at this ptr
     u8 *text_end;                             // 0x60, stops parsing text data at this ptr
-    struct                                    //
-    {                                         //
-        u8 *end;                              //
-        u8 *start;                            //
-        int size;                             // size of the text alloc
-    } *alloc;                                 // 0x64
-    void *x68;                                // 0x68, some alloc used for dialogue?
+    TextHeapCell *alloc;                      // 0x64
+    TextHeapCell *x68;                        // 0x68, some alloc used for dialogue?
     u16 x6c;                                  // 0x6c, flags of some kind
     u16 x6e;                                  // 0x6e
     struct
@@ -469,8 +471,8 @@ void Text_DestroySisHeap();
 /*** Variables ***/
 // Text data
 static int *stc_textheap_size = (int *)0x805de558;
-static TextCanvas **stc_textheap_start = (TextCanvas **)0x805de55c;
-static TextCanvas **stc_textheap_next = (TextCanvas **)0x805de560;
+static TextHeapCell **stc_textheap_start = (TextHeapCell **)0x805de55c;
+static TextHeapCell **stc_textheap_free = (TextHeapCell **)0x805de560;
 
 // Text GObj's data
 static Text **stc_text_first = (Text **)0x805de568;

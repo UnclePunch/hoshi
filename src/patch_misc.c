@@ -28,8 +28,9 @@ void Text_AlignSubtext(Text *t)
         TEXTCMD_ALIGNRIGHT,
     };
 
-    (*t->alloc->end) = align_cmds[t->align];
-    t->alloc->end++;
+    *(u8 *)t->alloc->next = align_cmds[t->align];                // write alignment command
+    t->alloc->next = (TextHeapCell *)((u8 *)t->alloc->next + 1); // increment next pointer
+    t->alloc->size++;
 }
 CODEPATCH_HOOKCREATE(0x80450030, "mr 3, 28\n\t", Text_AlignSubtext, "", 0)
 u8 *Text_SetTextAlign(Text *t, int idx)
@@ -71,6 +72,22 @@ void *MainMenu_LoadFGM()
     FGM_LoadInGameBanks();
 }
 CODEPATCH_HOOKCREATE(0x80015bd8, "", MainMenu_LoadFGM, "", 0)
+
+// Text HSDObj
+static HSD_ObjAllocData text_obj;
+void TextHeap_Init()
+{
+    HSD_ObjAllocInit(&text_obj, 0xa0, 4);
+}
+CODEPATCH_HOOKCREATE(0x8044f634, "", TextHeap_Init, "", 0)
+void *TextHeap_Alloc(int size)
+{
+    return HSD_ObjAlloc(&text_obj);
+}
+void TextHeap_Free(void *obj)
+{
+    HSD_ObjFree(&text_obj, obj);
+}
 
 void Patches_Apply()
 {
@@ -120,4 +137,9 @@ void Patches_Apply()
 
     // FGM Load
     CODEPATCH_HOOKAPPLY(0x80015bd8);
+
+    // Text HSDObj
+    CODEPATCH_HOOKAPPLY(0x8044f634);
+    CODEPATCH_REPLACECALL(0x8044f214, TextHeap_Alloc);
+    CODEPATCH_REPLACECALL(0x8044f0fc, TextHeap_Free);
 }

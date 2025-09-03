@@ -124,6 +124,7 @@ typedef struct ExclamData ExclamData;
 
 // Text
 typedef struct SISData SISData;
+typedef struct TextHeapCell TextHeapCell;
 typedef struct Text Text;
 typedef struct TextCanvas TextCanvas;
 

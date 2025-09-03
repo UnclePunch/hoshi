@@ -287,6 +287,7 @@ int HSD_Randi(int max);
 float HSD_Randf();
 void *HSD_MemAlloc(int size);
 void HSD_Free(void *ptr);
+void HSD_ObjAllocInit(HSD_ObjAllocData *data, size_t size, u32 align);
 void *HSD_ObjAlloc(HSD_ObjAllocData *obj_def);
 void HSD_ObjFree(HSD_ObjAllocData *obj_def, void *obj);
 void HSD_ClassDestroy(void *hsd_class);

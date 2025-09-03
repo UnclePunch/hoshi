@@ -120,6 +120,9 @@ SECTIONS
   GXInvalidateVtxCache = 0x803cb728;
   GXInvalidateTexAll = 0x803ce084;
   HSD_Free = 0x8041CEB4;
+  HSD_ObjAlloc = 0x804180e4;
+  HSD_ObjAllocInit = 0x8041825c;
+  HSD_ObjFree = 0x80418234;
   HSD_GetHeapID = 0x80410338;
   HSD_ImageDescCopyFromEFB = 0x803F7A7C;
   HSD_MemAlloc = 0x8041CEE4;

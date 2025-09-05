@@ -327,6 +327,15 @@ int Text_Sanitize(char *in, char *out, int buffer_size)
             .text_code = 0x8181,
         },
         {
+            .ascii = '<',
+            .text_code = 0x8183,
+        },
+        {
+            .ascii = '>',
+            .text_code = 0x8184,
+        },
+        {
+
             .ascii = '?',
             .text_code = 0x8148,
         },

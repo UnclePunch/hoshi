@@ -1863,10 +1863,11 @@ typedef struct grBoxGeneObj              // r13 + 0x608
     u8 sameitem_it_kind[ITKIND_NUM - 1]; // 0x19b
     u8 sameitem_chance[ITKIND_NUM - 1];  // 0x1df
     u8 sameitem_num;                     // 0x223
-    u8 unk_it_kind[40];                  // 0x224
-    u8 unk_chance[40];                   // 0x24c
-    u8 unk_num;                          // 0x274
-    int x278;                            // 0x278
+    // the following item pool is used when spawning more than 1 patch power up from a blue box
+    u8 subsequent_it_kind[40]; // 0x224
+    u8 subsequent_chance[40];  // 0x24c
+    u8 subsequent_num;         // 0x274
+    int x278;                  // 0x278
 } grBoxGeneObj;
 
 typedef struct grBoxGeneInfo // r13 + 0x610

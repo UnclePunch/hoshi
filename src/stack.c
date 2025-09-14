@@ -34,7 +34,8 @@ void Stack_Print()
     OSReport("\n");
 
     // attempt to load dol symbol names
-    if (stc_preload_heaps_lookup->heap_arr[0].is_disabled == 0 &&
+    if (DVDConvertPathToEntrynum("MxDb.dat") != -1 &&
+        stc_preload_heaps_lookup->heap_arr[0].is_disabled == 0 &&
         OSCheckHeap(HSD_GetHeapID()) > File_GetSize("MxDb.dat"))
     {
         HSD_Archive *debug_archive = Archive_LoadFile("MxDb.dat");

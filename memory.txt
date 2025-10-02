@@ -1,21 +1,35 @@
 KAR Memory Map
 
+OSInfo:
 0x80000000 -> 0x80003100
-	OSInfo
-0x80003100 -> 0x805ED870
-	DOL
-0x805ED870 -> 0x805f6720
-	Stack
-0x805f6720 -> 0x805f8740
-	OSReport Log
-0x805f8740 -> 0x80678740
-	Audio Heap
-0x80678740 -> 0x80824740
-	XFB Buffers (2 of these each with a size of 0x96000) (alloc'd @ 8040fdd4)
-0x80824740 -> 0x808531c0
-	Hoshi
-0x808531c0 -> 0x817fd260
-	Heap
+
+DOL:
+0x80003100 -> 0x805E6390
+
+OSThread:
+0x805E6390 -> 0x805ED870
+	
+Stack:
+0x805ED870 -> 0x805f6390
+
+(place additional dol code here?)
+
+OSReport Log:
+0x805f63a0 -> 0x805f83a0
+
+Audio Heap:
+0x805f83a0 -> ?
+	
+XFB Buffers (2 of these each with a size of 0x96000) (alloc'd @ 8040fdd4):
+? -> ?
+
+(Hoshi inserted here)
+
+Heap:
+? -> 0x817fd260
+	
+	
+
 0x817fd260 -> 0x817fffff
 	FST
 

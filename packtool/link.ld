@@ -10,6 +10,7 @@ SECTIONS
   AOBJ_ClearFlags = 0x803FB1AC;
   atan = 0x803BC94C;
   atan2 = 0x803BD3C8;
+  AudioHeap_SetAllocAndFree = 0x804479d4;
   bp = 0x802D4BB0;
   CARDCheckAsync = 0x803E55D8;
   CARDClose = 0x803E7264;

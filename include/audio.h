@@ -385,7 +385,7 @@ int SFX_PlayCommon(int sfxID);
 int SFX_PlayCrowd(int sfxID);
 void SFX_StopCrowd();
 
-char *Nametag_GetText(int tag_index);
+void AudioHeap_SetAllocAndFree(void *alloc_fun, void *free_func);
 void Audio_ResetCache(int group_index);
 void Audio_QueueFileLoad(int group_index, u64 ssm_index);
 void Audio_UpdateCache();

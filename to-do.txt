@@ -12,6 +12,7 @@
 - Buildtool
     - index reloc symbol offsets/addresses, should save a good amount of mem
     - implement debug strings
+    - can i free the memory containing the reloc data after i apply relocations? the code doesnt shift in memory once loaded
 
 Misc:
 - FGM pitch can be adjusted dynamically in debug menu?

@@ -58,7 +58,7 @@ OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o, \
           $(ALL_SOURCES))))
 
 # === Default target ===
-all: $(TARGET_BIN)
+all: $(TARGET_BIN) dol
 
 # === Compile or assemble all sources ===
 $(BUILDDIR)/%.o: %.c
@@ -84,18 +84,24 @@ $(TARGET_BIN): $(LINKED_O)
 
 -include $(OBJECTS:.o=.d)
 
+# --- dol Target ---
+dol:
+	$(MAKE) -C dol
+
 # --- Install Target ---
 # Copies the final .bin files from $(OUT_DIR) to $(INSTALL_DIR)
 install: all
+	$(MAKE) -C dol install INSTALL_DIR="$(INSTALL_DIR)"
 	@echo ""
-	@echo "--- Installing hoshi to "$(INSTALL_DIR)" ---"
-	cp "$(TARGET_BIN)" "$(strip $(INSTALL_DIR))"
+	@echo "--- Installing hoshi to "$(INSTALL_DIR)/files" ---"
+	cp "$(TARGET_BIN)" "$(strip $(INSTALL_DIR)/files)"
 	@echo ""
-	@echo "Installation complete."
+	@echo "Successfully installed hoshi."
 
 # === Clean ===
 clean:
+	$(MAKE) -C dol clean
 	rm -rf $(BUILDDIR) $(BINDIR)
 
-.PHONY: all clean install
+.PHONY: all dol clean install
  

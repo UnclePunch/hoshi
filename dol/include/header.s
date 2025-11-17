@@ -1,3 +1,6 @@
+.set AUDIO_HEAP_SIZE, 0x00034140
+
+/*
 .set DVDConvertPathToEntrynum, 0x803c4ed4
 .set File_GetSize, 0x8005915c
 .set OSCreateHeap, 0x803d3804
@@ -11,6 +14,7 @@
 .set TRK_FlushCache, 0x803bffd8
 .set OSReport, 0x803d4ce8
 .set assert, 0x804284b8
+*/
 
 .macro branchl reg, address
 lis \reg, \address @h
@@ -26,9 +30,9 @@ mtctr \reg
 bctr
 .endm
 
-.macro load reg, address
-lis \reg, \address @h
-ori \reg, \reg, \address @l
+.macro load reg, name
+lis \reg, (\name >> 16)
+ori \reg, \reg, (\name & 0xFFFF)
 .endm
 
 .macro backup

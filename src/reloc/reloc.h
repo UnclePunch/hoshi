@@ -4,6 +4,17 @@
 #include "structs.h"
 #include "datatypes.h"
 
+typedef enum RelocType
+{
+    R_PPC_NONE      = 0,
+    R_PPC_ADDR32    = 1,     // 32-bit absolute
+    R_PPC_ADDR16_LO = 4,     // lower 16 bits
+    R_PPC_ADDR16_HI = 5,     // upper 16 bits
+    R_PPC_ADDR16_HA = 6,     // upper 16 bits + adjust
+    R_PPC_REL24     = 10,    // 24-bit relative branch
+    R_PPC_REL32     = 26,    // 32-bit address
+};
+
 typedef struct ModHeader
 {
     char magic[4];
@@ -55,7 +66,7 @@ typedef struct MEXDebug
     MEXDebugSymbol *symbol; // 0x1c
 } MEXDebug;
 
-void reloc(ModHeader *header);
+void reloc(ModHeader *header, Reloc *reloc_table);
 void get_func(ModHeader *header, void **func_array);
 
 #endif

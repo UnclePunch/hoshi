@@ -288,34 +288,79 @@ void *MemAllocPersistent(int size)
 
     return alloc;
 }
+void MemFreePersistent(int size)
+{
+    u8 **stc_heap_next = (u8 **)0x805de290;
+    void *alloc = (void *)(*stc_heap_next); // next available address in "heap"
+
+    // "free" data
+    (*stc_heap_next) = (u8 *)((int)(*stc_heap_next) - OSRoundUp32B(size));
+
+    return;
+}
+
+void File_LoadCallback(int r3, int *is_loaded)
+{
+    (*is_loaded) = 1;
+    return;
+}
+int File_LoadOffsetSync(int entrynum, void *file_buffer, int file_offset, int file_size)
+{
+    
+    if (file_size == 0)
+    {
+        DVDFileInfo file_info;
+        DVDFastOpen(entrynum, &file_info);
+        file_size = file_info.length;
+        DVDClose(&file_info);
+    }
+
+    // load file
+    volatile int is_loaded = 0;
+    File_Read(entrynum, file_offset, file_buffer, OSRoundUp32B(file_size), 0x21, 1, File_LoadCallback, (void *)&is_loaded);
+
+    // wait to load
+    while (!is_loaded)
+        ;
+
+    return 1;
+}
 
 void Mods_CountFile(int entrynum, int *num)
 {
     (*num)++;
     return;
 }
-void Mods_LoadFile_Callback(int r3, int *is_loaded)
-{
-    (*is_loaded) = 1;
-    return;
-}
+
 void *Mods_LoadFile(int entrynum)
 {
 
-    // load this file
-    DVDFileInfo file_info;
-    DVDFastOpen(entrynum, &file_info);
-    int file_size = file_info.length;
-    DVDClose(&file_info);
-    void *file_buffer = HSD_MemAlloc(OSRoundUp32B(file_size));
+    bp();
 
-    // load file
-    volatile int is_loaded = 0;
-    File_Read(entrynum, 0, file_buffer, OSRoundUp32B(file_size), 0x21, 1, Mods_LoadFile_Callback, (void *)&is_loaded);
+    // get mod header
+    ModHeader mod_header __attribute__((aligned(32)));
+    File_LoadOffsetSync(entrynum, &mod_header, 0, sizeof(mod_header));
 
-    // wait to load
-    while (!is_loaded)
-        ;
+    // ensure its a supported mod version
+    if (mod_header.version != MOD_FILE_VERSION) {
+        OSReport("Unsupported mod version (%d). Requires version %d.\n", mod_header.version, MOD_FILE_VERSION);
+        assert("hoshi");
+    }
+
+    // load mod's code
+    void *file_buffer = HSD_MemAlloc(OSRoundUp32B(mod_header.relocs_offset));
+    File_LoadOffsetSync(entrynum, file_buffer, 0, mod_header.relocs_offset);
+
+    // load mod's reloc data
+    int reloc_size = mod_header.relocs_num * sizeof(Reloc);
+    Reloc *reloc_buffer = HSD_MemAlloc(OSRoundUp32B(reloc_size));
+    File_LoadOffsetSync(entrynum, reloc_buffer, mod_header.relocs_offset, reloc_size);
+
+    // reloc and overload
+    reloc(file_buffer, reloc_buffer);
+
+    // free relocs
+    MemFreePersistent(reloc_size);
 
     LOG_INFO("Loaded mod file: %s (0x%08x)", FST_GetFilenameFromEntrynum(entrynum), file_buffer);
 
@@ -329,11 +374,10 @@ void Mods_LoadGlobal(int entrynum)
 
     this_mod->entrynum = entrynum;
 
-    // load file
+    // load mod file
     ModHeader *file = Mods_LoadFile(entrynum); //
-
-    // reloc and overload
-    reloc(file);
+    
+    // get mod's function pointers
     get_func(file, (void **)&this_mod->data);
 
     // save ptr to mexFunction so we can access debug data

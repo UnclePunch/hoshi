@@ -1,20 +1,15 @@
 import sys
-import subprocess
 import re
+import subprocess
 import shutil
 import os
 import struct
 import argparse
 
-try:
-    from elftools.elf.elffile import ELFFile
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pyelftools"])
-    from elftools.elf.elffile import ELFFile
+import elf_utils
+from elf_utils import Section, RelocSection, Symbol, Reloc 
 
 build_dir = "_build"
-
-objdump_path = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-objdump")
 
 parser = argparse.ArgumentParser(description="Compile and pack C/ASM files into GC format.")
 parser.add_argument("linked_obj", help="Linked object file")
@@ -22,61 +17,52 @@ parser.add_argument("-l", "--link", required=False, help="Needed to link .dol fu
 parser.add_argument("-m", "--modtype", required=True, help="Will populate a lookup with this mod type's symbols")
 parser.add_argument("-o", "--output", default="output.bin", help="Output BIN file path")
 
-RELOC_TYPE_ENUM = {
-    "R_PPC_REL24":     1,
-    "R_PPC_ADDR32":    2,
-    "R_PPC_ADDR16_HA": 3,
-    "R_PPC_ADDR16_LO": 4,
-    "R_PPC_REL32":     5,
-}
-
 def main():
 
     args = parser.parse_args()
     output_path = args.output
     lookup_symbols = load_modtype_symbols(args.modtype)
+    linked_obj = args.linked_obj
 
     # Create temp build directory
     os.makedirs(build_dir, exist_ok=True)
 
-    # strip unused functions out of linked object
+    # # strip unused functions out of linked object
     linked_obj = strip_linked_obj(args.linked_obj, lookup_symbols)
-
-    # Dump symbols and relocs
-    symbols_txt = os.path.join(build_dir, "symbols.txt")
-    with open(symbols_txt, "w") as f:
-        subprocess.run([objdump_path, "-t", linked_obj], stdout=f)
-
-    relocs_txt = os.path.join(build_dir, "relocs.txt")
-    with open(relocs_txt, "w") as f:
-        subprocess.run([objdump_path, "-r", linked_obj], stdout=f)
-
-    # compiler_name = get_compiler_info(linked_obj)
-
-    all_sections = extract_sections_and_data(linked_obj)
-
-    symbols = parse_symbols(symbols_txt)
-    reloc_entries = parse_relocs(relocs_txt)
     
-    #with open(os.path.join(build_dir, "log.txt"), "wt") as f:
-    #    f.write("\nsymbol dictionary:\n\n") 
-    #    for name, info in symbols.items():
-    #        f.write(f"  {name} in {info['section']} at 0x{info['value']:X} ({info['size']} bytes)\n")
-    #    f.write("\nreloc entries:\n\n");
-    #    for r in reloc_entries:
-    #        f.write(f"  {r['type']} at .{r['section']}+0x{r['offset']:X} -> {r['symbol']}\n")
-            
-    write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbols)
+    # compiler_name = get_compiler_info(linked_obj)
+    
+    all_sections, symbols, relocs = elf_utils.extract(linked_obj)
+
+    write_modbin(output_path, all_sections, relocs, symbols, lookup_symbols)
  
-     # cleanup compile files
-    #print(f"[*] Cleaning build directory: {build_dir}")
+    # cleanup compile files
     shutil.rmtree(build_dir)
+
+def msys_to_win(path: str) -> str:
+    """Convert MSYS/Unix paths to Windows paths only when running on Windows."""
+    if os.name != "nt":
+        # Not Windows → return as-is
+        return path
+
+    # On Windows → convert using cygpath
+    result = subprocess.run(
+        ["cygpath", "-w", path],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+        
+    return result.stdout.strip()
 
 def strip_linked_obj(linked_obj, lookup_symbols):
     if not lookup_symbols:
         print(f"No symbols found for the chosen modtype.")
 
-    ld_path = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-ld")
+    ld_path_unix = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-ld")
+    ld_path = msys_to_win(ld_path_unix)
+
+    print(f"{ld_path}")
 
     # Build -u symbol args
     u_args = []
@@ -87,31 +73,6 @@ def strip_linked_obj(linked_obj, lookup_symbols):
     cmd = [ld_path, "-r", "--gc-sections"] + u_args + ["-o", linked_stripped, linked_obj]
     subprocess.run(cmd, check=True)
     return linked_stripped
-
-def extract_sections_and_data(file_path):
-    with open(file_path, 'rb') as f:
-        elf = ELFFile(f)
-
-        sections = {}
-        needed_sections = {".text", ".data", ".rodata", ".bss"}
-
-        # Loop over all sections in the ELF file
-        # print("[*] Sections and Data:")
-        for section in elf.iter_sections():
-            section_name = section.name
-            if any(section_name.startswith(prefix) for prefix in needed_sections):
-                section_data = section.data()
-
-                # Store the section name and data
-                sections[section_name] = {'data' : section_data, 'offset' : None}
-
-                # Print section information
-                # print(f"Section: {section_name}, Size: {len(section_data)} bytes")
-
-        
-        print(f"Extracted {len(sections)} sections")
-
-        return sections
 
 def get_compiler_info(obj_path):
     with open(obj_path, 'rb') as f:
@@ -129,93 +90,17 @@ def get_compiler_info(obj_path):
         # Decode strings and filter non-empty ones
         return [entry.decode('utf-8', errors='ignore') for entry in comments if entry]
 
-def parse_symbols(symbols_path):
-    symbols = {}
+def load_modtype_symbols(modtype, modtype_dir="modtypes"):
+    SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 
-    with open(symbols_path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("SYMBOL TABLE") or line.startswith("out/"):
-                continue
-
-            parts = line.split()
-            if len(parts) < 5:
-                continue  # Not enough parts to be useful
-
-            # Handle both 5 and 6+ part lines
-            if len(parts) == 5:
-                value_str, binding_type, section, size_str, name = parts
-                sym_type = None
-            else:
-                value_str, binding_type, sym_type, section, size_str, name = parts[:6]
-
-            try:
-                value = int(value_str, 16)
-                size = int(size_str, 16)
-            except ValueError:
-                continue
-
-            symbols[name] = {
-                "section": section,
-                "value": value,
-                "size": size
-            }
-
-    seen_offsets = {}
-    for name, info in symbols.items():
-        sec = info["section"]
-        key = (sec, info["value"])
-
-        # Skip section name symbols or debug symbols
-        if name == sec or name.endswith(".c") or sec == "*ABS*" and info["size"] == 0:
-            continue
-
-        if key in seen_offsets:
-            print(f"[!] Warning: Duplicate {sec} offset 0x{info['value']:X} for {name} and {seen_offsets[key]}")
-        else:
-            seen_offsets[key] = name
-
+    path = os.path.join(SCRIPT_DIR, modtype_dir, f"{modtype}.txt")
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Mod type '{modtype}' not found in {modtype_dir}/")
+    
+    with open(path, "r") as f:
+        symbols = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    
     return symbols
-
-def parse_relocs(relocs_path):
-    entries = []
-    current_section = None
-
-    section_header = re.compile(r"RELOCATION RECORDS FOR \[(\.[^\]]+)\]:")
-    reloc_line = re.compile(r"^([0-9a-fA-F]{8})\s+(\S+)\s+(\S+)$")
-
-    with open(relocs_path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-
-            # Match section headers
-            sec_match = section_header.match(line)
-            if sec_match:
-                current_section = sec_match.group(1)
-                # print(f"entering section {current_section}")
-                continue
-
-            # Match relocation lines
-            rel_match = reloc_line.match(line)
-            if rel_match:
-                offset = int(rel_match.group(1), 16)
-                rtype = rel_match.group(2)
-                symbol = rel_match.group(3)
-
-                # print(f" adding reloc {rtype} in section {current_section} pointing to {symbol}")
-                entries.append({
-                    "section": current_section,
-                    "offset": offset,
-                    "type": rtype,
-                    "symbol": symbol
-                })
-
-
-    print(f"Extracted {len(entries)} relocations")
-
-    return entries
 
 def resolve_symbol_offset(symbol_name, symbols, all_sections):
     """
@@ -254,114 +139,192 @@ def resolve_symbol_offset(symbol_name, symbols, all_sections):
 
     return None
 
-def load_modtype_symbols(modtype, modtype_dir="modtypes"):
-    SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+def roundup32(x: int) -> int:
+    return ((x + 31) // 32) * 32
 
-    path = os.path.join(SCRIPT_DIR, modtype_dir, f"{modtype}.txt")
-    if not os.path.isfile(path):
-        raise FileNotFoundError(f"Mod type '{modtype}' not found in {modtype_dir}/")
-    
-    with open(path, "r") as f:
-        symbols = [line.strip() for line in f if line.strip() and not line.startswith("#")]
-    
-    return symbols
+def bytes_pack(sections : list[Section]) -> bytearray:
+    bytes = bytearray()
+    print(f"begin packing byte array...")
+    for section in sections:
+        include_sections = [".text", ".rodata", ".data", ".sdata", ".bss"]
+        if any(section.name.startswith(term) for term in include_sections):
 
-def write_modbin(output_path, all_sections, reloc_entries, symbols, lookup_symbols):
+            bytes_offset = None
+
+            # pad byte array
+            padding = (4 - (len(bytes) % 4)) % 4
+            bytes.extend(b'\x00' * padding)
+
+            print(f" adding section {section.name} at offset 0x{len(bytes):08x}")
+
+            # append section data to byte array
+            bytes_offset = len(bytes)
+            bytes += section.data
+
+            section.bytes_offset = bytes_offset
+
+    print(f"done packing byte array.\n")
+
+    return bytes
+
+def write_modbin(output_path, all_sections: list[Section], reloc_sections : list[RelocSection], symbols : list[Symbol], lookup_symbols):
     
     # Pack all sections together
-    packed_data = bytearray()
-    debug_symbols = {}
-
-    # loop through all sections extracted from the o file
-    for key, entry in all_sections.items():
-        entry['offset'] = len(packed_data)  # calculate the offset of this section in the packed_data byte array
-        packed_data += entry['data']        # copy section data
-        if len(packed_data) % 4 != 0:
-            packed_data += bytes(4 - (len(packed_data) % 4))         # align all data to 4 bytes
-        if key.startswith(".text."):        # if this section contains code, add it to the debug symbols dictionary
-            debug_symbols[key.split(".text.", 1)[1]] = {'offset' : entry['offset'], 'size' : len(entry['data'])}
-
+    packed_data = bytes_pack(all_sections)
     packed_size = len(packed_data)
 
-    # create debug symbol bytearrays. one for lookup data and one for the symboldata
-    symbol_lookup_data = bytearray()
-    symbol_name_data = bytearray()
-    for key, entry in debug_symbols.items():
-        symbol_name_offset = len(symbol_name_data)
-        symbol_size = entry['size']
-        symbol_lookup_data += struct.pack(">I I I", symbol_name_offset, entry['offset'], symbol_size)
-        symbol_name_data += key.encode('ascii') + b'\x00'
-        # print(f"{key:<18} starts at offset {entry['offset']:X} with size {entry['size']:X}")
+    # create debug symbol bytearrays. one for lookup data and one for the symbol data
+    func_lookup_data = bytearray()
+    func_name_data = bytearray()
+    func_num = 0
+    for symbol in symbols:
+        if symbol.type == 'STT_FUNC':
+            symbol_name_offset = len(func_name_data)
+            symbol_size = all_sections[symbol.section_index].size
+            func_lookup_data += struct.pack(">I I I", symbol_name_offset, all_sections[symbol.section_index].bytes_offset, symbol_size)
+            func_name_data += symbol.name.encode('ascii') + b'\x00'
+            func_num += 1
+            # print(f"{key:<18} starts at offset {all_sections[symbol.section_index].bytes_offset:X} with size {all_sections[symbol.section_index].size:X}")
 
     # create reloc data
     encoded_relocs = bytearray()
-    for reloc in reloc_entries:
-        reloc_type = RELOC_TYPE_ENUM.get(reloc["type"])
-        if reloc_type is None:
-            print(f"[!] Unknown reloc type: {reloc['type']}")
+    for section in reloc_sections:
+        reloc_section_idx = section.target_section_index
+        reloc_section = all_sections[reloc_section_idx]
+
+        # ensure this section exists in our bytearray
+        if reloc_section.bytes_offset == None:
             continue
 
-        # Instruction offset
-        instr_section = f"{reloc['section']}"
-        instr_offset = all_sections[instr_section]['offset'] + reloc["offset"]
+        for i, reloc in enumerate(section.reloc_data):
+            reloc_type = reloc.type
+            patch_section_offset = reloc.section_offset
+            target_symbol_idx = reloc.symbol_index
+            target_symbol = symbols[target_symbol_idx]
+            target_addend = reloc.addend
+            target_symbol_type = target_symbol.type
+            target_symbol_section_idx =  target_symbol.section_index
+            target_symbol_section_value =  target_symbol.section_value
 
-        # Symbol offset
-        target_offset = resolve_symbol_offset(reloc["symbol"], symbols, all_sections)
-        # print(f" encoding reloc for section {instr_section} with target offset {target_offset:x}")
-        if target_offset is None:
-            print(f"[!] Symbol {reloc['symbol']} not found")
-            sys.exit(1)
+            target_section_offset = None
+            reloc_symbol_section = None
+            if target_symbol_section_idx != 'SHN_ABS':
+                reloc_symbol_section = all_sections[target_symbol_section_idx]
 
-        if instr_offset > 0xFFFFFF:
-            raise ValueError(f"Instruction offset too large: 0x{instr_offset:X}")
+            # STT_SECTION seems to use reloc addend to hold the offset of the section
+            if target_symbol_type == 'STT_SECTION':
+                target_section_offset = target_addend
+            # while everything else uses the section value from the target symbol
+            else:
+                target_section_offset = target_symbol_section_value
+                    
+            if 0:
+                print(f"[Reloc #{i}]")
+                print(f"Section to Patch: {reloc_section.name}")
+                print(f"Offset to Patch: 0x{patch_section_offset:08X}")
+                print(f"Relocation Type: {reloc_type}")
+                print(f"Symbol Index: {target_symbol_idx}")
+                print(f"Symbol Name: {target_symbol.name}")
+                print(f"Symbol Type: {target_symbol_type}")
+                if target_symbol_section_idx != 'SHN_ABS':
+                    print(f"Target Section: {reloc_symbol_section.name}")
+                    print(f"Target Blob Offset: 0x{reloc_symbol_section.bytes_offset:08X}")
+                    print(f"Target Section Offset: 0x{target_section_offset:08X}")
+                    print(f"Target Section Value: 0x{target_symbol_section_value:08X}")
+                else:
+                    print(f"Symbol Value: 0x{target_symbol_section_value:08X}")
+                print(f"")
 
-        header = (reloc_type << 24) | (instr_offset & 0xFFFFFF)
-        encoded_relocs += struct.pack(">I I", header, target_offset)
+            if reloc.type is None:
+                print(f"[!] Unknown reloc type: {reloc.type}")
+                continue
+
+            patch_offset = reloc_section.bytes_offset + patch_section_offset
+            if target_symbol_section_idx == 'SHN_ABS':
+                patch_data = target_symbol_section_value
+            else:
+                patch_data = reloc_symbol_section.bytes_offset + target_section_offset
+
+            if patch_offset > 0xFFFFFF:
+                raise ValueError(f"Instruction offset too large: 0x{patch_offset:X}")
+
+            header = (reloc.type << 24) | (patch_offset & 0xFFFFFF)
+            encoded_relocs += struct.pack(">I I", header, patch_data)    
 
     # create lookup for this mods symbols
+    symbol_dict = {this.name: this for this in symbols} # create a dict to make accessing symbols faster
     present_lookup_symbols = bytearray()
-    symbol_idx = 0
-    for symbol_name in lookup_symbols:
-        symbol_offset = resolve_symbol_offset(symbol_name, symbols, all_sections)
-        if symbol_offset is not None:
-            present_lookup_symbols += struct.pack(">I I", symbol_idx, symbol_offset)
+    for i, symbol_name in enumerate(lookup_symbols):
+        symbol = symbol_dict.get(symbol_name)
+        if symbol is not None and isinstance(symbol.section_index, int):
+            present_lookup_symbols += struct.pack(">I I", i, all_sections[symbol.section_index].bytes_offset)
             print(f" [X] {symbol_name}")
         else:
             print(f" [ ] {symbol_name}")
-        symbol_idx+=1
+    
+    # Define the binary header format (big endian)
+    HEADER_FMT = ">4sB3xIIIIIIII I"
+    HEADER_SIZE = struct.calcsize(HEADER_FMT)
 
-    header_size = 0x2c
+    MAGIC   = b"GCMB"
+    VERSION = 2
 
+    # Sizes
+    lookup_size_bytes = len(present_lookup_symbols)
+    reloc_size_bytes  = len(encoded_relocs)
+    func_lookup_size = len(func_lookup_data)
+    func_names_size = len(func_name_data)
+
+    lookup_count = lookup_size_bytes // 8
+    reloc_count  = reloc_size_bytes // 8
+
+    # Offsets
+    off_lookup      = HEADER_SIZE
+    off_packed      = roundup32(off_lookup + lookup_size_bytes)
+    off_func_lookup = off_packed + packed_size
+    off_func_name   = off_func_lookup + func_lookup_size 
+    off_reloc       = roundup32(off_func_name + func_names_size)
+
+    print(f"off_lookup 0x{off_lookup:08x}")
+    print(f"off_packed 0x{off_packed:08x}")
+    print(f"off_func_lookup 0x{off_func_lookup:08x}")
+    print(f"off_func_name 0x{off_func_name:08x}")
+    print(f"off_reloc 0x{off_reloc:08x}")
+
+    # Build header block
+    header = struct.pack(
+        HEADER_FMT,
+        MAGIC,
+        VERSION,
+        off_lookup,
+        lookup_count,
+        off_packed,
+        packed_size,
+        off_reloc,
+        reloc_count,
+        off_func_lookup,
+        off_func_name,
+        func_num,
+    )
+
+    # Write the final binary
     with open(output_path, "wb") as f:
-        # Header
-        f.write(b"GCMB")                                                                                                                        # Magic
-        f.write(struct.pack(">B", 1))                                                                                                           # Version
-        f.write(b"\x00\x00\x00")                                                                                                                # Reserved
-        f.write(struct.pack(">I", header_size))                                                                                                 # symbol lookup file pointer
-        f.write(struct.pack(">I", len(present_lookup_symbols) // 8))                                                                            # symbol lookup size
-        f.write(struct.pack(">I", header_size + len(present_lookup_symbols)))                                                                   # Packed section file pointer
-        f.write(struct.pack(">I", packed_size))                                                                                                 # Packed section size
-        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size))                                                     # Relocation data file pointer
-        f.write(struct.pack(">I", len(encoded_relocs) // 8))                                                                                    # Relocation count
-        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size + len(encoded_relocs)))                               # debug symbol lookup file pointer
-        f.write(struct.pack(">I", header_size + len(present_lookup_symbols) + packed_size + len(encoded_relocs) + len(symbol_lookup_data)))     # debug symbol names file pointer
-        f.write(struct.pack(">I", len(debug_symbols)))                                                                                          # symbol name count
+        f.write(header)
 
-        # lookup symbols
+        f.seek(off_lookup)
         f.write(present_lookup_symbols)
 
-        # Data
+        f.seek(off_packed)
         f.write(packed_data)
-        
-        # write reloc data
-        f.write(encoded_relocs)
 
-        # write symbol lookup data
-        f.write(symbol_lookup_data)
+        f.seek(off_func_lookup)
+        f.write(func_lookup_data)
 
-        # write symbol name data
-        f.write(symbol_name_data)
-        
+        f.seek(off_func_name)
+        f.write(func_name_data)    
+
+        f.seek(off_reloc)
+        f.write(encoded_relocs)  
         print(f"Wrote {f.tell()} bytes of data to {output_path}")
 
 if __name__ == "__main__":

@@ -292,6 +292,26 @@ SECTIONS
   VECCrossProduct = 0x803D21BC;
   VECDotProduct = 0x803D219C;
   VECNormalize = 0x803D20FC;
+
+  SOInit = 0x8047b020;
+  SOStartup = 0x8047b2f8;
+  SOCleanup = 0x8047b0a0;
+  SOSetResolver = 0x8047ac54;
+  SOGetResolver = 0x8047ad40;
+  SOSocket = 0x8047b888;
+  SOClose = 0x8047c3b8;
+  SOBind = 0x8047cbbc;
+  SOConnect = 0x8047cce0;
+  SORead = 0x8047cde4;
+  SORecvFrom = 0x8047ce0c;
+  SOWrite = 0x8047d044;
+  SOSendTo = 0x8047d06c;
+  SOAccept = 0x8047c8fc;
+  SOListen = 0x8047c7d0;
+  SOSetSockOpt = 0x8047d9a4;
+  SOFcntl = 0x8047d9d8;
+  SOPoll = 0x8047db90;
+
   MainMenu_InitAllVariables = 0x80007808;
   Gm_GetMenuData = 0x801311E0;
   Gm_GetGameData = 0x80006C14;

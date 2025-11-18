@@ -2,9 +2,8 @@
 #include "os.h"
 #include "hoshi/log.h"
 
-void reloc(ModHeader *header)
+void reloc(ModHeader *header, Reloc *reloc_table)
 {
-    Reloc *reloc_table = (Reloc *)((int)header + header->relocs_offset);
     void *code_ptr = (void *)((int)header + (int)header->code_offset);
 
     for (int reloc_idx = 0; reloc_idx < header->relocs_num; reloc_idx++)
@@ -19,7 +18,7 @@ void reloc(ModHeader *header)
 
         switch (cmd)
         {
-        case 1: // branch instr
+        case R_PPC_REL24: // branch instr
         {
             int offset = (int)symbol_ptr - (int)instr_ptr; // get offset
             int branch_instr = *(int *)instr_ptr;          // get branch instr
@@ -28,13 +27,13 @@ void reloc(ModHeader *header)
 
             break;
         }
-        case 2: // static addr
+        case R_PPC_ADDR32: // static addr
         {
             *(int *)instr_ptr = (int)symbol_ptr;
             break;
         }
-        case 3: // load addr (high half)
-        case 4: // load addr (low half)
+        case R_PPC_ADDR16_HA: // load addr (high half)
+        case R_PPC_ADDR16_LO: // load addr (low half)
         {
             // check if the low half is signed
             if ((int)symbol_ptr & 0x8000)
@@ -45,14 +44,18 @@ void reloc(ModHeader *header)
                 symbol_ptr = (int *)(((high + 1) << 16) | low);
             }
 
-            if (cmd == 3) // high half
+            if (cmd == R_PPC_ADDR16_HA) // high half
                 *(unsigned short *)(instr_ptr) = ((int)symbol_ptr >> 16);
-            else if (cmd == 4) // low half
+            else if (cmd == R_PPC_ADDR16_LO) // low half
                 *(unsigned short *)(instr_ptr) = ((int)symbol_ptr & 0x0000ffff);
 
             break;
         }
-        case 5: // relative 32 bit
+        case R_PPC_ADDR16_HI : // idk
+        {
+            assert("R_PPC_ADDR16_HI detected, uh oh\n");
+        }
+        case R_PPC_REL32: // relative 32 bit
         {
             int offset = (int)symbol_ptr - (int)instr_ptr; // get offset
             *(int *)instr_ptr = offset;

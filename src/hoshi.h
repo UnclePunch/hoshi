@@ -8,6 +8,8 @@
 #define MODLOADER_VERSION_MAJOR 1
 #define MODLOADER_VERSION_MINOR 2
 
+#define MOD_FILE_VERSION 2
+
 typedef struct MenuDesc MenuDesc;
 typedef struct MenuSave MenuSave;
 

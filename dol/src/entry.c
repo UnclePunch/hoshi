@@ -14,6 +14,11 @@ void *AllocHeapLo(int size)
 
     return alloc;
 }
+void FreeHeapLo(int size)
+{
+    void *alloc = *heap_lo_addr;
+    (*heap_lo_addr) = (void *)((int)(*heap_lo_addr) - OSRoundUp32B(size));
+}
 
 void func()
 {
@@ -28,15 +33,19 @@ void func()
     }
 
     // load file
-    void *buffer = AllocHeapLo(File_GetSize(modloader_filename));
+    ModHeader *buffer = AllocHeapLo(File_GetSize(modloader_filename));
     int out_size;
     File_LoadSync(modloader_filename, buffer, &out_size);
 
     // apply relocs
     reloc(buffer);
 
+    // free relocs
+    FreeHeapLo(buffer->relocs_num * sizeof(Reloc));
+
     // flush cache on the code
-    TRK_FlushCache(buffer, out_size);
+    void *code_ptr = (void*)((int)buffer + (int)buffer->code_offset);
+    TRK_FlushCache(code_ptr, buffer->code_size);
 
     // get onBoot function from modloader
     void (*on_boot)(ModHeader *);

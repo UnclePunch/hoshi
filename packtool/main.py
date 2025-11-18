@@ -144,7 +144,7 @@ def roundup32(x: int) -> int:
 
 def bytes_pack(sections : list[Section]) -> bytearray:
     bytes = bytearray()
-    print(f"begin packing byte array...")
+    # print(f"begin packing byte array...")
     for section in sections:
         include_sections = [".text", ".rodata", ".data", ".sdata", ".bss"]
         if any(section.name.startswith(term) for term in include_sections):
@@ -155,7 +155,7 @@ def bytes_pack(sections : list[Section]) -> bytearray:
             padding = (4 - (len(bytes) % 4)) % 4
             bytes.extend(b'\x00' * padding)
 
-            print(f" adding section {section.name} at offset 0x{len(bytes):08x}")
+            # print(f" adding section {section.name} at offset 0x{len(bytes):08x}")
 
             # append section data to byte array
             bytes_offset = len(bytes)
@@ -163,7 +163,7 @@ def bytes_pack(sections : list[Section]) -> bytearray:
 
             section.bytes_offset = bytes_offset
 
-    print(f"done packing byte array.\n")
+    # print(f"done packing byte array.\n")
 
     return bytes
 
@@ -285,12 +285,6 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
     off_func_name   = off_func_lookup + func_lookup_size 
     off_reloc       = roundup32(off_func_name + func_names_size)
 
-    print(f"off_lookup 0x{off_lookup:08x}")
-    print(f"off_packed 0x{off_packed:08x}")
-    print(f"off_func_lookup 0x{off_func_lookup:08x}")
-    print(f"off_func_name 0x{off_func_name:08x}")
-    print(f"off_reloc 0x{off_reloc:08x}")
-
     # Build header block
     header = struct.pack(
         HEADER_FMT,
@@ -325,7 +319,10 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
 
         f.seek(off_reloc)
         f.write(encoded_relocs)  
-        print(f"Wrote {f.tell()} bytes of data to {output_path}")
+
+        print(f"Relocs size: {len(encoded_relocs) / 1024:.2f}kb")
+        print(f"Wrote {f.tell() / 1024:.2f} kilobytes of data to {output_path}")
+        
 
 if __name__ == "__main__":
     main()

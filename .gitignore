@@ -2,3 +2,5 @@
 dol/kar.dol
 /dol/build
 /dol/Riivolution
+/dol/dol_inject/__pycache__
+/packtool/__pycache__

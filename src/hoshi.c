@@ -234,12 +234,8 @@ void OnFileLoad(ModHeader *file)
         // count size of all mods
         int mods_size = 0;
         for (int i = 0; i < stc_modloader_data->mod_num; i++)
-        {
-            DVDFileInfo file_info;
-            DVDFastOpen(stc_modloader_data->mods[i].entrynum, &file_info);
-            mods_size += file_info.length;
-            DVDClose(&file_info);
-        }
+            mods_size += stc_modloader_data->mods[i].mod_header->relocs_offset;
+
         LOG_INFO("Installed %d mods (%.2fkb) in %.2fms", mod_num, BytesToKB(mods_size), MillisecondsSinceTick(tick));
 
         Preload_IncreasePersistentHeapSize(); // increase size of persistent heap to fit any new files
@@ -266,7 +262,7 @@ void OnFileLoad(ModHeader *file)
 
     // log out memory used by hoshi
     void *hoshi_data_end = (*(void **)0x805de290);
-    int hoshi_data_size = ((int)hoshi_data_end - (int)hoshi_data_start) + OSRoundUp32B(File_GetSize("hoshi.bin"));
+    int hoshi_data_size = ((int)hoshi_data_end - (int)hoshi_data_start) + OSRoundUp32B(file->relocs_offset);
     int remaining_size = *(int *)0x805de294 - *(int *)0x805de290;
     LOG_INFO("hoshi + mods using %.2fkb.", BytesToKB(hoshi_data_size));
     LOG_INFO("Remaining memory: %.2fkb.", BytesToKB(remaining_size));
@@ -306,15 +302,6 @@ void File_LoadCallback(int r3, int *is_loaded)
 }
 int File_LoadOffsetSync(int entrynum, void *file_buffer, int file_offset, int file_size)
 {
-    
-    if (file_size == 0)
-    {
-        DVDFileInfo file_info;
-        DVDFastOpen(entrynum, &file_info);
-        file_size = file_info.length;
-        DVDClose(&file_info);
-    }
-
     // load file
     volatile int is_loaded = 0;
     File_Read(entrynum, file_offset, file_buffer, OSRoundUp32B(file_size), 0x21, 1, File_LoadCallback, (void *)&is_loaded);
@@ -335,32 +322,28 @@ void Mods_CountFile(int entrynum, int *num)
 void *Mods_LoadFile(int entrynum)
 {
 
-    bp();
+    DVDFileInfo file_info;
+    DVDFastOpen(entrynum, &file_info);
+    int file_size = file_info.length;
+    DVDClose(&file_info);
 
-    // get mod header
-    ModHeader mod_header __attribute__((aligned(32)));
-    File_LoadOffsetSync(entrynum, &mod_header, 0, sizeof(mod_header));
+    // load mod
+    ModHeader *file_buffer = HSD_MemAlloc(OSRoundUp32B(file_size));
+    File_LoadOffsetSync(entrynum, file_buffer, 0, file_size);
 
     // ensure its a supported mod version
-    if (mod_header.version != MOD_FILE_VERSION) {
-        OSReport("Unsupported mod version (%d). Requires version %d.\n", mod_header.version, MOD_FILE_VERSION);
+    if (file_buffer->version != MOD_FILE_VERSION) {
+        OSReport("Unsupported mod version (%d). Requires version %d.\n", file_buffer->version, MOD_FILE_VERSION);
         assert("hoshi");
     }
 
-    // load mod's code
-    void *file_buffer = HSD_MemAlloc(OSRoundUp32B(mod_header.relocs_offset));
-    File_LoadOffsetSync(entrynum, file_buffer, 0, mod_header.relocs_offset);
-
-    // load mod's reloc data
-    int reloc_size = mod_header.relocs_num * sizeof(Reloc);
-    Reloc *reloc_buffer = HSD_MemAlloc(OSRoundUp32B(reloc_size));
-    File_LoadOffsetSync(entrynum, reloc_buffer, mod_header.relocs_offset, reloc_size);
-
     // reloc and overload
-    reloc(file_buffer, reloc_buffer);
+    reloc(file_buffer);
 
     // free relocs
-    MemFreePersistent(reloc_size);
+    int relocs_size = file_buffer->relocs_num * sizeof(Reloc);
+    MemFreePersistent(relocs_size);
+    LOG_INFO("Freeing relocs (%.2f kb)", BytesToKB(relocs_size));
 
     LOG_INFO("Loaded mod file: %s (0x%08x)", FST_GetFilenameFromEntrynum(entrynum), file_buffer);
 

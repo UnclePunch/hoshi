@@ -66,7 +66,7 @@ typedef struct MEXDebug
     MEXDebugSymbol *symbol; // 0x1c
 } MEXDebug;
 
-void reloc(ModHeader *header, Reloc *reloc_table);
+void reloc(ModHeader *header);
 void get_func(ModHeader *header, void **func_array);
 
 #endif

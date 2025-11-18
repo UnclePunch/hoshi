@@ -2,8 +2,9 @@
 #include "os.h"
 #include "hoshi/log.h"
 
-void reloc(ModHeader *header, Reloc *reloc_table)
+void reloc(ModHeader *header)
 {
+    Reloc *reloc_table = (Reloc *)((int)header + header->relocs_offset);
     void *code_ptr = (void *)((int)header + (int)header->code_offset);
 
     for (int reloc_idx = 0; reloc_idx < header->relocs_num; reloc_idx++)

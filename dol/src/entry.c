@@ -17,38 +17,6 @@ void *AllocHeapLo(int size)
 
 void func()
 {
-
-    int num = HSD_Randi(5);
-
-    switch (num)
-    {
-    case (0):
-    {
-        OSReport("please");
-        break;
-    }
-    case (1):
-    {
-        OSReport("excuse");
-        break;
-    }
-    case (2):
-    {
-        OSReport("my dear");
-        break;
-    }
-    case (3):
-    {
-        OSReport("aunt");
-        break;
-    }
-    case (4):
-    {
-        OSReport("sally");
-        break;
-    }
-    }
-
     // set audio heap alloc and free callbacks (needed for file load callback)
     AudioHeap_SetAllocAndFree((void *)0x80059d28, (void *)0x80059d50);
 

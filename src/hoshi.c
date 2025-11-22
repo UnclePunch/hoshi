@@ -546,19 +546,19 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
             // update the mod's pointer to its save file data
             if (mod->data.save_ptr)
                 (*mod->data.save_ptr) = mod->save.user_data;
-
-            if (mod->data.OnSaveLoaded)
-            {
-                LOG_INFO("Exec save loaded func...\n", mod->data.name);
-                mod->data.OnSaveLoaded();
-                OSReport("\n");
-                LOG_INFO("Done.", mod->data.name);
-            }
         }
         else
         {
             LOG_INFO("No save data.", mod->data.name);
             req_init = 0;
+        }
+
+        if (mod->data.OnSaveLoaded)
+        {
+            LOG_INFO("Exec save loaded func...\n", mod->data.name);
+            mod->data.OnSaveLoaded();
+            OSReport("\n");
+            LOG_INFO("Done.", mod->data.name);
         }
     }
 

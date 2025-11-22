@@ -55,11 +55,21 @@ typedef enum PreloadFileKind // 0x1 of PreloadEntry
     PRELOADFILEKIND_NUM,     // m-ex uses this as a custom file_kind. its main purpose to not be marked as unneeded every time the preload table is updated (cant preload arbitrary files in vanilla melee)
 } PreloadFileKind;
 
+typedef enum PreloadHeapPriority // 0x10 of PreloadEntry
+{
+    PRELOADHEAPPRI_0,
+    PRELOADHEAPPRI_DRAM_LO,         // places heap at lowest available memory address
+    PRELOADHEAPPRI_DRAM_HI,         // places heap at highest available memory address closest to ArenaHi
+    PRELOADHEAPPRI_NONE,            // skips entirely?
+    PRELOADHEAPPRI_ARAM_LO,         // uses aram_addr_start
+    PRELOADHEAPPRI_ARAM_HI,         // uses aram_addr_end
+} PreloadHeapPriority;
+
 struct PreloadHeapDesc //
 {
     PreloadHeapKind kind;
     int location;
-    int pri;
+    int pri;                // 10 = dram? 2 = aram?
     int size;
 };
 
@@ -80,13 +90,13 @@ struct PreloadHandle
 
 struct PreloadHeap //
 {
-    int heap_index;        // 0x0, is a heap ID returned by OSCreateHeap, is = -1 if the heap doesnt use OSCreateHeap
-    PreloadHandle *handle; // 0x4, name evidenced by assert @ 80014f10
-    void *addr_start;      // 0x8
-    int size;              // 0xC
-    int pri;               // 0x10. 0 will allocate using OSCreateHeap, 1 will create heap using 80014e24. 2 = use main heap AND handles?? has something to do with how the heap is built. is referencedwhen freeing a preloaded file. if this is 1 it will properly free up the preload entry
-    int req_disable;       // 0x14, temp variable used in Preload_ResetHeaps
-    int is_disabled;       // 0x18,
+    int heap_index;             // 0x0, is a heap ID returned by OSCreateHeap, is = -1 if the heap doesnt use OSCreateHeap
+    PreloadHandle *handle;      // 0x4, name evidenced by assert @ 80014f10
+    void *addr_start;           // 0x8
+    int size;                   // 0xC
+    PreloadHeapPriority pri;    // 0x10. 0 will allocate using OSCreateHeap, 1 will create heap using 80014e24. 2 = use main heap AND handles?? has something to do with how the heap is built. is referencedwhen freeing a preloaded file. if this is 1 it will properly free up the preload entry
+    int req_disable;            // 0x14, temp variable used in Preload_ResetHeaps
+    int is_disabled;            // 0x18,
 };
 
 struct PreloadHeapLookup //

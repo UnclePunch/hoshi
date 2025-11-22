@@ -18,6 +18,7 @@ char *strrchr(const char *, int);
 #define OSRoundUp512B(x) (((u32)(x) + 512 - 1) & ~(512 - 1)) // using this for card reads
 #define OSRoundDown512B(x) (((u32)(x)) & ~(512 - 1))         // using this for card reads
 #define OSTicksToMilliseconds(ticks) ((float)(ticks) / ((os_info->bus_clock / 4) / 1000))
+#define OSMillisecondsToTicks(ms) ((ms) * ((os_info->bus_clock / 4) / 1000))
 #define OSTicksToMicroseconds(ticks) ((ticks) / ((os_info->bus_clock / 4) / 1000000))
 #define MillisecondsSinceTick(ticks) ((float)OSTicksToMicroseconds(OSGetTick() - ticks) / 1000) // returns microseconds between tick given and the current tick
 #define BytesToKB(bytes) ((float)(bytes) / 1000.0)
@@ -35,6 +36,8 @@ char *strrchr(const char *, int);
 #define MEM_PHYSICAL_TO_K0(x) (void *)((u32)(x) + SYS_BASE_CACHED)        /*!< Cast physical address to cached virtual address, e.g. 0x0xxxxxxx -> 0x8xxxxxxx */
 #define _SHIFTL(v, s, w) ((u32)(((u32)(v) & ((0x01 << (w)) - 1)) << (s))) // mask the first w bits of v before lshifting
 #define _SHIFTR(v, s, w) ((u32)(((u32)(v) >> (s)) & ((0x01 << (w)) - 1))) // rshift v and mask the first w bits afterwards
+#define tostr(s) xstr(s)
+#define xstr(s) #s
 
 // #define INFINITY ((float)(HUGE_ENUF * HUGE_ENUF))
 // #define M_PI (3.14159265358979323846)
@@ -248,7 +251,7 @@ struct OSInfo
     int xD8;               // 0x800000D8
     int xDC;               // 0x800000DC
     int xE0;               // 0x800000E0
-    int curr_osthread;     // 0x800000E4
+    OSThread *curr_osthread;// 0x800000E4
     int xE8;               // 0x800000E8
     int xEC;               // 0x800000EC
     int simulated_memsize; // 0x800000F0
@@ -310,6 +313,59 @@ typedef struct OSHeap
     OSHeapCell *free;
     OSHeapCell *allocated;
 } OSHeap;
+
+struct OSThreadQueue
+{
+    OSThread *head;
+    OSThread *tail;
+};
+
+typedef struct OSMutex {
+    OSThreadQueue queue;  // at 0x0
+    OSThread* thread;     // at 0x8
+    s32 lock;             // at 0xC
+    struct OSMutex* next; // at 0x10
+    struct OSMutex* prev; // at 0x14
+} OSMutex;
+
+struct OSMutexQueue
+{
+    OSMutex *head;
+    OSMutex *tail;
+};
+
+struct OSThreadLink
+{
+    OSThread *next;
+    OSThread *prev;
+};
+struct OSThread
+{
+    OSContext context; // register context
+
+    u16 state;    // OS_THREAD_STATE_*
+    u16 attr;     // OS_THREAD_ATTR_*
+    s32 suspend;  // suspended if the count is greater than zero
+    s32 priority; // effective scheduling priority
+    s32 base;     // base scheduling priority
+    void *val;    // exit value
+
+    OSThreadQueue *queue; // queue thread is on
+    OSThreadLink link;    // queue link
+
+    OSThreadQueue queueJoin; // list of threads waiting for termination (join)
+
+    OSMutex *mutex;          // mutex trying to lock
+    OSMutexQueue queueMutex; // list of mutexes owned
+
+    OSThreadLink linkActive; // link of all threads for debugging
+
+    u8 *stackBase; // the thread's designated stack (high address)
+    u32 *stackEnd; // last word of stack (low address)
+
+    s32 error;
+    void *specific[2]; // thread specific data
+};
 
 struct CARDStat
 {
@@ -577,7 +633,16 @@ int OSGetTick();
 u64 OSGetTime();
 void OSTicksToCalendarTime(u64 time, OSCalendarTime *td);
 u64 cvt_dbl_usll(float num);
+void OSCancelThread(OSThread* thread);
+long OSCheckActiveThreads(void);
+int OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stackBase, u32 stackSize, s32 priority, u16 attribute);
+void OSExitThread(void* val);
+s32 OSResumeThread(OSThread* thread);
+void OSSleepThread(OSThreadQueue* queue);
+s32 OSSuspendThread(OSThread* thread);
+void OSWakeupThread(OSThreadQueue* queue);
 void OSCreateAlarm(OSAlarm *alarm);
+void OSSetAlarm(OSAlarm *alarm, OSTime tick, void *handler);
 void OSSetPeriodicAlarm(OSAlarm *alarm, OSTime start, OSTime period, void *handler);
 void OSCancelAlarm(OSAlarm *alarm);
 void OSReport(char *, ...);
@@ -711,4 +776,5 @@ void Wind_StageCreate(Vec3 *pos, int duration, float radius, float lifetime, flo
 void Wind_FighterCreate(Vec3 *pos, int duration, float radius, float lifetime, float angle);
 
 int bp();
+
 #endif

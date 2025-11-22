@@ -9,6 +9,7 @@
 #include "os.h"
 #include "scene.h"
 #include "preload.h"
+#include "ip.h"
 
 #include <string.h>
 // #include <math.h>
@@ -748,5 +749,61 @@ static void GX_DrawLine(Vec3 *start, Vec3 *end, u8 width, GXColor *color)
 
     HSD_StateInvalidate(-1);
 }
+
+struct OSAlarmData
+{
+    OSAlarm alarm;
+    void *userdata;
+};
+static void SleepAlarmHandler(struct OSAlarmData* alarm, OSContext* ctx) 
+{
+    OSResumeThread((OSThread*)(alarm->userdata));
+}
+static void OSSleepTicks(s64 ticks) {
+    int enabled;
+    struct OSAlarmData alarm;
+    OSThread* thread;
+
+    enabled = OSDisableInterrupts();
+
+    thread = os_info->curr_osthread;
+    if (thread == NULL) {
+        OSRestoreInterrupts(enabled);
+        return;
+    }
+
+    OSCreateAlarm((OSAlarm *)&alarm);
+    alarm.userdata = thread;
+    OSSetAlarm((OSAlarm *)&alarm, ticks, SleepAlarmHandler);
+
+    OSSuspendThread(thread);
+    OSCancelAlarm((OSAlarm *)&alarm);
+    OSRestoreInterrupts(enabled);
+}
+static void OSSleepMilliseconds(int msec)
+{
+    OSSleepTicks(OSMillisecondsToTicks(msec));
+}
+
+static char* IPNtoA(const SOInAddr addr) {
+    static char ascii[16];
+    u8 *addr_ptr = (u8 *)&addr;
+
+    sprintf(ascii, "%d.%d.%d.%d", addr_ptr[0], addr_ptr[1], addr_ptr[2], addr_ptr[3]);
+    return ascii;
+}
+
+static char* SOInetNtoP(int af, void* src, char* dst, u32 len) {
+    const u8* addr;
+
+    if (af == 2 && dst != NULL && len >= 16) {
+        addr = (const u8*)src;
+        sprintf(dst, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3]);
+        return dst;
+    }
+
+    return NULL;
+}
+
 
 #endif

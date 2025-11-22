@@ -202,7 +202,15 @@ SECTIONS
   BGM_RaiseVolume = 0x80061BA0;
   cvt_sll_flt = 0x803ae03c;
   cvt_dbl_usll = 0x803ae0f0;
+  OSCreateThread = 0x803da0d0;
+  OSCancelThread = 0x803da39c;
+  OSSleepThread = 0x803daa90;
+  OSResumeThread = 0x803da698;
+  OSSuspendThread = 0x803da920;
+  OSWakeupThread = 0x803dab7c;
+  OSCheckActiveThreads = 0x803dad1c;
   OSCreateAlarm = 0x803d2e80;
+  OSSetAlarm = 0x803d30e0;
   OSSetPeriodicAlarm = 0x803d3148;
   OSCancelAlarm = 0x803d31c4;
   OSCheckHeap = 0x803D3884;
@@ -294,8 +302,9 @@ SECTIONS
   VECNormalize = 0x803D20FC;
 
   SOInit = 0x8047b020;
-  SOStartup = 0x8047b2f8;
-  SOCleanup = 0x8047b0a0;
+  SOGetHostID = 0x8047db1c;
+  SOStartup = 0x8047b0a0;
+  SOCleanup = 0x8047b578;
   SOSetResolver = 0x8047ac54;
   SOGetResolver = 0x8047ad40;
   SOSocket = 0x8047b888;

@@ -206,6 +206,9 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
             target_symbol_section_idx =  target_symbol.section_index
             target_symbol_section_value =  target_symbol.section_value
 
+            if target_symbol_section_idx == 'SHN_UNDEF':
+                sys.exit(f"Error: symbol \"{target_symbol.name}\" is undefined.")
+
             target_section_offset = None
             reloc_symbol_section = None
             if target_symbol_section_idx != 'SHN_ABS':

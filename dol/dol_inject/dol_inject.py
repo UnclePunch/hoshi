@@ -396,6 +396,7 @@ if __name__ == '__main__':
             dol_apply_hooks(dol, blob, hooks)   # apply branches to and from blob
 
             # write out to file
+            os.makedirs(os.path.dirname(args.dol_out), exist_ok=True)
             with open(args.dol_out, "wb") as f:
                 dol.save(f)
 

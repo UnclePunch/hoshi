@@ -101,7 +101,7 @@ install: all
 # === Clean ===
 clean:
 	$(MAKE) -C dol clean
-	rm -rf $(BUILDDIR) $(BINDIR)
+	rm -rf $(BUILDDIR) $(TARGET_BIN)
 
 .PHONY: all dol clean install
  

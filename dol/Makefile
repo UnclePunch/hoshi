@@ -11,13 +11,14 @@ ASFLAGS := -mcpu=750 -meabi -mhard-float -mregnames
 
 SRC_DIR 	:= src
 BUILD   	:= build
-INSTALL_DIR ?= 	#can override this in the command line: make install INSTALL_DIR=/path/to/your/files
+OUT_DIR     ?= out
+INSTALL_DIR ?=
 
 INC_DIR   := ../include
 LD_SCRIPT := ../packtool/link.ld
 ELF_OUT   := $(BUILD)/payload.elf
 DOL_IN    ?= kar.dol
-DOL_OUT   ?= $(INSTALL_DIR)/main.dol
+DOL_OUT   ?= $(OUT_DIR)/main.dol
 
 PREPROCESS_SCRIPT	:= dol_inject/preprocess.py
 INJECT_SCRIPT 		:= dol_inject/dol_inject.py

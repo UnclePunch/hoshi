@@ -258,7 +258,7 @@ def xml_create(dir_path : str, game_id : str, mod_name : str, dol : DolFile, lis
     
     mod_xml.save(dir_path, blob)
 
-    print(f"Created Riivolution folder for {mod_name}.")
+    print(f"Created Riivolution folder for {mod_name} at {dir_path}.")
 
 def dol_get_console(dol : DolFile) -> str:
     for i, section in enumerate(dol.dataSections):

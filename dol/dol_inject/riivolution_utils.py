@@ -45,15 +45,14 @@ class RiivolutionMod:
         indent(self.root)
 
         # create output path
-        out_path = os.path.basename(path)
-        os.makedirs(out_path, exist_ok=True)
+        os.makedirs(path, exist_ok=True)
 
         # create xml folder
-        xml_folder = os.path.join(out_path, "riivolution")
+        xml_folder = os.path.join(path, "riivolution")
         os.makedirs(xml_folder, exist_ok=True)
 
         # create disc folder
-        disc_folder = os.path.join(out_path, self.disc_folder)
+        disc_folder = os.path.join(path, self.disc_folder)
         os.makedirs(disc_folder, exist_ok=True)
 
         # write blob out to file

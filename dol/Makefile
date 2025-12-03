@@ -19,6 +19,7 @@ LD_SCRIPT := ../packtool/link.ld
 ELF_OUT   := $(BUILD)/payload.elf
 DOL_IN    ?= kar.dol
 DOL_OUT   ?= $(OUT_DIR)/main.dol
+RIIV_OUT   = $(OUT_DIR)/Riivolution
 
 PREPROCESS_SCRIPT	:= dol_inject/preprocess.py
 INJECT_SCRIPT 		:= dol_inject/dol_inject.py
@@ -59,7 +60,7 @@ $(ELF_OUT): $(OBJS)
 
 # DOL pack
 $(DOL_OUT): $(ELF_OUT)
-	$(PYTHON) $(INJECT_SCRIPT) -e "$(ELF_OUT)" -d "$(DOL_IN)" -o "$(DOL_OUT)"
+	$(PYTHON) $(INJECT_SCRIPT) -e "$(ELF_OUT)" -d "$(DOL_IN)" -o "$(DOL_OUT)" --riiv-out $(RIIV_OUT) --game-id "GKYE01" --mod-name "Kirby Air Ride Deluxe"
 
 # --- Install Target ---
 # Copies the final .dol file

@@ -632,20 +632,18 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
 
     // get option specific values
     int name_joint_idx;
-    char *opt_name;
+    char *opt_name = desc->name;
     switch (desc->kind)
     {
     case (OPTKIND_VALUE):
     {
         name_joint_idx = 6;
-        opt_name = desc->name;
         break;
     }
     case (OPTKIND_MENU):
     case (OPTKIND_SCENE):
     {
         name_joint_idx = 11;
-        opt_name = desc->name;
         break;
     }
     }

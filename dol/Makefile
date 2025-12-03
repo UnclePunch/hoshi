@@ -72,4 +72,4 @@ install: all
 	@echo "Successfully installed dol."
 
 clean:
-	rm -rf $(BUILD) $(ELF_OUT) $(DOL_OUT) $(SRC_DIR)/*.S.tmp
+	rm -rf $(BUILD) $(ELF_OUT) $(DOL_OUT) $(RIIV_OUT) $(SRC_DIR)/*.S.tmp

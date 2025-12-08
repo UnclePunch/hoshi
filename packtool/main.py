@@ -42,10 +42,10 @@ def main():
 def msys_to_win(path: str) -> str:
     """Convert MSYS/Unix paths to Windows paths only when running on Windows."""
     if os.name != "nt":
-        # Not Windows → return as-is
+        # Not Windows = return as is
         return path
 
-    # On Windows → convert using cygpath
+    # On Windows = convert using cygpath
     result = subprocess.run(
         ["cygpath", "-w", path],
         capture_output=True,
@@ -62,7 +62,7 @@ def strip_linked_obj(linked_obj, lookup_symbols):
     ld_path_unix = os.path.join(os.environ["DEVKITPPC"], "bin", "powerpc-eabi-ld")
     ld_path = msys_to_win(ld_path_unix)
 
-    print(f"{ld_path}")
+    # print(f"{ld_path}")
 
     # Build -u symbol args
     u_args = []

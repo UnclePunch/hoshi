@@ -227,7 +227,7 @@ SECTIONS
   DVDClose = 0x803C5304;
   DVDReadAbsAsyncPrio = 0x803c554c;
   File_Read = 0x80446ACC;
-  File_ReadSync = 0x80059228;
+  File_CopyFromARAMToDRAM = 0x80059228;
   File_GetSize = 0x8005915C;
   Pad_GetDown = 0x8000ECF0;
   Pad_GetRapidHeld = 0x8000ED30;

@@ -215,7 +215,7 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
                 reloc_symbol_section = all_sections[target_symbol_section_idx]
 
             # STT_SECTION seems to use reloc addend to hold the offset of the section
-            if target_symbol_type == 'STT_SECTION':
+            if target_symbol_type == 'STT_SECTION' or target_symbol_type == 'STT_OBJECT':
                 target_section_offset = target_addend
             # while everything else uses the section value from the target symbol
             else:

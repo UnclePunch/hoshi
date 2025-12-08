@@ -19,7 +19,7 @@ class Reloc:
         self.addend = addend                                    # offset in the section it is pointing to 
 
     def __repr__(self):
-        return f"<Reloc section_offset=0x{self.section_offset:08X} type={self.type} symbol_index={self.symbol_index}>"
+        return f"<Reloc section_offset=0x{self.section_offset:08X} type={self.type} addend=0x{self.addend:x} symbol_index={self.symbol_index}>"
 
 class Section:
     def __init__(self, name, size, bytes_offset, data=None):

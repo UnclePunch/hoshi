@@ -53,6 +53,13 @@ int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind)
         return 0;
     }
 
+    // ensure file exists on disc
+    if (DVDConvertPathToEntrynum(Archive_AppendExtension(file_name)) == -1)
+    {
+        LOG_WARN("Preload: game file %s not on disc!\n", file_name);
+        return 0;
+    }
+
     // ensure it isnt already present
     for (int i = 0; i < stc_custom_game_files.num; i++)
     {
@@ -155,7 +162,7 @@ void Preload_LoadCustomGameFile()
                  p->updated.gr_kind != 59) // copied from 800748ec
         {
             is_requested = 1;
-            Preload_CreateAllMEntry(stc_custom_game_files.file[i].name);
+            PreloadEntry *pe = Preload_CreateAllMEntry(stc_custom_game_files.file[i].name);
         }
 
         if (is_requested)

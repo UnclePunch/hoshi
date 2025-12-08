@@ -82,6 +82,7 @@ SECTIONS
   Archive_Init = 0x8041E224;
   Archive_Free = 0x80059628;
   Archive_GetPublicAddress = 0x8041E390;
+  Archive_AppendExtension = 0x80058e84;
   File_GetPreloadedFile = 0x80073BA0;
   File_LoadSync = 0x80059364;
   Gm_LoadGameFile = 0x80059818;

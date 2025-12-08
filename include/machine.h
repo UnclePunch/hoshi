@@ -117,7 +117,13 @@ typedef struct vcDataCommon
         {
             float match_progress; // time
             float chance[VCKIND_NUM];
-        } *spawn_desc;
+        } *spawn_desc; // 0x8
+        void *xc;
+        struct
+        {
+            float weight[11]; // first float is the X/305 chance for 1 additional machine to spawn, second float is the chance for 2 additional, etc....
+            int machine_kinds[29]; // not sure exactly what these are but likely the machine kinds that spawn in the city
+        } *max_spawn_weights; // 0x10
     } *x20;
 } vcDataCommon;
 

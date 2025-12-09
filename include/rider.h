@@ -46,6 +46,7 @@ typedef enum CopyKind
     COPYKIND_ICE,
     COPYKIND_TORNADO,
     COPYKIND_BIRD,
+    COPYKIND_NUM,
 } CopyKind;
 
 typedef struct rdDataKirby
@@ -798,6 +799,7 @@ typedef struct RiderData
 static rdDataKirby **stc_rdDataKirby = (rdDataKirby **)0x80559fa8;
 
 void Rider_RespawnEnter(RiderData *);
+void Rider_GiveAbility(RiderData *, CopyKind);
 int Rider_CheckUnableAbility(RiderData *); // checks if the rider can receive an ability?
 void Rider_AbilityRemoveModel(RiderData *);
 void Rider_AbilityRemoveUnk(RiderData *);

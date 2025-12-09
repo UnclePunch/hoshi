@@ -381,6 +381,7 @@ SECTIONS
   Ply_SetRiderKind = 0x8022C898;
   Gm_GetIfAllScreenArchive = 0x80112058;
   Gm_GetIfAllCityArchive = 0x80112050;
+  Gm_FadeOutMusic = 0x80061df0;
   Gm_GetPlyViewNum = 0x800092B4;
   Ply_GetRiderKind2 = 0x800094C4;
   Ply_SetMachineKind = 0x8022C8F8;
@@ -392,6 +393,7 @@ SECTIONS
   Ply_GetAllUpCollected = 0x8022d024;
   Ply_SetAllUpCollected = 0x8022d03c;
   Rider_RespawnEnter = 0x801A1D70;
+  Rider_GiveAbility = 0x801a81a4;
   Rider_CheckUnableAbility = 0x80191798;
   Rider_AbilityRemoveModel = 0x80191554;
   Rider_AbilityRemoveUnk = 0x801915c4;

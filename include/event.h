@@ -31,21 +31,39 @@ typedef struct EventCheckData
     {
         struct
         {
-            int event_delay_min;                     // 0x0
-            int event_delay_max;                     // 0x4
-            int event_occur_chance;                  // 0x8
-            int event_skip_chance;                   // 0xc
+            int delay_min;                     // 0x0
+            int delay_max;                     // 0x4
+            int occur_chance;                  // 0x8
+            int skip_chance;                   // 0xc
             u8 x10[0x8];                             // 0x10
             int prev_kind_num;                       // 0x18
-            int x1c;                                 // 0x1c
+            int music_fadeout_frames;                // 0x1c, number of frames to fade out the music
             int x20;                                 // 0x20
             int x24;                                 // 0x24
             int x28;                                 // 0x28
             struct                                   // 0x2c, contains a weight for every event for every type of stadium
             {                                        //
-                int weight[STGROUP_NUM][EVKIND_NUM]; //
-            } *event_weights;                        //
-        } *param;                                    //
+                int arr[STGROUP_NUM][EVKIND_NUM]; //
+            } *weights;                        //
+            struct                                   // 0x2c, contains a weight for every event for every type of stadium
+            {                                        //
+                struct                                   // 0x2c, contains a weight for every event for every type of stadium
+                {                                        //
+                    u8 x0;                           //
+                    u8 x1;                           //
+                    u8 x2;                           //
+                    u8 x3;                           //
+                    u8 x4;                           //
+                    u8 x5;                           //
+                    u8 x6;                           //
+                    u8 x7;                           //
+                    u8 x8;                           //
+                    u8 is_siren;                     // will play siren before starting this event
+                    u8 xa;                           //
+                    u8 xb;                           //
+                } arr[EVKIND_NUM];                  //
+            } *param;  
+        } *event;                                    //
     } *data;
     int state; // 0 = no event, 1 = event starting, 2 = event active, 3 = event ending
     EventKind cur_kind;
@@ -74,7 +92,7 @@ typedef struct EventFunction
     void *x4;
     void *x8;
     void *xc;
-    int (*check)(GOBJ *g);
+    int (*check)(EventCheckData *gp);
 } EventFunction;
 
 static GOBJ **stc_eventcheck_gobj = (GOBJ **)(0x805dd0e0 + 0x618);

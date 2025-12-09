@@ -2235,6 +2235,7 @@ void Ply_SetHP(int ply, float hp);
 int Ply_GetAllUpCollected(int ply);
 int Ply_SetAllUpCollected(int ply, int num);
 
+void Gm_FadeOutMusic(int frame_duration);
 int Gm_GetPlyViewNum();
 ItemGroup Gm_GetItemGroup(ItemKind it_kind);
 int ClearChecker_GetClearKindFromRewardKind(GameMode gm, int clear_kind);

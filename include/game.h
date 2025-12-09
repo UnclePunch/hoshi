@@ -2232,6 +2232,8 @@ void Ply_SetMachineIsBike(int ply, int is_bike);
 int Ply_GetMachineIsBike(int ply);
 void Ply_AddDeath(int ply, DmgLog *dmg_log, int is_bike, MachineKind machine_kind);
 void Ply_SetHP(int ply, float hp);
+int Ply_GetAllUpCollected(int ply);
+int Ply_SetAllUpCollected(int ply, int num);
 
 int Gm_GetPlyViewNum();
 ItemGroup Gm_GetItemGroup(ItemKind it_kind);

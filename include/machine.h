@@ -1044,5 +1044,6 @@ int Machine_GetRiderPly(MachineData *md);
 void Machine_SetMaxHP(MachineData *md);
 void Machine_GiveIntangibility(MachineData *md, int time);
 void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
+void Machine_GiveAllUp(MachineData *, int num);
 
 #endif

@@ -368,6 +368,7 @@ SECTIONS
   Machine_SetMaxHP = 0x801cb4a4;
   Machine_GiveIntangibility = 0x801d6c50;
   Machine_ApplyColAnim = 0x801d5ca0;
+  Machine_GiveAllUp = 0x801cad40;
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
@@ -388,6 +389,8 @@ SECTIONS
   Ply_GetMachineIsBike = 0x8022C8B0;
   Ply_AddDeath = 0x8022f648;
   Ply_SetHP = 0x8022ca38;
+  Ply_GetAllUpCollected = 0x8022d024;
+  Ply_SetAllUpCollected = 0x8022d03c;
   Rider_RespawnEnter = 0x801A1D70;
   Rider_CheckUnableAbility = 0x80191798;
   Rider_AbilityRemoveModel = 0x80191554;

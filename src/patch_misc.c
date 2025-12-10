@@ -30,7 +30,6 @@ void Text_AlignSubtext(Text *t)
 
     *(u8 *)t->alloc->next = align_cmds[t->align];                // write alignment command
     t->alloc->next = (TextHeapCell *)((u8 *)t->alloc->next + 1); // increment next pointer
-    t->alloc->size++;
 }
 CODEPATCH_HOOKCREATE(0x80450030, "mr 3, 28\n\t", Text_AlignSubtext, "", 0)
 u8 *Text_SetTextAlign(Text *t, int idx)

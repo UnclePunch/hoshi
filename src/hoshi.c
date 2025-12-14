@@ -22,6 +22,8 @@
 #include "reloc/reloc.h"
 
 // Hoshi
+#include "export.h"
+#include "hoshi/func.h"
 #include "hoshi/log.h"
 
 // Lib
@@ -29,6 +31,7 @@
 #include "fst/fst.h"
 
 ModloaderData *stc_modloader_data;
+GlobalMod *cur_mod_install = 0;
 
 /////////////////////////////
 //                         //
@@ -208,6 +211,9 @@ void OnFileLoad(ModHeader *file)
 
     CODEPATCH_REPLACEFUNC(hash_32, _hash_32);         // install our hash function
     CODEPATCH_REPLACEFUNC(hash_32_str, _hash_32_str); // install our string hash function
+    
+    CODEPATCH_REPLACEFUNC(Hoshi_ExportMod, _Hoshi_ExportMod); // install function to export mod data
+    CODEPATCH_REPLACEFUNC(Hoshi_ImportMod, _Hoshi_ImportMod); // install function to import mod data
 
     // alloc hoshi lookup data
     stc_modloader_data = HSD_MemAlloc(sizeof(*stc_modloader_data));
@@ -375,6 +381,9 @@ void Mods_LoadGlobal(int entrynum)
     LOG_INFO("   Version:\t\t%d.%d", this_mod->desc->version.major, this_mod->desc->version.minor);
 
     OSReport("\n");
+
+    // set global pointer to the mod being installed
+    cur_mod_install = this_mod;
 
     // exec init function
     if (this_mod->desc->OnBoot)

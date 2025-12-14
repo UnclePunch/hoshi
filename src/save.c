@@ -18,6 +18,7 @@
 #include "hash.h"
 #include "hoshi.h"
 
+#include "hoshi/func.h"
 #include "hoshi/log.h"
 
 #include "code_patch/code_patch.h"

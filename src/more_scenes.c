@@ -8,6 +8,7 @@
 #include "game.h"
 #include <string.h>
 
+#include "hoshi/func.h"
 #include "hoshi/log.h"
 
 #include "more_scenes.h"

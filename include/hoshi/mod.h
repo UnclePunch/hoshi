@@ -12,7 +12,7 @@ typedef struct ModDesc
         u16 major;
         u16 minor;
     } version;
-    void *save_ptr;     // read-only! hoshi will write this pointer during installation.
+    void *save_ptr;                         // read-only! hoshi will write this pointer during installation.
     int save_size;
     OptionDesc *option_desc;
     void (*OnBoot)();
@@ -27,5 +27,8 @@ typedef struct ModDesc
     void (*OnPlayerSelectLoad)();
     void (*OnFrame)();
 } ModDesc;
+
+void *Hoshi_ImportMod(char *id, int version_major, int version_minor);
+void Hoshi_ExportMod(void *export);
 
 #endif

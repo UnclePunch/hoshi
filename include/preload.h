@@ -204,6 +204,4 @@ void *Preload_AllocFromHeap(PreloadHeapKind heap_kind, int size);
 void Preload_FreeToHeap(void *ptr, int size);
 void Preload_SetGrKind(GroundKind);
 
-int Hoshi_AddPreloadMenuFile(char *file_name);
-int Hoshi_AddPreloadGameFile(char *file_name, PreloadHeapKind heap_kind);
 #endif

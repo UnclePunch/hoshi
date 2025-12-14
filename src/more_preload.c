@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "hoshi/log.h"
+#include "hoshi/func.h"
 
 #include "more_preload.h"
 #include "code_patch/code_patch.h"

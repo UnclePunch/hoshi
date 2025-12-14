@@ -424,4 +424,6 @@ SECTIONS
   hash_32 = 0x8049516C;
   hash_32_str = 0x80495170;
   Hoshi_AddPreloadGameFile = 0x80495174;
+  Hoshi_ExportMod = 0x80495178;
+  Hoshi_ImportMod = 0x8049517c;
 }

@@ -1,5 +1,5 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef HOSHILOG_H
+#define HOSHILOG_H
 
 #include "os.h"
 

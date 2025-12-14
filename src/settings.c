@@ -43,9 +43,9 @@ void Settings_Init(ModloaderData *mod_data)
     int mod_settings_num = 0;
     for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
     {
-        if (mod_data->mods[mod_idx].data.option_desc)
+        if (mod_data->mods[mod_idx].desc->option_desc)
         {
-            LOG_INFO("  * Installing %s to settings menu.", mod_data->mods[mod_idx].data.name);
+            LOG_INFO("  * Installing %s to settings menu.", mod_data->mods[mod_idx].desc->name);
             mod_settings_num++;
         }
     }
@@ -60,7 +60,7 @@ void Settings_Init(ModloaderData *mod_data)
         // copy over mod options
         for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
         {
-            OptionDesc *mod_option = mod_data->mods[mod_idx].data.option_desc;
+            OptionDesc *mod_option = mod_data->mods[mod_idx].desc->option_desc;
             if (mod_option)
             {
                 main_menu->options[main_menu->option_num] = mod_option;

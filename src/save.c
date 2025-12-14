@@ -343,7 +343,7 @@ Returns:        ptr to mod's user_data.
 *---------------------------------------------------------------------*/
 void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
 {
-    int mod_hash = _hash_32_str(mod->data.name);
+    int mod_hash = _hash_32_str(mod->desc->name);
 
     if (stc_hoshi_save->mod_num > GetElementsIn(stc_hoshi_save->metadata))
     {
@@ -384,7 +384,7 @@ void *KARPlusSave_Alloc(GlobalMod *mod, int menu_size, int user_size)
         save_data_ptr = (void *)((int)stc_hoshi_save + user_offset);
 
     LOG_DEBUG("alloc'd mod %s index %d hash 0x%x metadata @ %p",
-              mod->data.name,
+              mod->desc->name,
               stc_hoshi_save->mod_num,
               stc_hoshi_save->metadata[stc_hoshi_save->mod_num].mod_hash,
               &stc_hoshi_save->metadata[stc_hoshi_save->mod_num]);
@@ -414,7 +414,7 @@ Returns:        bool - if the save size changed.
 int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
 {
     int is_size_changed = 0;
-    int mod_hash = _hash_32_str(mod->data.name);
+    int mod_hash = _hash_32_str(mod->desc->name);
     int new_size = menu_size + user_size;
 
     // find this save
@@ -520,7 +520,7 @@ int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size)
             mod->save.user_size = user_size;
 
             LOG_DEBUG("verified mod %s index %d hash 0x%x metadata @ %p",
-                      mod->data.name,
+                      mod->desc->name,
                       i,
                       stc_hoshi_save->metadata[i].mod_hash,
                       &stc_hoshi_save->metadata[i]);
@@ -544,7 +544,7 @@ Returns:        bool, isExists
 *---------------------------------------------------------------------*/
 int KARPlusSave_CheckModDataExists(GlobalMod *mod)
 {
-    int mod_hash = _hash_32(mod->data.name, strlen(mod->data.name));
+    int mod_hash = _hash_32(mod->desc->name, strlen(mod->desc->name));
 
     for (int i = 0; i < stc_hoshi_save->mod_num; i++)
     {

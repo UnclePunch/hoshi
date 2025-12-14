@@ -44,8 +44,8 @@ void Hook_SceneChange()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.OnSceneChange)
-            this_mod->data.OnSceneChange();
+        if (this_mod->desc->OnSceneChange)
+            this_mod->desc->OnSceneChange();
     }
 
 #ifdef LOG_LEVEL
@@ -76,8 +76,8 @@ void Hook_MainMenuLoad()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.OnMainMenuLoad)
-            this_mod->data.OnMainMenuLoad();
+        if (this_mod->desc->OnMainMenuLoad)
+            this_mod->desc->OnMainMenuLoad();
     }
 
     return;
@@ -92,8 +92,8 @@ void Hook_3DLoad()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.On3DLoad)
-            this_mod->data.On3DLoad();
+        if (this_mod->desc->On3DLoad)
+            this_mod->desc->On3DLoad();
     }
 
     return;
@@ -108,8 +108,8 @@ void Hook_3DPause(int pause_ply)
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.On3DPause)
-            this_mod->data.On3DPause(pause_ply);
+        if (this_mod->desc->On3DPause)
+            this_mod->desc->On3DPause(pause_ply);
     }
 
     return;
@@ -124,8 +124,8 @@ void Hook_3DUnPause(int pause_ply)
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.On3DUnpause)
-            this_mod->data.On3DUnpause(pause_ply);
+        if (this_mod->desc->On3DUnpause)
+            this_mod->desc->On3DUnpause(pause_ply);
     }
 
     return;
@@ -142,8 +142,8 @@ void Hook_3DExit()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.On3DExit)
-            this_mod->data.On3DExit();
+        if (this_mod->desc->On3DExit)
+            this_mod->desc->On3DExit();
     }
 
     return;
@@ -158,8 +158,8 @@ void Hook_PlayerSelectLoad()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.OnPlayerSelectLoad)
-            this_mod->data.OnPlayerSelectLoad();
+        if (this_mod->desc->OnPlayerSelectLoad)
+            this_mod->desc->OnPlayerSelectLoad();
     }
 
     return;
@@ -174,8 +174,8 @@ void Hook_OnFrame()
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->data.OnFrame)
-            this_mod->data.OnFrame();
+        if (this_mod->desc->OnFrame)
+            this_mod->desc->OnFrame();
     }
 
     return;
@@ -359,28 +359,30 @@ void Mods_LoadGlobal(int entrynum)
 
     // load mod file
     ModHeader *file = Mods_LoadFile(entrynum); //
-    
-    // get mod's function pointers
-    get_func(file, (void **)&this_mod->data);
 
-    // save ptr to mexFunction so we can access debug data
+    // get mod's descriptor
+    ModDesc *mod_desc;
+    get_func(file, (void **)&mod_desc);
+    this_mod->desc = mod_desc;
+
+    // save ptr to mod_header so we can access debug data
     this_mod->mod_header = file;
 
     LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
     LOG_INFO("   Installing global mod...");
-    LOG_INFO("   Name:\t\t%s", this_mod->data.name);
-    LOG_INFO("   Author:\t\t%s", this_mod->data.author);
-    LOG_INFO("   Version:\t\t%s", this_mod->data.version);
+    LOG_INFO("   Name:\t\t%s", this_mod->desc->name);
+    LOG_INFO("   Author:\t\t%s", this_mod->desc->author);
+    LOG_INFO("   Version:\t\t%d.%d", this_mod->desc->version.major, this_mod->desc->version.minor);
 
     OSReport("\n");
 
     // exec init function
-    if (this_mod->data.OnBoot)
-        this_mod->data.OnBoot(file);
+    if (this_mod->desc->OnBoot)
+        this_mod->desc->OnBoot();
 
     OSReport("\n");
 
-    LOG_INFO("Finished installing %s.", this_mod->data.name);
+    LOG_INFO("Finished installing %s.", this_mod->desc->name);
     LOG_INFO("~~~~~~~~~~~~~~~~~~~~~\n");
 
     // inc
@@ -392,7 +394,7 @@ GlobalMod *Mods_GetFromName(char *name)
     // each mod
     for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
     {
-        if (strcmp(stc_modloader_data->mods[mod_idx].data.name, name) == 0)
+        if (strcmp(stc_modloader_data->mods[mod_idx].desc->name, name) == 0)
             return &stc_modloader_data->mods[mod_idx];
     }
 
@@ -413,14 +415,14 @@ void Mods_SetDefaultSaveData()
 void Mod_SetDefaultSaveData(GlobalMod *mod)
 {
     LOG_DEBUG("~~~~~~~~~~~~~~~~~~~~~");
-    LOG_DEBUG("%s:", mod->data.name);
+    LOG_DEBUG("%s:", mod->desc->name);
 
     // get save data sizes as dictated by the currently installed mod version
     int menu_size = 0, user_size = 0;
-    Option_GetSaveSize(mod->data.option_desc, &menu_size);
+    Option_GetSaveSize(mod->desc->option_desc, &menu_size);
 
-    if ((mod->data.save_size) && (*mod->data.save_size) > 0)
-        user_size = *mod->data.save_size;
+    if ((mod->desc->save_size) && (mod->desc->save_size) > 0)
+        user_size = mod->desc->save_size;
 
     // if mod has save data
     if (menu_size > 0 || user_size > 0)
@@ -441,20 +443,19 @@ void Mod_SetDefaultSaveData(GlobalMod *mod)
         Mod_CopyToSave(mod); // copy default menu settings to the save
 
         // update the mod's pointer to its save file data
-        if (mod->data.save_ptr)
-            (*mod->data.save_ptr) = mod->save.user_data;
+        mod->desc->save_ptr = mod->save.user_data;
 
-        if (mod->data.OnSaveInit)
+        if (mod->desc->OnSaveInit)
         {
-            LOG_DEBUG("Exec save default func...", mod->data.name);
-            mod->data.OnSaveInit();
+            LOG_DEBUG("Exec save default func...", mod->desc->name);
+            mod->desc->OnSaveInit();
             OSReport("\n");
-            LOG_DEBUG("Done.", mod->data.name);
+            LOG_DEBUG("Done.", mod->desc->name);
         }
     }
     else
     {
-        LOG_DEBUG("No save data.", mod->data.name);
+        LOG_DEBUG("No save desc.", mod->desc->name);
     }
 
     LOG_DEBUG("~~~~~~~~~~~~~~~~~~~~~\n");
@@ -478,19 +479,19 @@ void Mods_OnLoadSaveData()
 int Mod_OnLoadSaveData(GlobalMod *mod)
 {
     LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
-    LOG_INFO("%s:", mod->data.name);
+    LOG_INFO("%s:", mod->desc->name);
 
     int req_init;
 
     // skip save file verification if no memcard is present, we can assume the defaults we created are valid.
     if (Memcard_GetSaveStatus() == CARDSAVE_IGNORE)
     {
-        if (mod->data.OnSaveLoaded)
+        if (mod->desc->OnSaveLoaded)
         {
-            LOG_INFO("Exec save loaded func...\n", mod->data.name);
-            mod->data.OnSaveLoaded();
+            LOG_INFO("Exec save loaded func...\n", mod->desc->name);
+            mod->desc->OnSaveLoaded();
             OSReport("\n");
-            LOG_INFO("Done.", mod->data.name);
+            LOG_INFO("Done.", mod->desc->name);
         }
 
         req_init = 0;
@@ -500,10 +501,10 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
 
         // get save data sizes as dictated by the currently installed mod version
         int menu_size = 0, user_size = 0;
-        Option_GetSaveSize(mod->data.option_desc, &menu_size);
+        Option_GetSaveSize(mod->desc->option_desc, &menu_size);
 
-        if ((mod->data.save_size != 0) && (*mod->data.save_size) > 0)
-            user_size = *mod->data.save_size;
+        if (mod->desc->save_size > 0)
+            user_size = mod->desc->save_size;
 
         // if mod has save data
         if (menu_size > 0 || user_size > 0)
@@ -514,14 +515,14 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
             // check if save data exists on card
             if (is_exists)
             {
-                LOG_INFO("Save data found.", mod->data.name);
+                LOG_INFO("Save data found.", mod->desc->name);
 
                 // re-alloc if current version of the mod demands more storage
                 req_init = KARPlusSave_VerifySize(mod, menu_size, user_size);
             }
             else
             {
-                LOG_INFO("Save data created.", mod->data.name);
+                LOG_INFO("Save data created.", mod->desc->name);
 
                 // alloc save
                 KARPlusSave_Alloc(mod, menu_size, user_size);
@@ -544,21 +545,20 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
                 Mod_CopyToSave(mod); // copy default menu settings to the save
 
             // update the mod's pointer to its save file data
-            if (mod->data.save_ptr)
-                (*mod->data.save_ptr) = mod->save.user_data;
+            mod->desc->save_ptr = mod->save.user_data;
         }
         else
         {
-            LOG_INFO("No save data.", mod->data.name);
+            LOG_INFO("No save data.", mod->desc->name);
             req_init = 0;
         }
 
-        if (mod->data.OnSaveLoaded)
+        if (mod->desc->OnSaveLoaded)
         {
-            LOG_INFO("Exec save loaded func...\n", mod->data.name);
-            mod->data.OnSaveLoaded();
+            LOG_INFO("Exec save loaded func...\n", mod->desc->name);
+            mod->desc->OnSaveLoaded();
             OSReport("\n");
-            LOG_INFO("Done.", mod->data.name);
+            LOG_INFO("Done.", mod->desc->name);
         }
     }
 
@@ -570,9 +570,9 @@ int Mod_OnLoadSaveData(GlobalMod *mod)
 
 void Mod_CopyFromSave(GlobalMod *mod)
 {
-    if (mod->data.option_desc)
+    if (mod->desc->option_desc)
     {
-        OptionDesc *this_option = mod->data.option_desc;
+        OptionDesc *this_option = mod->desc->option_desc;
 
         switch (this_option->kind)
         {
@@ -593,9 +593,9 @@ void Mod_CopyFromSave(GlobalMod *mod)
 }
 void Mod_CopyToSave(GlobalMod *mod)
 {
-    if (mod->data.option_desc)
+    if (mod->desc->option_desc)
     {
-        OptionDesc *this_option = mod->data.option_desc;
+        OptionDesc *this_option = mod->desc->option_desc;
         switch (this_option->kind)
         {
         case (OPTKIND_VALUE):

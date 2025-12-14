@@ -68,30 +68,6 @@ typedef enum PKind
     PKIND_NONE,
 } PKind;
 
-typedef enum CharacterKind
-{
-    CKIND_COMPACT,
-    CKIND_WARP,
-    CKIND_TURBO,
-    CKIND_FORMULA,
-    CKIND_SLICK,
-    CKIND_SWERVE,
-    CKIND_WAGON,
-    CKIND_BULK,
-    CKIND_SHADOW,
-    CKIND_WINGED,
-    CKIND_JET,
-    CKIND_ROCKET,
-    CKIND_WHEELIESCOOTER,
-    CKIND_WHEELIEBIKE,
-    CKIND_REXWHEELIE,
-    CKIND_DRAGOON,
-    CKIND_HYDRA,
-    CKIND_FLIGHT,
-    CKIND_DEDEDE,
-    CKIND_METAKNIGHT,
-} CharacterKind;
-
 typedef enum AirRideMode
 {
     AIRRIDEMODE_RACE,
@@ -278,7 +254,7 @@ typedef struct GameData
     int x1cc; // 0x1cc
     struct
     {
-        int x1d0;          // 0x1d0
+        u8 x1d0;          // 0x1d0
         int x1d4;          // 0x1d4
         int x1d8;          // 0x1d8
         int x1dc;          // 0x1dc
@@ -288,7 +264,7 @@ typedef struct GameData
         int x1ec;          // 0x1ec
         u8 x1f0;           // 0x1f0
         u8 ready_state[4]; // 0x1f1
-        u8 x1f4;           // 0x1f5
+        u8 x1f5;           // 0x1f5
         int x1f8;          // 0x1f8
         u8 x1fc;           // 0x1fc
         u8 icon[4];        // 0x1fd
@@ -308,10 +284,12 @@ typedef struct GameData
         int x230;          // 0x230
         struct
         {
-            u8 x234;           // 0x234, total number of machines selectable
+            u8 x234;           // 0x234
             u8 num;            // 0x235, total number of machines selectable
             u8 c_kind_arr[20]; // 0x236, 0x66, array of c_kind indices
         } machine_select;
+        u8 x24a;  // 0x24a
+        u8 x24b;  // 0x24b
         int x24c; // 0x24c
         int x250; // 0x250
         int x254; // 0x254
@@ -1825,13 +1803,6 @@ typedef struct gmDataAll
     } *stadium_desc;  // array of these, STKIND_NUM
 } gmDataAll;
 
-typedef struct CharacterDesc
-{
-    u8 rider_kind;
-    u8 is_bike;
-    u8 machine;
-} CharacterDesc;
-
 typedef struct PlayerData
 {
     u8 x0[0x90c];
@@ -2211,7 +2182,6 @@ void Gm_HidePauseHUD();
 void Gm_ShowHUD();
 
 int Gm_IsInCity();
-CharacterDesc *Character_GetDesc(CharacterKind ckind);
 
 GmIntroState Gm_GetIntroState();
 CityMode Gm_GetCityMode();
@@ -2238,6 +2208,7 @@ int Ply_SetAllUpCollected(int ply, int num);
 void Gm_FadeOutMusic(int frame_duration);
 int Gm_GetPlyViewNum();
 ItemGroup Gm_GetItemGroup(ItemKind it_kind);
+int ClearChecker_CheckUnkUnlocked();
 int ClearChecker_GetClearKindFromRewardKind(GameMode gm, int clear_kind);
 int ClearChecker_GetRewardNum(GameMode gm);
 int ClearChecker_CheckUnlocked(GameMode gm, int clear_kind);
@@ -2255,7 +2226,6 @@ void Gm_ResumeAllSFX();
 
 void Gm_SetCameraNormal();
 int Gm_IsDamageEnabled();
-int Hoshi_WriteSave();
 int hash_32(const void *data, int size);
 int hash_32_str(const void *data);
 void Gm_LoadGroundFGMBank(GroundKind gr_kind); //

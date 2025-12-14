@@ -323,6 +323,7 @@ SECTIONS
   SOPoll = 0x8047db90;
 
   MainMenu_InitAllVariables = 0x80007808;
+  SelIcon_GetCKind = 0x8000b9bc;
   Gm_GetMenuData = 0x801311E0;
   Gm_GetGameData = 0x80006C14;
   Gm_GetRandomItem = 0x800EB7E4;
@@ -403,6 +404,7 @@ SECTIONS
   HurtData_Create = 0x8018c1c8;
   HurtData_GiveIntangibility = 0x8018cb5c;
   Gm_Get3dData = 0x80112044;
+  ClearChecker_CheckUnkUnlocked = 0x8007b650;
   ClearChecker_GetClearKindFromRewardKind = 0x80049C84;
   ClearChecker_GetRewardNum = 0x80049C20;
   ClearChecker_CheckUnlocked = 0x80049E24;

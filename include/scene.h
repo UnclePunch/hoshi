@@ -816,14 +816,6 @@ void Scene_ExitMinor();                 // run this to cause a minor scene chang
 void Scene_SetDirection(int direction); // usually the button used to change scene
 int Scene_GetDirection();               // usually the button used to change scene
 void Scene_InitHeaps();                 //
-void CSS_DecideNext(MinorScene *minor_scene, ScDataVS *css_data);
-void CSS_ResetKOStars();
-void CSS_InitMajorData(ScDataVS *major_data);
-void CSS_InitMinorData(MinorScene *minor_scene, ScDataVS *major_data, int css_kind);
-void SSS_InitMinorData(MinorScene *minor_scene, ScDataVS *major_data);
-void SSS_DecideNext(MinorScene *minor_scene, ScDataVS *css_data, int exit_minor_id);
-void Match_InitMinorData(MinorScene *minor_scene, ScDataVS *major_data, void *init_cb, void *startmelee_cb);
-void Match_SetNametags(MatchInit *match_init);
 ScMenuCommon *Gm_GetMenuData();
 void MainMenu_InitAllVariables();
 #endif

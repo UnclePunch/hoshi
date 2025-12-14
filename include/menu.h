@@ -27,6 +27,38 @@ typedef enum MainMenuSubmenuKind
     MAINMENU_SUBMENU_CITY_RECORDS,
 } MainMenuSubmenuKind;
 
+typedef enum CharacterKind
+{
+    CKIND_COMPACT,
+    CKIND_WARP,
+    CKIND_TURBO,
+    CKIND_FORMULA,
+    CKIND_SLICK,
+    CKIND_SWERVE,
+    CKIND_WAGON,
+    CKIND_BULK,
+    CKIND_SHADOW,
+    CKIND_WINGED,
+    CKIND_JET,
+    CKIND_ROCKET,
+    CKIND_WHEELIESCOOTER,
+    CKIND_WHEELIEBIKE,
+    CKIND_REXWHEELIE,
+    CKIND_DRAGOON,
+    CKIND_HYDRA,
+    CKIND_FLIGHT,
+    CKIND_DEDEDE,
+    CKIND_METAKNIGHT,
+    CKIND_NUM,
+} CharacterKind;
+
+typedef struct CharacterDesc
+{
+    u8 rider_kind;      // RiderKind
+    u8 is_bike;         // bool
+    u8 machine_kind;    // MachineKind
+} CharacterDesc;
+
 typedef struct MainMenuData
 {
     u8 input_lockout;                     // 0x30
@@ -74,5 +106,8 @@ static SoundTestDesc *stc_soundtest_desc = (SoundTestDesc *)0x80496458; // 62 of
 
 GOBJ *MenuElement_Create(JOBJDesc *jobjdesc);
 MenuElementData *MenuElement_AddData(GOBJ *menu_element_gobj, int element_kind);
+
+CharacterKind SelIcon_GetCKind(int row_idx, int col_idx);
+CharacterDesc *Character_GetDesc(CharacterKind ckind);
 
 #endif

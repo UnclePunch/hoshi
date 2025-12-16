@@ -215,6 +215,7 @@ SECTIONS
   OSSetPeriodicAlarm = 0x803d3148;
   OSCancelAlarm = 0x803d31c4;
   OSCheckHeap = 0x803D3884;
+  OSAllocFromArenaLo = 0x803d3c04;
   OSGetPhysicalMemSize = 0x803D7B30;
   OSGetConsoleType = 0x803D2470;
   OSDisableInterrupts = 0x803D70A8;

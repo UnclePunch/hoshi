@@ -652,6 +652,7 @@ void OSDestroyHeap(int heap_id);
 void *OSAllocFromHeap(int heap_id);
 void OSFreeToHeap(void *alloc);
 int OSCheckHeap(int heap);
+void *OSAllocFromArenaLo(int size, int align);
 int OSGetPhysicalMemSize();
 int OSGetConsoleType();
 int OSDisableInterrupts(void);

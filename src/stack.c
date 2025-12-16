@@ -46,7 +46,7 @@ void Stack_Print()
     }
 
     OSReport("%s\n", iso_name);
-    OSReport("hoshi v" STR(MODLOADER_VERSION_MAJOR) "." STR(MODLOADER_VERSION_MINOR) "\n");
+    OSReport("hoshi v" STR(HOSHI_VERSION)"\n");
     OSReport((char *)0x80507bd4); // STACK text
     OSReport(" LR Save:   Symbol\n");
 
@@ -218,6 +218,53 @@ char *Stack_FindSymbolNameFromAddress(void *lr)
     return 0;
 }
 
+void PreHSD_DecodeOSReportLog(void)
+{
+    char *log = osreport_data->text;
+    int cursor = osreport_data->cursor;
+
+    int msg_count = 0;
+    int cur = cursor - 1;
+
+    // count messages
+    while (cur >= 0)
+    {
+        u8 len = (u8)log[cur];
+        if (len == 0)
+            len = (u8)log[--cur];
+
+        cur -= (len + 1);
+        msg_count++;
+    }
+
+    // allocate output buffer
+    char *decoded = OSAllocFromArenaLo(cursor, 32);
+    int out_cur = cursor;
+
+    cur = cursor - 1;
+
+    // decode directly into output buffer
+    while (cur >= 0)
+    {
+        u8 len = (u8)log[cur];
+        if (len == 0)
+            len = (u8)log[--cur];
+
+        char *msg = &log[cur - len];
+
+        out_cur -= (len + 1);
+        memcpy(&decoded[out_cur], msg, len);
+        decoded[out_cur + len] = '\n';
+
+        cur -= (len + 1);
+    }
+
+    char **out_ptr = (char **)0x8056d600;
+    *out_ptr = decoded;
+}
+CODEPATCH_HOOKCREATE(0x803d5994, "", PreHSD_DecodeOSReportLog, "b 0x8\t\n", 0)
+
+
 void Stack_ApplyPatches()
 {
     CODEPATCH_REPLACEINSTRUCTION(0x8043ff60, 0x60000000); // skip setting exception handler
@@ -233,6 +280,10 @@ void Stack_ApplyPatches()
     // inject code to output stack information in newly created thread
     // (safe to load a file there)
     CODEPATCH_HOOKAPPLY(0x8043f844);
+
+    // display OSReportLog when invoking debug console before sysdolphin initializes 
+    CODEPATCH_HOOKAPPLY(0x803d5994);
+    CODEPATCH_REPLACEINSTRUCTION(0x803d601c, 0x60000000); // skip OSReporting the crash message (again)
 
     return;
 }

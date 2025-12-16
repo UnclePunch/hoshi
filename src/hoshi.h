@@ -6,18 +6,13 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define MODLOADER_VERSION_MAJOR 1
-#define MODLOADER_VERSION_MINOR 3
-
+#define HOSHI_VERSION 3
 /*
-    hoshi Version History:
-        - 1.0 - introductory
-        - 1.1 - split the save callback into 2 separate callbacks
-        - 1.2 - add onFrame callback
-        - 1.3 - implement ModDesc
+  Mod File Version History:
+   1 - (07-01-25) introductory version
+   2 - (11-19-25) move relocs to the end of the file so they can be discarded at runtime
+   3 - (12-15-25) define all mod data in a single ModDesc struct 
 */
-
-#define MOD_FILE_VERSION 2
 
 typedef struct MenuDesc MenuDesc;
 typedef struct MenuSave MenuSave;

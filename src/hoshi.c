@@ -204,6 +204,7 @@ void OnFileLoad(ModHeader *file)
     //     (*stc_dblevel) = DB_DEVELOP;
 
     Patches_Apply();    // apply code patches
+    Export_Init();      // init mod export/import 
     Scenes_Init();      // init scene expansion
     Preload_Init();     // init preload expansion
     Stack_Init();       // init stack print patch
@@ -212,9 +213,6 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_REPLACEFUNC(hash_32, _hash_32);         // install our hash function
     CODEPATCH_REPLACEFUNC(hash_32_str, _hash_32_str); // install our string hash function
     
-    CODEPATCH_REPLACEFUNC(Hoshi_ExportMod, _Hoshi_ExportMod); // install function to export mod data
-    CODEPATCH_REPLACEFUNC(Hoshi_ImportMod, _Hoshi_ImportMod); // install function to import mod data
-
     // alloc hoshi lookup data
     stc_modloader_data = HSD_MemAlloc(sizeof(*stc_modloader_data));
 
@@ -338,9 +336,15 @@ void *Mods_LoadFile(int entrynum)
     File_LoadOffsetSync(entrynum, file_buffer, 0, file_size);
 
     // ensure its a supported mod version
-    if (file_buffer->version != MOD_FILE_VERSION) {
-        OSReport("Unsupported mod version (%d). Requires version %d.\n", file_buffer->version, MOD_FILE_VERSION);
-        assert("hoshi");
+    if (file_buffer->version != HOSHI_VERSION) {
+
+        OSClearReports();
+
+        OSReport("Mod update required!\n%s targets hoshi v%d.\nCurrently installed: hoshi v%d.\n", 
+                    FST_GetFilenameFromEntrynum(entrynum),
+                    file_buffer->version, 
+                    HOSHI_VERSION);
+        assert("0");
     }
 
     // reloc and overload

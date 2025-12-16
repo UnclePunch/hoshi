@@ -9,6 +9,13 @@ import argparse
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
+VERSION = 3
+
+# Version History:
+#  1 - (07-01-25) introductory version
+#  2 - (11-19-25) move relocs to the end of the file so they can be discarded at runtime
+#  3 - (12-15-25) define all mod data in a single ModDesc struct 
+
 build_dir = "_build"
 
 parser = argparse.ArgumentParser(description="Compile and pack C/ASM files into GC format.")
@@ -270,7 +277,6 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
     HEADER_SIZE = struct.calcsize(HEADER_FMT)
 
     MAGIC   = b"GCMB"
-    VERSION = 2
 
     # Sizes
     lookup_size_bytes = len(present_lookup_symbols)

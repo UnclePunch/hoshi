@@ -46,3 +46,8 @@ void _Hoshi_ExportMod(void *export)
     return;
 }
 
+void Export_Init()
+{
+    CODEPATCH_REPLACEFUNC(Hoshi_ExportMod, _Hoshi_ExportMod); // install function to export mod data
+    CODEPATCH_REPLACEFUNC(Hoshi_ImportMod, _Hoshi_ImportMod); // install function to import mod data
+}

@@ -42,6 +42,8 @@
 #define JOBJ_ROOT_TEXEDGE (1 << 30)        // 0x40000000
 #define JOBJ_31 (1 << 31)                  // 0x80000000
 
+#define JOBJ_ROOT_MASK (JOBJ_ROOT_OPA | JOBJ_ROOT_TEXEDGE | JOBJ_ROOT_XLU)
+
 // MObj Flags
 #define HSD_A_M_AMBIENT_R 1
 #define HSD_A_M_AMBIENT_G 2
@@ -765,6 +767,7 @@ void JObj_RemoveAll(JOBJ *joint);
 void JObj_Remove(JOBJ *joint);
 void JObj_AddChild(JOBJ *parent, JOBJ *child);
 void JObj_AddNext(JOBJ *parent, JOBJ *child);
+JOBJ *JObj_GetPrev(JOBJ* joint);
 float JObj_GetCurrentMatAnimFrame(JOBJ *joint);
 void JObj_SetFlags(JOBJ *joint, int flags);
 void JObj_SetFlagsAll(JOBJ *joint, int flags);
@@ -801,6 +804,7 @@ void JObj_SetAllTObjFrame(JOBJ *j, int frame);
 void JObj_Detach(JOBJ *to_attach);
 void JObj_ResetFromDesc(JOBJ *, JOBJDesc *);
 void JObj_RemoveAnimByFlags(JOBJ *, int);
+void JObj_RemoveAnimAllByFlags(JOBJ *, int);
 void JObj_SetAllMObjAnimFrameAndRate(JOBJ *j, int frame, float rate);
 void JObj_PauseAllTObjAnimFrame(JOBJ *j, int frame);
 void ROBJ_RemoveAll(void *robj);

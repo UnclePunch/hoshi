@@ -125,9 +125,21 @@ struct ScMenuCommon
     int x1c;                // 0x1c
     int x20;                // 0x20
     int x24;                // 0x24
-    u8 canvas_idx;          // 0x28
-    Text *description_text; // 0x2c
-    u8 x30[0x2C8];          // 0x30
+    struct
+    {
+        u8 canvas_idx;          // 0x28
+        Text *description_text; // 0x2c
+        int x30;                // 0x30
+        int x34;                // 0x34
+        int x38;                // 0x38
+        int x3c;                // 0x3c
+        struct
+        {
+            Text *x0;           // 0x40
+            Text *x4;           // 0x44
+        } ply_machine_description[4];
+    } text;
+    u8 x54[0x298];              // 0x60
     struct
     {
         GOBJ *menu_name;            // 0x2f8
@@ -149,8 +161,11 @@ struct ScMenuCommon
         JOBJSet *ScMenSelplyBoard_scene_models;   // 0x4f0
         GOBJ *board_gobj;                         // 0x4f4
         JOBJSet *ScMenSelplyHandi_scene_models;   // 0x4f8
-        GOBJ *handicap_gobj[4];                   // 0x4fc
-        u8 x50c[0x10];                            // 0x50c
+        struct                                    // 0x4fc
+        {
+            GOBJ *handicap;
+            GOBJ *cpu_level;
+        } bar_gobj[4];
         JOBJSet *ScMenSelplySicon_scene_models;   // 0x51c
         GOBJ *sicon_gobj[20];                     // 0x520
         JOBJSet *ScMenSelplySicon2_scene_models;  // 0x570
@@ -187,51 +202,47 @@ struct ScMenuCommon
         HSD_SObjDesc *sobj;                              // 0x7ac
         JOBJSet **ScMenSelplyBgCt_scene_models;          // 0x7b0
         GOBJ *background_gobj;                           // 0x7b4
-        JOBJSet **ScMenSelplyScoreCt_scene_models;       // 0x7b8
-        GOBJ *score_gobj;                                // 0x7bc
+        JOBJSet **ScMenSelplyPanelCt_scene_models;       // 0x7b8
+        GOBJ *panel_gobj;                                // 0x7bc
         JOBJSet **x7c0;                                  // 0x7c0
         JOBJSet **x7c4;                                  // 0x7c4
         JOBJSet **ScMenSelplyCursor0Ct_scene_models;     // 0x7c8
         GOBJ *cursor0_gobj[4];                           // 0x7cc
         JOBJSet **ScMenSelplyCursorBoardCt_scene_models; // 0x7dc
-        GOBJ *cityselect_menu_gobj;                      // 0x7e0
+        GOBJ *board_gobj;                                // 0x7e0
         JOBJSet **ScMenSelplyHandiCt_scene_models;       // 0x7e4
-        GOBJ *handicap_gobj[4];                          // 0x7e8
-        void *x7f8;                                      // 0x7f8
-        void *x7fc;                                      // 0x7fc
-        u8 x800[0x5c];                                   // 0x800
+        struct                                           // 0x7e8
+        {
+            GOBJ *handicap;
+            GOBJ *cpu_level;
+        } bar_gobj[4];
+        u8 x808[0x54];                                   // 0x808
         JOBJSet **ScMenSelplySicon2Ct_scene_models;      // 0x85c
         GOBJ *sicon2_gobj[4];                            // 0x860
-        GOBJ *x870[4];                                   // 0x870
+        JOBJSet **ScMenSelplyCpos2Ct_scene_models;       // 0x870
+        GOBJ *cpos_gobj;                                 // 0x874
+        JOBJSet **ScMenSelplyIpos2Ct_scene_models;       // 0x878
+        GOBJ *ipos_gobj;                                 // 0x87c
         JOBJSet **ScMenSelplyCursor1_scene_models;       // 0x880
         GOBJ *cursor1_gobj[4];                           // 0x884
         void *x894;                                      // 0x894
         void *x898;                                      // 0x898
         void *x89c;                                      // 0x89c
-        JOBJSet **ScMenSelplyCursor6_scene_models;       // 0x8a0
-        GOBJ *cursor6_gobj[4];                           // 0x8a4
-        void *x8b4;                                      // 0x8b4
-        void *x8b8;                                      // 0x8b8
+        JOBJSet **x8a0;                                  // 0x8a0
+        GOBJ *x8a4;                                      // 0x8a4
+        JOBJSet *ScMenSelplyCursor3_scene_models;        // 0x8a8
+        GOBJ *cursor3_gobj[4];                           // 0x8ac
         JOBJSet **ScMenSelplyCursor5_scene_models;       // 0x8bc
         GOBJ *cursor5_gobj[4];                           // 0x8c0
+        JOBJSet **ScMenSelplyWinCt_scene_models;         // 0x8d0
+        GOBJ *window_gobj[4];                             // 0x8d4
+        int x8e4;                                        // 0x8e4
+        int x8e8;                                        // 0x8e8
+        JOBJSet **ScMenSelplyEntryCt_scene_models;       // 0x8ec
+        GOBJ *entry_gobj[4];                             // 0x8f0
+        int ScMenSelplyCursor6_scene_models;             // 0x900
+        GOBJ *cursor6_gobj[4];                           // 0x904
     } city_select;                                       //
-    int x8d0;                                            // 0x8d0
-    int x8d4;                                            // 0x8d4
-    int x8d8;                                            // 0x8d8
-    int x8dc;                                            // 0x8dc
-    int x8e0;                                            // 0x8e0
-    int x8e4;                                            // 0x8e4
-    int x8e8;                                            // 0x8e8
-    int x8ec;                                            // 0x8ec
-    int x8f0;                                            // 0x8f0
-    int x8f4;                                            // 0x8f4
-    int x8f8;                                            // 0x8f8
-    int x8fc;                                            // 0x8fc
-    int x900;                                            // 0x900
-    int x904;                                            // 0x904
-    int x908;                                            // 0x908
-    int x90c;                                            // 0x90c
-    int x910;                                            // 0x910
     int x914;                                            // 0x914
     int x918;                                            // 0x918
     int x91c;                                            // 0x91c
@@ -816,6 +827,6 @@ void Scene_ExitMinor();                 // run this to cause a minor scene chang
 void Scene_SetDirection(int direction); // usually the button used to change scene
 int Scene_GetDirection();               // usually the button used to change scene
 void Scene_InitHeaps();                 //
-ScMenuCommon *Gm_GetMenuData();
+ScMenuCommon *Gm_GetMenuData();         // 0x80558788
 void MainMenu_InitAllVariables();
 #endif

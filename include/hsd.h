@@ -269,6 +269,7 @@ static u64 *stc_pause_plink_whitelists = (u64 *)0x80494f68; // array of u64 bitf
 static HSD_PollData *stc_hsd_polldata = (HSD_PollData *)0x804c1f78;
 static GXPixelFmt *stc_hsd_pixelfmt = (GXPixelFmt *)0x804d76c8;
 static DebugLevel *stc_dblevel = (DebugLevel *)0x805DD630;
+static int *hsd_rand_seed = (int *)0x805dcd30;
 
 /*** Functions ***/
 

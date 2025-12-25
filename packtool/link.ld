@@ -31,6 +31,17 @@ SECTIONS
   CARDSetStatusAsync = 0x803E836C;
   CARDUnmount = 0x803E65D0;
   CARDGetXferredBytes = 0x803126B4;
+  EXIInit = 0x803eb1ac;
+  EXISelect = 0x803eabc0;
+  EXIDeselect = 0x803eacec;
+  EXILock = 0x803eb380;
+  EXIUnlock = 0x803eb474;
+  EXIDma = 0x803ea354;
+  EXIImm = 0x803ea058;
+  EXIImmEx = 0x803ea2b4;
+  EXISync = 0x803ea440;
+  EXIProbe = 0x803ea8c4;
+  EXIGetID = 0x803eb590;
   DevelopText_Create = 0x800ab2d4;
   DevelopText_Activate = 0x0;
   DevelopText_Deactivate = 0x0;
@@ -145,6 +156,7 @@ SECTIONS
   JObj_AddAnim = 0x80409340;
   JObj_AddAnimAll = 0x80409480;
   JObj_AddNext = 0x8040BAC8;
+  JObj_GetPrev = 0x8040bc14;
   JObj_Anim = 0x8040A1A0;
   JObj_AnimAll = 0x8040A304;
   JObj_CheckAObjPlaying = 0x800547E0;
@@ -159,8 +171,8 @@ SECTIONS
   JObj_LoadJoint = 0x8040AFE8;
   JObj_Remove = 0x8040B718;
   JObj_RemoveAll = 0x8040B920;
-  JObj_RemoveAnim = 0x80408E74;
-  JObj_RemoveAnimAll = 0x80408EDC;
+  JObj_RemoveAnim = 0x80408e74;
+  JObj_RemoveAnimAll = 0x80408edc;
   JObj_ReqAnim = 0x80409250;
   JObj_ReqAnimAll = 0x80409274;
   JObj_ReqAnimAllByFlags = 0x80408F88;
@@ -174,7 +186,8 @@ SECTIONS
   JObj_AttachPosition = 0x80055C14;
   JObj_AttachPositionRotation = 0x80055C7C;
   JObj_AddSetAnim = 0x80138B10;
-  JObj_RemoveAnimByFlags = 0x80408B54;
+  JObj_RemoveAnimByFlags = 0x80408b54;
+  JObj_RemoveAnimAllByFlags = 0x80408bd0;
   LObj_LoadDesc = 0x80400238;
   LObj_GetPosition = 0x803FFCEC;
   LObj_SetPosition = 0x803FFC64;

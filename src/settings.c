@@ -125,11 +125,11 @@ void Settings_Create()
 
     // destroy main menu's description text
     ScMenuCommon *md = Gm_GetMenuData();
-    Text_Destroy(md->description_text);
-    md->description_text = 0;
+    Text_Destroy(md->text.description_text);
+    md->text.description_text = 0;
 
     // create description text
-    Text *t = Text_CreateText(0, md->canvas_idx);
+    Text *t = Text_CreateText(0, md->text.canvas_idx);
     t->trans = (Vec3){99, 406.9, 10};
     t->aspect = (Vec2){830, 19.2};
     t->viewport_scale = (Vec2){0.6, 0.6};

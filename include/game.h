@@ -126,6 +126,28 @@ typedef struct TitleScreenData
     u8 x17;        // 0x17
 } TitleScreenData;
 
+typedef struct PlayerDesc
+{
+    u8 p_kind;                   // 0x00
+    u8 rider_kind;               // 0x01
+    u8 is_bike;                  // 0x02
+    u8 machine_kind;             // 0x03
+    u8 color;                    // 0x04
+    u8 x5;                       // 0x05
+    u8 ply;                      // 0x06
+    s8 x7;                       // 0x07
+    int x8;                      // 0x08
+    int xc;                      // 0x0c
+    int x10;                     // 0x10
+    int x14;                     // 0x14
+    int x18;                     // 0x18
+    int x1c;                     // 0x1c
+    int x20;                     // 0x20
+    int x24;                     // 0x24
+    int x28;                     // 0x28
+    int x2c;                     // 0x2c
+} PlayerDesc;
+
 typedef struct GameData
 {
     int x0;                            // 0x0
@@ -254,37 +276,34 @@ typedef struct GameData
     int x1cc; // 0x1cc
     struct
     {
-        u8 x1d0;          // 0x1d0
-        int x1d4;          // 0x1d4
-        int x1d8;          // 0x1d8
-        int x1dc;          // 0x1dc
-        int x1e0;          // 0x1e0
-        int x1e4;          // 0x1e4
-        int x1e8;          // 0x1e8
-        int x1ec;          // 0x1ec
-        u8 x1f0;           // 0x1f0
-        u8 ready_state[4]; // 0x1f1
-        u8 x1f5;           // 0x1f5
-        int x1f8;          // 0x1f8
-        u8 x1fc;           // 0x1fc
-        u8 icon[4];        // 0x1fd
-        u8 x201;           // 0x201
-        int x204;          // 0x204
-        int x208;          // 0x208
-        int x20c;          // 0x20c
-        int x210;          // 0x210
-        int x214;          // 0x214
-        int x218;          // 0x218
-        int x21c;          // 0x21c
-        u8 x220;           // 0x220
-        u8 color[4];       // 0x221
-        u8 x225;           // 0x225
-        int x228;          // 0x228
-        int x22c;          // 0x22c
-        int x230;          // 0x230
+        u8 x1d0;                        // 0x1d0
+        u8 x1d1[3];                     // 0x1d1
+        u8 x1d4;                        // 0x1d4
+        u8 is_all_ready;                // 0x1d5, checks for start inputs when this is 1
+        u8 ply_is_selecting_bitfield;   // 0x1d6, (ply << 1). flag raised when selecting an icon or cpu/handicap level
+        u8 x1d7;                        // 0x1d7
+        u8 x1d8;                        // 0x1d8
+        u8 is_ready[4];                 // 0x1d9, flag raised when the ply is active and done making their selection
+        u8 hold_b_timer[20];            // 0x1dd, i have no idea why there are 20 elements when there are only 4 controller ports lol
+        u8 player_state[4];             // 0x1f1, 0 = inactive, 1 = icon select, 2 = handicap/cpu level = 3 = player element
+        u8 ply_cursor[4];               // 0x1f5, ply index the players cursor is hovered over
+        u8 ply_bar[4];                  // 0x1f9, bar index the player is hovered over 
+        u8 icon[4];                     // 0x1fd
+        u8 icon_saved[4];               // 0x201, written to after player exits. assumed to preserve the human selected icon
+        u8 x205[4];                     // 0x205
+        u8 x209[4];                     // 0x209
+        u8 x20d[4];                     // 0x20d
+        u8 x211[4];                     // 0x211
+        u8 x215[4];                     // 0x215, unk, 00 = hmn controlled, 02 = cpu, 03 = none
+        u8 x219[4];                     // 0x219, prev value for x215. 
+        u8 ply_pkind[4];                // 0x21d
+        u8 ply_color[4];                // 0x221
+        u8 ply_hmn_handicap[4];         // 0x225
+        u8 ply_cpu_handicap[4];         // 0x229
+        u8 ply_cpu_level[4];            // 0x22d
+        u8 ply_icon_ckind[4];           // 0x231, the ckind belonging to the currently selected icon
         struct
         {
-            u8 x234;           // 0x234
             u8 num;            // 0x235, total number of machines selectable
             u8 c_kind_arr[20]; // 0x236, 0x66, array of c_kind indices
         } machine_select;
@@ -392,7 +411,7 @@ typedef struct GameData
         int x39a : 8;                // 0x39a,
         int scene : 8;               // 0x39b, 3 = player select screen, 4 = in game, 5 = properties graph, 6 = stadium splash, 7 = stadium, 8 = results screen
         int x39c;                    // 0x39c
-        float ply_stats[4][9];       // 0x3a0, copied from playerblock @ 80040024
+        float ply_stats[9][4];       // 0x3a0, copied from playerblock @ 80040024
         int x430;                    // 0x430
         int x434;                    // 0x434
         int x438;                    // 0x438
@@ -635,7 +654,6 @@ typedef struct GameData
     int x7d8;                        // 0x7d8
     int x7dc;                        // 0x7dc
     HSD_Update update;               // 0x7e0
-    int x814;                        // 0x814
     int x818;                        // 0x818
     int x81c;                        // 0x81c
     int x820;                        // 0x820
@@ -803,15 +821,21 @@ typedef struct GameData
     u8 is_always_ura_bgm;            // 0xa99
     u8 xa9a;                         // 0xa9a
     u8 xa9b;                         // 0xa9b
-    int xa9c;                        // 0xa9c
+    u16 time_seconds;                // 0xa9c
     int xaa0;                        // 0xaa0
     u8 xaa4;                         // 0xaa4
     u8 xaa5;                         // 0xaa5
-    u8 xaa6;                         // 0xaa6
+    u8 xaa6_80 : 1;                  // 0xaa6, 0x80
+    u8 xaa6_40 : 1;                  // 0xaa6, 0x40
+    u8 xaa6_20 : 1;                  // 0xaa6, 0x20 (always enabled)
+    u8 xaa6_10 : 1;                  // 0xaa6, 0x10 (always enabled)
+    u8 xaa6_08 : 1;                  // 0xaa6, 0x08
+    u8 tempo : 2;                    // 0xaa6, 0x06
+    u8 xaa6_01 : 1;                  // 0xaa6, 0x01
     u8 xaa7_80 : 1;                  // 0xaa7, 0x80
     u8 xaa7_40 : 1;                  // 0xaa7, 0x40
     u8 is_play_music : 1;            // 0xaa7, 0x20
-    u8 xaa7_10 : 1;                  // 0xaa7, 0x10
+    u8 is_enable_events : 1;         // 0xaa7, 0x10
     u8 xaa7_08 : 1;                  // 0xaa7, 0x08
     u8 xaa7_04 : 1;                  // 0xaa7, 0x04
     u8 xaa7_02 : 1;                  // 0xaa7, 0x02
@@ -824,27 +848,7 @@ typedef struct GameData
     int xabc;                        // 0xabc
     int xac0;                        // 0xac0
     int xac4;                        // 0xac4
-    struct                           // 0xac8
-    {                                //
-        u8 x0;                       // 0x00
-        u8 rider_kind;               // 0x01
-        u8 is_bike;                  // 0x02
-        u8 machine_kind;             // 0x03
-        u8 color;                    // 0x04
-        u8 x5;                       // 0x05
-        u8 ply;                      // 0x06
-        u8 x7;                       // 0x07
-        int x8;                      // 0x08
-        int xc;                      // 0x0c
-        int x10;                     // 0x10
-        int x14;                     // 0x14
-        int x18;                     // 0x18
-        int x1c;                     // 0x1c
-        int x20;                     // 0x20
-        int x24;                     // 0x24
-        int x28;                     // 0x28
-        int x2c;                     // 0x2c
-    } ply_data[4];                   //
+    PlayerDesc ply_desc[4];          // 0xac8
     int xb88;                        // 0xb88
     int xb8c;                        // 0xb8c
     int xb90;                        // 0xb90
@@ -857,9 +861,12 @@ typedef struct GameData
     int xbac;                        // 0xbac
     int xbb0;                        // 0xbb0
     int xbb4;                        // 0xbb4
-    int xbb8;                        // 0xbb8
-    int xbbc;                        // 0xbbc
-    int xbc0;                        // 0xbc0
+    struct                           // 0xbb8
+    {
+        s8 x0;
+        s8 x1;
+        s8 x2;
+    } ply_view_desc[4];              //
     int xbc4;                        // 0xbc4
     StadiumResults stadium_results;  // 0xbc8
     int xc24;                        // 0xc24
@@ -1278,17 +1285,8 @@ typedef struct Game3dData
     int x388;                                     // 0x388
     int x38c;                                     // 0x38c
     int x390;                                     // 0x390
-    u16 time_seconds;                             // 0x394
-    u8 menu_stadium_selection;                    // 0x396, selected from settings, sub 1 to get StadiumGroup value
-    u8 game_tempo : 2;                            // 0x397, 0xC0 (1 = normal = 2 is slow)
-    u8 events_enable : 1;                         // 0x397, 0x20
-    u8 x397_x10 : 1;                              // 0x397, 0x10
-    u8 x397_x08 : 1;                              // 0x397, 0x08
-    u8 x397_x04 : 1;                              // 0x397, 0x04
-    u8 x397_x02 : 1;                              // 0x397, 0x02
-    u8 x397_x01 : 1;                              // 0x397, 0x01
-    u8 x398;                                      // 0x398,
-    CityMode city_mode : 8;                       // 0x399, which mode was selected from the menu
+    int x394;                                     // 0x394
+    int x398;                                     // 0x398
     int x39c;                                     // 0x39c
     int x3a0;                                     // 0x3a0
     int x3a4;                                     // 0x3a4
@@ -1703,7 +1701,7 @@ typedef struct Game3dData
     int xa90;                                     // 0xa90
     int xa94;                                     // 0xa94
     int xa98;                                     // 0xa98
-    int xa9c;                                     // 0xa9c
+    u16 a9c;                                      // 0xa9c
     int xaa0;                                     // 0xaa0
     int xaa4;                                     // 0xaa4
     int xaa8;                                     // 0xaa8
@@ -1807,6 +1805,7 @@ typedef struct PlayerData
 {
     u8 x0[0x90c];
 } PlayerData;
+
 
 typedef struct LegendaryPieceData           // 80ae2cec
 {                                           //

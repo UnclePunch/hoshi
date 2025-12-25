@@ -282,60 +282,6 @@ static inline float lerp(float start, float end, float t)
     return start + t * (end - start);
 }
 
-static DOBJ *JObj_GetDObjIndex(JOBJ *root, int joint_idx, int dobj_idx)
-{
-    if (!root)
-    {
-        OSReport("jobj %d not found\n", 0);
-        assert("0");
-        return 0;
-    }
-
-    JOBJ *this_joint = root;
-
-    for (int this_idx = 0; this_idx < joint_idx; this_idx++)
-    {
-        if (this_joint->child)
-            this_joint = this_joint->child;
-
-        else if (this_joint->sibling)
-            this_joint = this_joint->sibling;
-
-        else
-        {
-            OSReport("jobj %d not found\n", joint_idx);
-            assert("0");
-
-            return 0;
-        }
-    }
-
-    DOBJ *this_dobj = this_joint->dobj;
-
-    if (!this_dobj)
-    {
-        OSReport("jobj %d has no dobj\n", joint_idx);
-        assert("0");
-        return 0;
-    }
-
-    for (int this_idx = 0; this_idx < dobj_idx; this_idx++)
-    {
-        if (this_dobj->next)
-            this_dobj = this_dobj->next;
-
-        else
-        {
-            OSReport("dobj %d not found\n", dobj_idx);
-            assert("0");
-
-            return 0;
-        }
-    }
-
-    return this_dobj;
-}
-
 static inline int abs(int x)
 {
     if (x < 0)
@@ -411,23 +357,16 @@ static HSD_Pad *PadGetSys(int idx)
 
 static JOBJ *JObj_GetIndex(JOBJ *j, int idx)
 {
-    if (idx <= 0)
-        return (idx == 0) ? j : NULL;
-
     int count = idx;
-
-    while (count)
+    
+    while (count > 0)
     {
         if (j)
         {
             if (j->child)
-            {
                 j = j->child;
-            }
             else if (j->sibling)
-            {
                 j = j->sibling;
-            }
             else
             {
                 // Go up until we find a node with a sibling
@@ -597,26 +536,6 @@ static AOBJ *JObj_GetJointAOBJ(JOBJ *jobj)
     return 0;
 }
 
-static DOBJ *JObj_GetDObjChild(JOBJ *joint, int dobj_index)
-{
-
-    int count = 0;
-    DOBJ *dobj = joint->dobj;
-
-    while (count < dobj_index)
-    {
-        if (dobj->next == 0)
-            assert("dobj not found!");
-
-        else
-            dobj = dobj->next;
-
-        count++;
-    }
-
-    return dobj;
-}
-
 static TOBJ *JObj_FindTOBJFromImageDesc(JOBJ *root, _HSD_ImageDesc *image_desc)
 {
 
@@ -653,6 +572,43 @@ static TOBJ *JObj_FindTOBJFromImageDesc(JOBJ *root, _HSD_ImageDesc *image_desc)
     }
 
     return 0;
+}
+
+static DOBJ *JObj_GetDObjIndex(JOBJ *root, int joint_idx, int dobj_idx)
+{
+    if (!root)
+    {
+        OSReport("jobj %d not found\n", 0);
+        assert("0");
+        return 0;
+    }
+
+    JOBJ *this_joint = JObj_GetIndex(root, joint_idx);
+    
+    DOBJ *this_dobj = this_joint->dobj;
+
+    if (!this_dobj)
+    {
+        OSReport("jobj %d has no dobj\n", joint_idx);
+        assert("0");
+        return 0;
+    }
+
+    for (int this_idx = 0; this_idx < dobj_idx; this_idx++)
+    {
+        if (this_dobj->next)
+            this_dobj = this_dobj->next;
+
+        else
+        {
+            OSReport("dobj %d not found\n", dobj_idx);
+            assert("0");
+
+            return 0;
+        }
+    }
+
+    return this_dobj;
 }
 
 static float Math_Vec2Angle(Vec2 *a, Vec2 *b)
@@ -712,6 +668,86 @@ static void C_MTXRotAxisRad(Mtx *m, Vec3 *axis, f32 rad)
     (*m)[2][1] = (t * y * z) + (s * x);
     (*m)[2][2] = (t * zSq) + (c);
     (*m)[2][3] = 0.0f;
+}
+
+static void UpdateParentTrspBits(JOBJ* jobj, JOBJ* child)
+{
+    u32 flags = (child->flags | (child->flags << 10)) & JOBJ_ROOT_MASK;
+    while (jobj != NULL) {
+        if (!(flags & ~jobj->flags)) {
+            break;
+        }
+        jobj->flags |= flags;
+        jobj = jobj->parent;
+    }
+}
+
+static void RecalcParentTrspBits(JOBJ* jobj)
+{
+    while (jobj != NULL) {
+        JOBJ* child = jobj->child;
+        u32 flags = ~JOBJ_ROOT_MASK;
+        while (child != NULL) {
+            flags |= (child->flags | child->flags << 10) & JOBJ_ROOT_MASK;
+            child = child->sibling;
+        }
+        if (!(jobj->flags & ~flags)) {
+            break;
+        }
+        jobj->flags &= flags;
+        jobj = jobj->sibling;
+    }
+}
+
+static void HSD_JObjAddChild(JOBJ* jobj, JOBJ* child)
+{
+    JOBJ* last;
+
+    if (jobj == NULL || child == NULL) {
+        return;
+    }
+    if (child->parent != NULL) {
+        OSReport("child should be a orphan.\n");
+        __assert(__FILE__, 1350, "child->parent == NULL");
+    }
+    if (child->sibling != NULL) {
+        OSReport("child should not have siblings");
+        __assert(__FILE__, 1351, "child->next == NULL");
+    }
+    if (jobj->child == NULL) {
+        jobj->child = child;
+    } else {
+        last = jobj->child;
+        while (last->sibling != NULL) {
+            last = last->sibling;
+        }
+        last->sibling = child;
+    }
+    child->parent = jobj;
+    UpdateParentTrspBits(jobj, child);
+}
+
+static JOBJ* JObj_Reparent(JOBJ* jobj, JOBJ* parent)
+{
+    JOBJ* next;
+
+    if (jobj == NULL) {
+        return NULL;
+    }
+    next = jobj->sibling;
+    if (jobj->parent != NULL) {
+        if (jobj->parent->child == jobj) {
+            jobj->parent->child = next;
+        } else {
+            JOBJ* prev = JObj_GetPrev(jobj);
+            prev->sibling = next;
+        }
+        RecalcParentTrspBits(jobj->parent);
+        jobj->parent = NULL;
+    }
+    jobj->sibling = NULL;
+    HSD_JObjAddChild(parent, jobj);
+    return next;
 }
 
 // static float Math_Vec2Distance(Vec2 *a, Vec2 *b)

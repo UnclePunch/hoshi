@@ -6,12 +6,13 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 3
+#define HOSHI_VERSION 4
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
    2 - (11-19-25) move relocs to the end of the file so they can be discarded at runtime
    3 - (12-15-25) define all mod data in a single ModDesc struct 
+   4 - (12-24-25) split On3DLoad() into On3DLoadStart() and On3DLoadEnd()
 */
 
 typedef struct MenuDesc MenuDesc;

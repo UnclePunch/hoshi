@@ -87,21 +87,37 @@ void Hook_MainMenuLoad()
 };
 CODEPATCH_HOOKCREATE(0x80018994, "", Hook_MainMenuLoad, "", 0)
 
-// runs upon entering 3d scene
-void Hook_3DLoad()
+// runs before instantiating the 3d scene
+void Hook_3DLoadStart()
 {
     // loop through installed mods, run their function
     for (int i = 0; i < stc_modloader_data->mod_num; i++)
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->desc->On3DLoad)
-            this_mod->desc->On3DLoad();
+        if (this_mod->desc->On3DLoadStart)
+            this_mod->desc->On3DLoadStart();
     }
 
     return;
 };
-CODEPATCH_HOOKCREATE(0x80014d3c, "", Hook_3DLoad, "", 0)
+CODEPATCH_HOOKCREATE(0x80014448, "", Hook_3DLoadStart, "", 0)
+
+// runs after instantiating the 3d scene
+void Hook_3DLoadEnd()
+{
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->desc->On3DLoadEnd)
+            this_mod->desc->On3DLoadEnd();
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x80014d3c, "", Hook_3DLoadEnd, "", 0)
 
 // runs upon pausing 3d scene
 void Hook_3DPause(int pause_ply)
@@ -251,6 +267,7 @@ void OnFileLoad(ModHeader *file)
     // insert callback hooks
     CODEPATCH_HOOKAPPLY(0x8000678c);
     CODEPATCH_HOOKAPPLY(0x80018994);
+    CODEPATCH_HOOKAPPLY(0x80014448);
     CODEPATCH_HOOKAPPLY(0x80014d3c);
     CODEPATCH_HOOKAPPLY(0x8003b48c);
     CODEPATCH_HOOKAPPLY(0x80041160);

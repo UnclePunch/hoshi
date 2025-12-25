@@ -78,6 +78,7 @@ void KARPlusSave_OnSaveCreateOrLoad()
         }
     }
 
+    // run on load callbacks
     Mods_OnLoadSaveData();
 
     LOG_INFO("Finished initializing save.");
@@ -124,6 +125,9 @@ void KARPlusSave_OnNoSave()
         // set as no save to skip prompt
         Memcard_SetSaveStatus(CARDSAVE_IGNORE);
 
+        // boot to main menu
+        Scene_SetNextMajor(MJRKIND_MENU);
+
         // run on load callbacks
         Mods_OnLoadSaveData();
 
@@ -155,7 +159,6 @@ void KARPlusSave_OnNoSave()
         memset(city_checklist, -1, 0x78);
 
         MainMenu_InitAllVariables();
-        Scene_SetNextMajor(MJRKIND_MENU);
         Scene_ExitMajor();
     }
 

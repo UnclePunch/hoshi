@@ -19,7 +19,8 @@ typedef struct ModDesc
     void (*OnSceneChange)();
     void (*OnSaveInit)();
     void (*OnSaveLoaded)();
-    void (*On3DLoad)();
+    void (*On3DLoadStart)();                // executes before the game is initialized
+    void (*On3DLoadEnd)();                  // executes after the game is initialized (riders, machines, stage, etc are all instantiated)
     void (*On3DPause)(int pause_ply);
     void (*On3DUnpause)(int pause_ply);
     void (*On3DExit)();

@@ -275,9 +275,7 @@ typedef struct RiderData
     int x2f4;                             // 0x2f4
     int x2f8;                             // 0x2f8
     int x2fc;                             // 0x2fc
-    int x300;                             // 0x300
-    int x304;                             // 0x304
-    int x308;                             // 0x308
+    Vec3 pos;                             // 0x300
     int x30c;                             // 0x30c
     int x310;                             // 0x310
     int x314;                             // 0x314

@@ -13,6 +13,7 @@ SRC_DIR 	:= src
 BUILD   	:= build
 OUT_DIR     ?= out
 INSTALL_DIR ?=
+MOD_NAME    ?=
 
 INC_DIR   := ../include
 LD_SCRIPT := ../packtool/link.ld
@@ -60,7 +61,7 @@ $(ELF_OUT): $(OBJS)
 
 # DOL pack
 $(DOL_OUT): $(ELF_OUT)
-	$(PYTHON) $(INJECT_SCRIPT) -e "$(ELF_OUT)" -d "$(DOL_IN)" -o "$(DOL_OUT)" --riiv-out $(RIIV_OUT) --game-id "GKYE01" --mod-name "Kirby Air Ride Deluxe"
+	$(PYTHON) $(INJECT_SCRIPT) -e "$(ELF_OUT)" -d "$(DOL_IN)" -o "$(DOL_OUT)" --riiv-out $(RIIV_OUT) --game-id "GKYE01" --mod-name "$(MOD_NAME)"
 
 # --- Install Target ---
 # Copies the final .dol file

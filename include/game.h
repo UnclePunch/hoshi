@@ -822,7 +822,7 @@ typedef struct GameData
     u8 xa9a;                         // 0xa9a
     u8 xa9b;                         // 0xa9b
     u16 time_seconds;                // 0xa9c
-    int xaa0;                        // 0xaa0
+    int rng_seed_initial;            // 0xaa0
     u8 xaa4;                         // 0xaa4
     u8 xaa5;                         // 0xaa5
     u8 xaa6_80 : 1;                  // 0xaa6, 0x80
@@ -836,7 +836,7 @@ typedef struct GameData
     u8 xaa7_40 : 1;                  // 0xaa7, 0x40
     u8 is_play_music : 1;            // 0xaa7, 0x20
     u8 is_enable_events : 1;         // 0xaa7, 0x10
-    u8 xaa7_08 : 1;                  // 0xaa7, 0x08
+    u8 is_replay : 1;                // 0xaa7, 0x08
     u8 xaa7_04 : 1;                  // 0xaa7, 0x04
     u8 xaa7_02 : 1;                  // 0xaa7, 0x02
     u8 xaa7_01 : 1;                  // 0xaa7, 0x01

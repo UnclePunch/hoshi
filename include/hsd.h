@@ -95,11 +95,11 @@ struct HSD_ClassInfoHead
 struct HSD_ClassInfo
 {
     HSD_ClassInfoHead head;
-    void *(*alloc)(struct HSD_ClassInfo *o);     // 0x28
-    void (*init)(struct _HSD_Class *o);          // 0x2C
-    void (*release)(struct _HSD_Class *o);       // 0x30
-    void (*destroy)(struct _HSD_Class *o);       // 0x34
-    void (*amnesia)(struct HSD_ClassInfo *info); // 0x38
+    void *(*alloc)(HSD_ClassInfo *o);     // 0x28
+    void (*init)(HSD_ClassInfo *o);          // 0x2C
+    void (*release)(HSD_ClassInfo *o);       // 0x30
+    void (*destroy)(HSD_ClassInfo *o);       // 0x34
+    void (*amnesia)(HSD_ClassInfo *info); // 0x38
 };
 
 typedef struct _HSD_ObjAllocLink

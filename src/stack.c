@@ -100,7 +100,7 @@ void Stack_Log(StackData *sp, int exception_kind, int dsisr, void *segfault_inst
     for (int i = 0; i < STACK_MAX_DEPTH_LOG; i++)
     {
         // next chain exists and is a valid address
-        if (!c || c > (0x80000000 | OSGetPhysicalMemSize()))
+        if (!c || (u32)c > (0x80000000 | OSGetPhysicalMemSize()))
             break;
 
         // log pointers

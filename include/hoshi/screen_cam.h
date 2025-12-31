@@ -3,6 +3,6 @@
 
 #define HOSHI_SCREENCAM_GXLINK 63
 
-int Hoshi_GetScreenCanvasIndex();
+int Hoshi_CreateScreenText();
 
 #endif

@@ -31,12 +31,12 @@ void ScreenCam_Create()
     // CObj_SetOrtho(c, 0, -480, 0, 640);
 }
 
-int ScreenCam_GetCanvasIdx()
+Text *ScreenCam_CreateText()
 {
-    return canvas_idx;
+    return Text_CreateText(1, canvas_idx);
 }
 
 void ScreenCam_Init()
 {
-    CODEPATCH_REPLACEFUNC(Hoshi_GetScreenCanvasIndex, ScreenCam_GetCanvasIdx); // install function to get screen canvas idx 
+    CODEPATCH_REPLACEFUNC(Hoshi_CreateScreenText, ScreenCam_CreateText); // install function to get screen canvas idx 
 }

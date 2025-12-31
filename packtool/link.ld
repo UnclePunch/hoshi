@@ -445,5 +445,5 @@ SECTIONS
   Hoshi_AddPreloadGameFile = 0x80495174;
   Hoshi_ExportMod = 0x80495178;
   Hoshi_ImportMod = 0x8049517c;
-  Hoshi_GetScreenCanvasIndex = 0x80495180;
+  Hoshi_CreateScreenText = 0x80495180;
 }

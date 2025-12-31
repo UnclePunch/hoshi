@@ -61,7 +61,7 @@ SECTIONS
   COBJ_LoadDesc = 0x804031EC;
   COBJ_LoadDescSetScissor = 0x80066DF8;
   COBJ_Init = 0x80402FC0;
-  CObjThink_Common = 0x8011586c; 
+  CObjThink_Common = 0x8042a29c; 
   CObj_SetCurrent = 0x80401150;
   CObj_SetEraseColor = 0x8040F884;
   CObj_EraseScreen = 0x804006D4;

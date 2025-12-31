@@ -6,6 +6,7 @@
 #include "hurt.h"
 #include "collision.h"
 #include "machine.h"
+#include "camera.h"
 
 typedef enum RiderKind
 {
@@ -282,15 +283,9 @@ typedef struct RiderData
     int x318;                             // 0x318
     int x31c;                             // 0x31c
     int x320;                             // 0x320
-    int x324;                             // 0x324
-    int x328;                             // 0x328
-    int x32c;                             // 0x32c
-    int x330;                             // 0x330
-    int x334;                             // 0x334
-    int x338;                             // 0x338
-    int x33c;                             // 0x33c
-    int x340;                             // 0x340
-    int x344;                             // 0x344
+    Vec3 x324;                            // 0x324, forward movement vector
+    Vec3 x330;                            // 0x330, up vector
+    Vec3 x33c;                            // 0x33c
     int x348;                             // 0x348
     int x34c;                             // 0x34c
     int x350;                             // 0x350
@@ -328,7 +323,8 @@ typedef struct RiderData
         int x3e0;           // 0x3e0
         int down;           // 0x3e4
         int x3e8;           // 0x3e8
-        int x3ec;           // 0x3ec
+        s8 stickX;          // 0x3ec, byte. used for replays i think
+        s8 stickY;          // 0x3ed, byte. used for replays i think
         int x3f0;           // 0x3f0
     } input;
     GOBJ *machine_gobj;        // 0x3f4
@@ -360,7 +356,7 @@ typedef struct RiderData
     int x444;                  // 0x444
     int x448;                  // 0x448
     int x44c;                  // 0x44c
-    int x450;                  // 0x450
+    Vec3 *x450;                // 0x450
     CopyKind copy_kind;        // 0x454
     int x458;                  // 0x458
     int x45c;                  // 0x45c
@@ -794,7 +790,31 @@ typedef struct RiderData
     int xac0;                           // 0xac0
 } RiderData;
 
+typedef struct CamData
+{
+    int x0;                 // 0x0
+    int x4;                 // 0x4
+    int x8;                 // 0x8
+    int kind;               // 0xc
+    int x10;                // 0x10
+    CameraParam x14;        // 0x14  (copied from x138)
+    u8 x3c[0x84];           // 0x3c
+    CameraParam xc0;        // 0xc0
+    CameraParam xe8;        // gets copied directly from the cobj eye position @ 800b783c
+    CameraParam x110;       // 0x110
+    CameraParam x138;       // 0x138
+    u8 x160[0x20];
+    Vec3 eye_pos;           // 0x180
+    Vec3 interest_pos;      // 0x18c
+} CamData;
+
+typedef struct RiderCamData
+{
+    CamData *cam_data;  // 0x0
+} RiderCamData;
+
 static rdDataKirby **stc_rdDataKirby = (rdDataKirby **)0x80559fa8;
+static GOBJ **stc_ridercam_gobjs = (GOBJ **)0x805572f8; // array of 32, this is actually part of a larger struct
 
 void Rider_RespawnEnter(RiderData *);
 void Rider_GiveAbility(RiderData *, CopyKind);
@@ -804,5 +824,7 @@ void Rider_AbilityRemoveUnk(RiderData *);
 void Rider_LoseAbilityState_Enter(RiderData *);
 void Rider_GiveIntangibility(RiderData *, int time);
 void Rider_GiveInvincibility(RiderData *, int time);
+int Rider_IsOnMachine(RiderData *);
+int Rider_IsMachineDead(RiderData *);       // can only be called between the RDPRI_HITCOLL and RDPRI_DMGAPPLY priority.
 
 #endif

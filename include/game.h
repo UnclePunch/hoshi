@@ -148,7 +148,7 @@ typedef struct PlayerDesc
     int x2c;                     // 0x2c
 } PlayerDesc;
 
-typedef struct GameData
+typedef struct GameData // 805359d8
 {
     int x0;                            // 0x0
     int x4;                            // 0x4
@@ -815,7 +815,7 @@ typedef struct GameData
     int xa90;                        // 0xa90
     u8 city_kind;                    // 0xa94, 5 = main city trial. stadium modes are derived here @ 8004051c (0xE is destruction derby)
     u8 xa95;                         // 0xa95
-    u8 xa96;                         // 0xa96
+    u8 view_num;                     // 0xa96, number of views to create?
     u8 stage_kind;                   // 0xa97, StageKind
     u8 bgm_override;                 // 0xa98, when this is not 1, it plays it as the song id
     u8 is_always_ura_bgm;            // 0xa99
@@ -863,8 +863,8 @@ typedef struct GameData
     int xbb4;                        // 0xbb4
     struct                           // 0xbb8
     {
-        s8 x0;
-        s8 x1;
+        s8 ply;                      // 0x0
+        s8 is_enabled;               // 0x1
         s8 x2;
     } ply_view_desc[4];              //
     int xbc4;                        // 0xbc4

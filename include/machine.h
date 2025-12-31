@@ -424,9 +424,7 @@ typedef struct MachineData
     int x318;                             // 0x318
     int x31c;                             // 0x31c
     int x320;                             // 0x320
-    int x324;                             // 0x324
-    int x328;                             // 0x328
-    int x32c;                             // 0x32c
+    Vec3 x324;                            // 0x324
     int x330;                             // 0x330
     int x334;                             // 0x334
     int x338;                             // 0x338
@@ -493,12 +491,8 @@ typedef struct MachineData
     int x40c;                             // 0x40c
     int x410;                             // 0x410
     int x414;                             // 0x414
-    int x418;                             // 0x418
-    int x41c;                             // 0x41c
-    int x420;                             // 0x420
-    int x424;                             // 0x424
-    int x428;                             // 0x428
-    int x42c;                             // 0x42c
+    Vec3 vel;                             // 0x418, velocity vector
+    Vec3 up;                              // 0x424, up vector
     int x430;                             // 0x430
     int x434;                             // 0x434
     int x438;                             // 0x438
@@ -654,9 +648,12 @@ typedef struct MachineData
     struct                                //
     {                                     //
         Vec2 stick;                       // 0x664
-        int is;                           // 0x66c
-    } charge;                             //
-    int x670;                             // 0x670
+        int buttons;                      // 0x66c
+        u8 tilt_timer_x;                  // 0x670
+        u8 tilt_timer_y;                  // 0x671
+        u8 x672;                          // 0x672
+        u8 x673;                          // 0x673
+    } input;                              //
     int x674;                             // 0x674
     int x678;                             // 0x678
     int x67c;                             // 0x67c
@@ -768,11 +765,8 @@ typedef struct MachineData
     int x824;                             // 0x824
     int x828;                             // 0x828
     int x82c;                             // 0x82c
-    u8 x830;                              // 0x830
-    u8 x831;                              // 0x831
-    u8 x832;                              // 0x832
-    u8 frames_in_second;                  // 0x833
-    int seconds_passed;                   // 0x834
+    int x830;                             // 0x830
+    int x834;                             // 0x834
     int x838;                             // 0x838
     int x83c;                             // 0x83c
     int x840;                             // 0x840
@@ -998,15 +992,15 @@ typedef struct MachineData
     int xbcc;                             // 0xbcc
     int xbd0;                             // 0xbd0
     int xbd4;                             // 0xbd4
-    int xbd8;                             // 0xbd8
-    int xbdc;                             // 0xbdc
-    int xbe0;                             // 0xbe0
-    int xbe4;                             // 0xbe4
-    int xbe8;                             // 0xbe8
-    int xbec;                             // 0xbec
-    int xbf0;                             // 0xbf0
-    int xbf4;                             // 0xbf4
-    int xbf8;                             // 0xbf8
+    void (*xbd8)(GOBJ *m);                // 0xbd8
+    void (*xbdc)(GOBJ *m);                // 0xbdc
+    void (*xbe0)(GOBJ *m);                // 0xbe0
+    void (*xbe4)(GOBJ *m);                // 0xbe4
+    void (*xbe8)(GOBJ *m);                // 0xbe8
+    void (*xbec)(GOBJ *m);                // 0xbec
+    void (*xbf0)(GOBJ *m);                // 0xbf0
+    void (*xbf4)(GOBJ *m);                // 0xbf4
+    void (*xbf8)(GOBJ *m);                // 0xbf8
     int xbfc;                             // 0xbfc
     int xc00;                             // 0xc00
     int xc04;                             // 0xc04
@@ -1028,7 +1022,12 @@ typedef struct MachineData
     int xc30_04 : 1;                      // 0xc30, 0x04
     int xc30_02 : 1;                      // 0xc30, 0x02
     int xc30_01 : 1;                      // 0xc30, 0x01
-    int xc34;                             // 0xc34
+    u8 xc34;                              // 0xc34
+    u8 xc35_80 : 1;                       // 0xc35, 0x80
+    u8 xc35_40 : 1;                       // 0xc35, 0x40
+    u8 is_dead : 1;                       // 0xc35, 0x20
+    u8 xc36;                              // 0xc36
+    u8 xc37;                              // 0xc37
     int xc38;                             // 0xc38
     int xc3c;                             // 0xc3c
 
@@ -1045,5 +1044,5 @@ void Machine_SetMaxHP(MachineData *md);
 void Machine_GiveIntangibility(MachineData *md, int time);
 void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
 void Machine_GiveAllUp(MachineData *, int num);
-
+int Machine_IsDead(MachineData *);
 #endif

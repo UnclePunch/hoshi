@@ -165,8 +165,8 @@ struct HSD_Pads
 struct HSD_Update
 {
     int x7e0;                       // 0x7e0
-    u32 engine_frames;              // 0x0
-    u32 sys_frames;                 // 0x4
+    u32 engine_frames;              // 0x7e4
+    u32 sys_frames;                 // 0x7e8
     u32 x7ec;                       // 0x7ec,
     u8 pause_kind;                  // 0x7f0, 1 << PauseKind
     u8 pause_kind_prev;             // 0x7f1, 1 << PauseKind

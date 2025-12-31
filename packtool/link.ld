@@ -384,6 +384,7 @@ SECTIONS
   Machine_GiveIntangibility = 0x801d6c50;
   Machine_ApplyColAnim = 0x801d5ca0;
   Machine_GiveAllUp = 0x801cad40;
+  Machine_IsDead = 0x801c856c;
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
@@ -415,6 +416,8 @@ SECTIONS
   Rider_LoseAbilityState_Enter = 0x801b0adc;
   Rider_GiveIntangibility = 0x80195f68;
   Rider_GiveInvincibility = 0x80195f28;
+  Rider_IsOnMachine = 0x80191680;
+  Rider_IsMachineDead = 0x801943e4;
   HurtData_Create = 0x8018c1c8;
   HurtData_GiveIntangibility = 0x8018cb5c;
   Gm_Get3dData = 0x80112044;

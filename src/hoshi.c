@@ -23,8 +23,10 @@
 
 // Hoshi
 #include "export.h"
+#include "screen_cam.h"
 #include "hoshi/func.h"
 #include "hoshi/log.h"
+
 
 // Lib
 #include "code_patch/code_patch.h"
@@ -42,6 +44,8 @@ GlobalMod *cur_mod_install = 0;
 // runs every scene change, heap exists
 void Hook_SceneChange()
 {
+    ScreenCam_Create();
+
     // loop through installed mods, run their scene change function
     for (int i = 0; i < stc_modloader_data->mod_num; i++)
     {
@@ -50,13 +54,13 @@ void Hook_SceneChange()
         if (this_mod->desc->OnSceneChange)
             this_mod->desc->OnSceneChange();
     }
-
+    
 #ifdef LOG_LEVEL
     if (LOG_LEVEL > LOG_LEVEL_INFO)
     {
         // watermark
-        int canvas_idx = Text_CreateCanvas(1, 0, 0, 0, 0, 63, 0, 63);
-        Text *t = Text_CreateText(1, canvas_idx);
+        // int canvas_idx = Text_CreateCanvas(1, 0, 0, 0, 0, 63, 0, 63);
+        Text *t = Text_CreateText(1, ScreenCam_GetCanvasIdx());
         t->kerning = 1;
         t->use_aspect = 1;
         t->viewport_scale = (Vec2){0.5, 0.5};
@@ -64,8 +68,8 @@ void Hook_SceneChange()
         t->viewport_color = (GXColor){0, 0, 0, 128};
         Text_AddSubtext(t, 0, 0, "KARDX Test Build " __DATE__);
     }
-
 #endif
+
 
     return;
 };
@@ -215,6 +219,8 @@ void OnFileLoad(ModHeader *file)
     // this allows us to make persistent allocations by simply calling hsd_memalloc
     int alloc_instr = *(int *)(HSD_MemAlloc);
     CODEPATCH_REPLACEFUNC(HSD_MemAlloc, MemAllocPersistent);
+    int loadarchive_intr = *(int *)(Archive_LoadFile);
+    CODEPATCH_REPLACEFUNC(Archive_LoadFile, Archive_LoadFilePersistent);
 
     // if (LOG_LEVEL >= LOG_LEVEL_DEBUG)
     //     (*stc_dblevel) = DB_DEVELOP;
@@ -224,6 +230,7 @@ void OnFileLoad(ModHeader *file)
     Scenes_Init();      // init scene expansion
     Preload_Init();     // init preload expansion
     Stack_Init();       // init stack print patch
+    ScreenCam_Init();    // init screen camera
     KARPlusSave_Init(); // Init save data
 
     CODEPATCH_REPLACEFUNC(hash_32, _hash_32);         // install our hash function
@@ -280,6 +287,7 @@ void OnFileLoad(ModHeader *file)
 
     // restore hsd_memalloc
     CODEPATCH_REPLACEINSTRUCTION(HSD_MemAlloc, alloc_instr);
+    CODEPATCH_REPLACEINSTRUCTION(Archive_LoadFile, loadarchive_intr);
 
     // log out memory used by hoshi
     void *hoshi_data_end = (*(void **)0x805de290);
@@ -316,9 +324,37 @@ void MemFreePersistent(int size)
     return;
 }
 
-void File_LoadCallback(int r3, int *is_loaded)
+volatile int archive_is_loaded = 0;
+void Archive_LoadFilePersistentCallback(int unk, void *arg2)
 {
-    (*is_loaded) = 1;
+    archive_is_loaded = 1;
+}
+HSD_Archive *Archive_LoadFilePersistent(char *filename)
+{
+    // check if it exists
+    int entrynum = DVDConvertPathToEntrynum(filename);
+    if (entrynum == -1)
+       return 0;
+
+    archive_is_loaded = 0;
+
+    int size = File_GetSize(filename);
+    void *buffer = HSD_MemAlloc(size);
+    File_Read(entrynum, 0, buffer, OSRoundUp32B(size), 0x21, 1, Archive_LoadFilePersistentCallback, 0);
+
+    while (!archive_is_loaded)
+        ;
+
+    HSD_Archive *archive = HSD_MemAlloc(sizeof(HSD_Archive));
+    Archive_Init(archive, buffer, size);
+
+    return archive;
+}
+
+void File_LoadCallback(int r3, void *arg2)
+{
+    int *is_loaded = (int *)arg2;
+    *is_loaded = 1;
     return;
 }
 int File_LoadOffsetSync(int entrynum, void *file_buffer, int file_offset, int file_size)

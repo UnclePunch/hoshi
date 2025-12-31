@@ -47,6 +47,7 @@ extern ModloaderData *stc_modloader_data;
 
 void OnFileLoad(ModHeader *file);
 void *MemAllocPersistent(int size);
+HSD_Archive *Archive_LoadFilePersistent(char *filename);
 void OnSceneChange();
 void OnSceneChange_Caller();
 void Mods_CountFile(int entrynum, int *num);

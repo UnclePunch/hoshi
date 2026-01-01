@@ -5,6 +5,7 @@
 #include "obj.h"
 #include "hurt.h"
 #include "collision.h"
+#include "trigger.h"
 
 typedef enum MachineKind
 {
@@ -450,15 +451,7 @@ typedef struct MachineData
     int x388;                             // 0x388
     int x38c;                             // 0x38c
     int x390;                             // 0x390
-    u16 time_seconds;                     // 0x394
-    u8 menu_stadium_selection;            // 0x396, selected from settings, add 1 to get StadiumGroup value
-    u8 game_tempo : 2;                    // 0x397, 0xC0 (1 = normal = 2 is slow)
-    u8 events_enable : 1;                 // 0x397, 0x20
-    u8 x397_x10 : 1;                      // 0x397, 0x10
-    u8 x397_x08 : 1;                      // 0x397, 0x08
-    u8 x397_x04 : 1;                      // 0x397, 0x04
-    u8 x397_x02 : 1;                      // 0x397, 0x02
-    u8 x397_x01 : 1;                      // 0x397, 0x01
+    int x394;                             // 0x394
     int x398;                             // 0x398
     int x39c;                             // 0x39c
     int x3a0;                             // 0x3a0
@@ -479,9 +472,7 @@ typedef struct MachineData
     int x3dc;                             // 0x3dc
     int x3e0;                             // 0x3e0
     int x3e4;                             // 0x3e4
-    int x3e8;                             // 0x3e8
-    int x3ec;                             // 0x3ec
-    int x3f0;                             // 0x3f0
+    Vec3 pos;                             // 0x3e8
     int x3f4;                             // 0x3f4
     int x3f8;                             // 0x3f8
     int x3fc;                             // 0x3fc
@@ -889,30 +880,7 @@ typedef struct MachineData
     int xa14;                             // 0xa14
     float hp;                             // 0xa18
     int xa1c;                             // 0xa1c
-    int xa20;                             // 0xa20
-    int xa24;                             // 0xa24
-    int xa28;                             // 0xa28
-    int xa2c;                             // 0xa2c
-    int xa30;                             // 0xa30
-    int xa34;                             // 0xa34
-    int xa38;                             // 0xa38
-    int xa3c;                             // 0xa3c
-    int xa40;                             // 0xa40
-    int xa44;                             // 0xa44
-    int xa48;                             // 0xa48
-    int xa4c;                             // 0xa4c
-    int xa50;                             // 0xa50
-    int xa54;                             // 0xa54
-    int xa58;                             // 0xa58
-    int xa5c;                             // 0xa5c
-    int xa60;                             // 0xa60
-    int xa64;                             // 0xa64
-    int xa68;                             // 0xa68
-    int xa6c;                             // 0xa6c
-    int xa70;                             // 0xa70
-    int xa74;                             // 0xa74
-    int xa78;                             // 0xa78
-    int xa7c;                             // 0xa7c
+    TriggerData trigger;                  // 0xa20
     int xa80;                             // 0xa80
     int xa84;                             // 0xa84
     int xa88;                             // 0xa88

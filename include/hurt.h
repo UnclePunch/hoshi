@@ -15,6 +15,14 @@ typedef enum HurtKind
     HURTKIND_STAGE,
 } HurtKind;
 
+typedef struct HurtDesc
+{
+    int joint_idx;
+    int x4;
+    float scale;
+    Vec3 offset;
+} HurtDesc;
+
 typedef struct HurtData
 {
     HurtKind kind;       // x0

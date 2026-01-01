@@ -7,6 +7,7 @@
 #include "collision.h"
 #include "machine.h"
 #include "camera.h"
+#include "trigger.h"
 
 typedef enum RiderKind
 {
@@ -493,30 +494,7 @@ typedef struct RiderData
     int x668;                  // 0x668
     int x66c;                  // 0x66c
     CollData *coll_data;       // 0x670
-    int x674;                  // 0x674
-    int x678;                  // 0x678
-    int x67c;                  // 0x67c
-    int x680;                  // 0x680
-    int x684;                  // 0x684
-    int x688;                  // 0x688
-    int x68c;                  // 0x68c
-    int x690;                  // 0x690
-    int x694;                  // 0x694
-    int x698;                  // 0x698
-    int x69c;                  // 0x69c
-    int x6a0;                  // 0x6a0
-    int x6a4;                  // 0x6a4
-    int x6a8;                  // 0x6a8
-    int x6ac;                  // 0x6ac
-    int x6b0;                  // 0x6b0
-    int x6b4;                  // 0x6b4
-    int x6b8;                  // 0x6b8
-    int x6bc;                  // 0x6bc
-    int x6c0;                  // 0x6c0
-    int x6c4;                  // 0x6c4
-    int x6c8;                  // 0x6c8
-    int x6cc;                  // 0x6cc
-    int x6d0;                  // 0x6d0
+    TriggerData trigger;       // 0x674
     int x6d4;                  // 0x6d4
     int x6d8;                  // 0x6d8
     int x6dc;                  // 0x6dc

@@ -44,7 +44,7 @@ typedef enum GamePLink
     GAMEPLINK_ITEM,       // anything in ItemKind
     GAMEPLINK_PROJECTILE, // bomb, plasma bullet, flame, firework etc
     GAMEPLINK_15,
-    GAMEPLINK_16,
+    GAMEPLINK_EFFECTMODEL,
     GAMEPLINK_CAMWORLD,
     GAMEPLINK_18,
     GAMEPLINK_CAMHUD,

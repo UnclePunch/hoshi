@@ -11,6 +11,14 @@ SECTIONS
   atan = 0x803BC94C;
   atan2 = 0x803BD3C8;
   AudioHeap_SetAllocAndFree = 0x804479d4;
+  AudioSource_Alloc = 0x8005d864;
+  AudioSource_Free = 0x8005e08c;
+  AudioSource_SetPosition = 0x8005db44;
+  AudioSource_InitUnk = 0x80061168;
+  AudioSource_Play = 0x8005f528;
+  AudioSource_CheckUnk = 0x800623ec;
+  AudioTrack_Alloc = 0x8005d2b4;
+  AudioTrack_Free = 0x8005d64c;
   bp = 0x802D4BB0;
   CARDCheckAsync = 0x803E55D8;
   CARDClose = 0x803E7264;
@@ -197,6 +205,7 @@ SECTIONS
   LObj_AnimAll = 0x803FDE54;
   LObj_DeleteCurrentAll = 0x803FF318;
   LObj_RemoveAll = 0x803FFA40;
+  Map_AllocAudioSource = 0x8005ded0;
   MenuElement_Create = 0x801388a8;
   MenuElement_AddData = 0x80138a00;
   Memcard_GetState = 0x80452790;
@@ -368,6 +377,7 @@ SECTIONS
   Gm_IsDamageEnabled = 0x8000a188;
   Item_Create = 0x8024EEF4;
   Item_GetCommonAttr = 0x802500B0;
+  Item_AllocAudioSource = 0x8005de3c;
   CityTrial_DecideStadium = 0x8003F808;
   HUD_PauseCreate = 0x801285DC;
   HUD_PauseDestroy = 0x80128A68;
@@ -385,6 +395,7 @@ SECTIONS
   Machine_ApplyColAnim = 0x801d5ca0;
   Machine_GiveAllUp = 0x801cad40;
   Machine_IsDead = 0x801c856c;
+  Machine_AllocAudioSource = 0x8005dc5c;
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
@@ -418,6 +429,7 @@ SECTIONS
   Rider_GiveInvincibility = 0x80195f28;
   Rider_IsOnMachine = 0x80191680;
   Rider_IsMachineDead = 0x801943e4;
+  Rider_AllocAudioSource = 0x8005dbc8;
   HurtData_Create = 0x8018c1c8;
   HurtData_GiveIntangibility = 0x8018cb5c;
   Gm_Get3dData = 0x80112044;

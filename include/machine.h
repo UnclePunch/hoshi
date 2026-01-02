@@ -645,7 +645,7 @@ typedef struct MachineData
         u8 x672;                          // 0x672
         u8 x673;                          // 0x673
     } input;                              //
-    int x674;                             // 0x674
+    GOBJ *shadow_gobj;                    // 0x674
     int x678;                             // 0x678
     int x67c;                             // 0x67c
     int x680;                             // 0x680
@@ -1013,4 +1013,6 @@ void Machine_GiveIntangibility(MachineData *md, int time);
 void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
 void Machine_GiveAllUp(MachineData *, int num);
 int Machine_IsDead(MachineData *);
+
+AudioSource Machine_AllocAudioSource(int index);
 #endif

@@ -107,6 +107,18 @@ enum FGMID
     FGM_NULL,
 };
 
+typedef enum AudioSourceKind
+{
+    AUDIOSOURCE_0,
+    AUDIOSOURCE_RIDER,
+    AUDIOSOURCE_MACHINE,
+    AUDIOSOURCE_3,
+    AUDIOSOURCE_4,
+    AUDIOSOURCE_ITEM,
+    AUDIOSOURCE_MAP,
+} AudioSourceKind;
+
+typedef s32 AudioSource;
 typedef struct _AXPBADDR
 {
     u16 loopFlag;         // 0x0, one shot or looped sample (see above)
@@ -356,6 +368,73 @@ struct AXLive
     HPSChunkHeader hps_chunk_headers[3]; // 0x1c60, circular buffer of 3 most recent hps headers
 };
 
+typedef struct AudioSource
+{
+    int x0;                 // 0x0, 0x33c
+    int x4;                 // 0x4
+    AudioSourceKind kind;   // 0x8
+    Vec3 xc;                // 0xc
+    Vec3 x18;               // 0x18
+    Vec3 x24;               // 0x24
+    int x30;                // 0x30
+    int x34;                // 0x34 
+    int x38;                // 0x38
+    int x3c;                // 0x3c
+    int x40;                // 0x40
+    u16 x44;                // 0x44, doesnt play if this is under 10? 8005f558
+    u16 x46;                // 0x46
+    int x48;                // 0x48
+    int x4c;                // 0x4c
+    int x50;                // 0x50
+    u8 x54_80 : 1;          // 0x54 0x80
+    u8 x54_40 : 1;          // 0x54 0x40
+    u8 x54_20 : 1;          // 0x54 0x20
+    u8 x54_10 : 1;          // 0x54 0x10
+    u8 x54_08 : 1;          // 0x54 0x08
+    u8 x54_04 : 1;          // 0x54 0x04
+    u8 x54_02 : 1;          // 0x54 0x02
+    u8 x54_01 : 1;          // 0x54 0x01
+    u8 x55_80 : 1;          // 0x55 0x80
+    u8 x55_40 : 1;          // 0x55 0x40
+    u8 x55_20 : 1;          // 0x55 0x20
+    u8 x55_10 : 1;          // 0x55 0x10
+    u8 x55_08 : 1;          // 0x55 0x08
+    u8 x55_04 : 1;          // 0x55 0x04
+    u8 x55_02 : 1;          // 0x55 0x02
+    u8 x55_01 : 1;          // 0x55 0x01
+    int x58;                // 0x58
+    int x5c;                // 0x5c
+    int x60;                // 0x60
+    int x64;                // 0x64
+    int x68;                // 0x68
+    int x6c;                // 0x6c
+    int x70;                // 0x70
+    int x74;                // 0x74
+    int x78;                // 0x78
+    int x7c;                // 0x7c
+    int x80;                // 0x80
+    int x84;                // 0x84
+    int x88;                // 0x88
+    int x8c;                // 0x8c
+    int x90;                // 0x90
+    int x94;                // 0x94
+    int x98;                // 0x98
+    int x9c;                // 0x9c
+    int xa0;                // 0xa0
+    int xa4;                // 0xa4
+    int xa8;                // 0xa8
+    int xac;                // 0xac
+    int xb0;                // 0xb0
+    int xb4;                // 0xb4
+} AudioSourceData;
+
+typedef struct AudioSourceTable
+{
+    u8 x0[0x33c];
+    AudioSourceData sources[350]; // 0x805383c4
+} AudioSourceTable;
+
+static AudioSourceTable *audio_source_table = (AudioSourceTable *)0x80538088; // indexed by value returned from Audio_AllocSource()
 static BGMData *stc_bgm_data_arr = (BGMData *)0x80508bc8; // 0 = ?, 1 = main song, 2 = secondary song (event)
 static FGMLive *fgm_live = (FGMLive *)0x804c45a0;         // points to an array of ? FGMLive structs
 static AXLive *ax_live = (AXLive *)0x80596da0;
@@ -385,7 +464,7 @@ int SFX_PlayCommon(int sfxID);
 int SFX_PlayCrowd(int sfxID);
 void SFX_StopCrowd();
 
-void AudioHeap_SetAllocAndFree(void *alloc_fun, void *free_func);
+void AudioHeap_SetAllocAndFree(void *alloc_func, void *free_func);
 void Audio_ResetCache(int group_index);
 void Audio_QueueFileLoad(int group_index, u64 ssm_index);
 void Audio_UpdateCache();
@@ -409,6 +488,15 @@ int FGM_SetPanning(u32 sfxid, u8 panning);
 void FGM_ResumeKind(int kind); //
 void FGM_PauseKind(int kind);  // pausing in-game pauses kinds 5,6,7,8
 void FGM_LoadInGameBanks();
+
+AudioSource AudioSource_Alloc(AudioSourceKind kind, int idx); // 
+void AudioSource_Free(AudioSource source); //
+void AudioSource_SetPosition(AudioSource source, Vec3 *pos, float unk); // 
+void AudioSource_InitUnk(AudioSource source); // is called before playing
+int AudioSource_CheckUnk(AudioSource source);
+void AudioSource_Play(int sfx, int audio_track, AudioSource source); // you can play multiple sounds per track and prox?
+int AudioTrack_Alloc(); // 
+void AudioTrack_Free(int audio_track); // 
 
 AXVPB *AXAcquireVoice(u32 priority, void *callback, u32 userContext);
 

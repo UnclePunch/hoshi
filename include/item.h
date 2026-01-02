@@ -6,6 +6,22 @@
 #include "os.h"
 #include "trigger.h"
 
+typedef enum ItemPri
+{
+    ITPRI_0,
+    ITPRI_ANIM,
+    ITPRI_PHYS = 4,
+    ITPRI_ENVCOLL,
+    ITPRI_6,
+    ITPRI_TRIGGER, // collect powerup collision, also frees sounds
+    ITPRI_8,
+    ITPRI_HITCOLL,
+    ITPRI_DMGAPPLY,
+    ITPRI_13 = 13,
+    ITPRI_15 = 15,
+} ItemPri;
+
+
 typedef enum BoxKind
 {
     BOXKIND_ALL = -1,
@@ -167,7 +183,7 @@ typedef struct ItemCommonParam
     float scale;           // 0x0
     float x4;              // 0x4
     float x8;              // 0x8
-    float xc;              // 0xc
+    float shadow_scale;    // 0xc
     float x10;             // 0x10
     float x14;             // 0x14
     float x18;             // 0x18
@@ -211,13 +227,13 @@ typedef struct ItemData
     int xc;                     // 0xc
     int x10;                    // 0x10
     int x14;                    // 0x14
-    int x18;                    // 0x18
-    int x1c;                    // 0x1c
+    GOBJ *shadow_gobj;          // 0x18
+    ItemKind kind;              // 0x1c
     int x20;                    // 0x20
-    int x24;                    // 0x24
+    int unk_group;              // 0x24, is referenced when defining shadow size. non boxes use a smaller shadow size in ItCommon
     JOBJDesc *jobjdesc;         // 0x28
     itData *itData;             // 0x2c
-    int x30;                    // 0x30
+    int exist_index;            // 0x30, this item is the nth to exist
     int x34;                    // 0x34
     int x38;                    // 0x38
     int x3c;                    // 0x3c
@@ -231,7 +247,7 @@ typedef struct ItemData
     int x5c;                    // 0x5c
     int x60;                    // 0x60
     int x64;                    // 0x64
-    float frames_since_hit;     // 0x68
+    float state_frame;          // 0x68
     int x6c;                    // 0x6c
     int x70;                    // 0x70
     int x74;                    // 0x74
@@ -248,7 +264,7 @@ typedef struct ItemData
     int xa0;                    // 0xa0
     int xa4;                    // 0xa4
     int xa8;                    // 0xa8
-    int xac;                    // 0xac
+    float scale;                // 0xac
     float alpha;                // 0xb0
     float alpha_addend;         // 0xb4, is added to alpha each frame, for box at least 
     Vec3 xb8;                   // 0xb8, queued velocity? gets added to vel
@@ -259,9 +275,7 @@ typedef struct ItemData
     int xf4;                    // 0xf4
     int xf8;                    // 0xf8
     int xfc;                    // 0xfc
-    int x100;                   // 0x100
-    int x104;                   // 0x104
-    int x108;                   // 0x108
+    Vec3 x100;                  // 0x100
     int x10c;                   // 0x10c
     int x110;                   // 0x110
     int x114;                   // 0x114
@@ -302,12 +316,12 @@ typedef struct ItemData
     struct                      // 0x1a8, items use point collision
     {
         int raycast_idx;        // 0x1a8, this id represents when the raycast was performed?
-        Vec3 land_pos;          // 0x1ac, calculated ahead of time
+        Vec3 land_pos;          // 0x1ac, calculated ahead of time once
     } point_coll;               //
     int x1b8;                   // 0x1b8
     int x1bc;                   // 0x1bc
     int x1c0;                   // 0x1c0
-    int x1c4;                   // 0x1c4
+    float x1c4;                 // 0x1c4, is the value returned by 800ceb18
     Vec3 x1c8;                  // 0x1c8, multiplied with queued velocity @ 0xb8 when a box is landing. another down vector?
     int x1d4;                   // 0x1d4
     int x1d8;                   // 0x1d8
@@ -336,9 +350,9 @@ typedef struct ItemData
     int x234;                   // 0x234
     int x238;                   // 0x238
     int x23c;                   // 0x23c
-    int x240;                   // 0x240
-    int x244;                   // 0x244
-    int x248;                   // 0x248
+    int audio_prox;             // 0x240, 8005de3c returns this.
+    int audio_track;            // 0x244, stored @ 80256b5c when bouncing item sound plays
+    int audio_unk;              // 0x248
     int bounce_num;             // 0x24c, incremented when bouncing @ 80255a70
     TriggerData trigger;        // 0x250
     int x2b0;                   // 0x2b0
@@ -916,11 +930,12 @@ typedef struct ItemParam2
     int max_items; // 0x0
 } ItemParam2;
 
-static ItemParam **stc_item_param = (ItemParam **)(0x805dd0e0 + 0x7E8);
+static ItemCommonParam **stc_item_param = (ItemCommonParam **)(0x805dd0e0 + 0x7E8);
 static ItemParam2 **stc_item_param2 = (ItemParam2 **)(0x805dd0e0 + 0x7EC);
 
 ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); // group: -1 = sky, 0 = blue box, 1 = green box, 2 = red box. r4 = -1 = everything, 0 = down only, 1 = up only. spawn_flags: 0x1 = ?, 0x2 = patch, 0x4 = box,
 GOBJ *Item_Create(void *spawn_desc);
 ItemCommonAttr *Item_GetCommonAttr(ItemKind it_kind);
 
+AudioSource Item_AllocAudioSource(int index);
 #endif

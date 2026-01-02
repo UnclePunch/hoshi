@@ -492,7 +492,7 @@ typedef struct RiderData
     int x660;                  // 0x660
     int x664;                  // 0x664
     int x668;                  // 0x668
-    int x66c;                  // 0x66c
+    GOBJ *shadow_gobj;         // 0x66c
     CollData *coll_data;       // 0x670
     TriggerData trigger;       // 0x674
     int x6d4;                  // 0x6d4
@@ -804,5 +804,7 @@ void Rider_GiveIntangibility(RiderData *, int time);
 void Rider_GiveInvincibility(RiderData *, int time);
 int Rider_IsOnMachine(RiderData *);
 int Rider_IsMachineDead(RiderData *);       // can only be called between the RDPRI_HITCOLL and RDPRI_DMGAPPLY priority.
+
+AudioSource Rider_AllocAudioSource(int index);
 
 #endif

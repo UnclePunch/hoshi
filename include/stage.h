@@ -139,4 +139,5 @@ GroundKind Gm_GetGrKindFromStageKind(StageKind stage_kind);
 
 void Gr_StateChange(YakumonoData *yp, int state_idx, int anim_idx, int joint_idx, int flags, float start_frame, float anim_rate, float blend_rate);
 
+AudioSource Map_AllocAudioSource(int index);
 #endif

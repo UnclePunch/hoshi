@@ -40,10 +40,10 @@ typedef enum GamePLink
     GAMEPLINK_MACHINE,
     GAMEPLINK_RIDER,
     GAMEPLINK_11,
-    GAMEPLINK_EVENTACTOR, // dyna blade, tac, meteor, etc
-    GAMEPLINK_ITEM,       // anything in ItemKind
-    GAMEPLINK_PROJECTILE, // bomb, plasma bullet, flame, firework etc
-    GAMEPLINK_15,
+    GAMEPLINK_EVENTACTOR,   // dyna blade, tac, meteor, etc
+    GAMEPLINK_ITEM,         // anything in ItemKind
+    GAMEPLINK_PROJECTILE,   // bomb, plasma bullet, flame, firework etc
+    GAMEPLINK_SHADOW,       // circular shadow beneath most objects
     GAMEPLINK_EFFECTMODEL,
     GAMEPLINK_CAMWORLD,
     GAMEPLINK_18,
@@ -2222,6 +2222,8 @@ void Gm_Resume(int pause_kind);
 void Gm_PlayPauseSFX();
 void Gm_PauseAllSFX();
 void Gm_ResumeAllSFX();
+
+float Gm_GetDownVector(Vec3 *pos, Vec3 *out); // 800ceb18. unsure what the float is
 
 void Gm_SetCameraNormal();
 int Gm_IsDamageEnabled();

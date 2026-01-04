@@ -395,7 +395,7 @@ SECTIONS
   Machine_SetMaxHP = 0x801cb4a4;
   Machine_GiveIntangibility = 0x801d6c50;
   Machine_ApplyColAnim = 0x801d5ca0;
-  Machine_GivePatch = 0x801cad40;
+  Machine_GivePatch = 0x801cacf4;
   Machine_GiveAllUp = 0x801cad40;
   Machine_IsDead = 0x801c856c;
   Machine_AllocAudioSource = 0x8005dc5c;

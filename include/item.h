@@ -4,6 +4,8 @@
 #include "structs.h"
 #include "datatypes.h"
 #include "os.h"
+#include "audio.h"
+#include "hurt.h"
 #include "trigger.h"
 
 typedef enum ItemPri
@@ -129,6 +131,20 @@ typedef enum ItemKind
     ITKIND_WEIGHTFAKE,
     ITKIND_NUM,
 } ItemKind;
+
+typedef enum PatchKind
+{
+    PATCHKIND_WEIGHT,
+    PATCHKIND_ACCEL,
+    PATCHKIND_TOPSPEED,
+    PATCHKIND_TURN,
+    PATCHKIND_CHARGE,
+    PATCHKIND_GLIDE,
+    PATCHKIND_OFFENSE,
+    PATCHKIND_DEFENSE,
+    PATCHKIND_HP,
+    PATCHKIND_NUM,
+} PatchKind;
 
 typedef struct ItemCommonAttr
 {

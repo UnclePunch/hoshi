@@ -357,7 +357,7 @@ typedef struct RiderData
     int x444;                  // 0x444
     int x448;                  // 0x448
     int x44c;                  // 0x44c
-    Vec3 *x450;                // 0x450
+    PlayerCamLink *x450;       // 0x450
     CopyKind copy_kind;        // 0x454
     int x458;                  // 0x458
     int x45c;                  // 0x45c
@@ -388,8 +388,8 @@ typedef struct RiderData
     int x4c0;                  // 0x4c0
     int x4c4;                  // 0x4c4
     int x4c8;                  // 0x4c8
-    int x4cc;                  // 0x4cc
-    int x4d0;                  // 0x4d0
+    AudioSource audio_source;  // 0x4cc
+    int audio_track;           // 0x4d0
     int x4d4;                  // 0x4d4
     int x4d8;                  // 0x4d8
     int x4dc;                  // 0x4dc
@@ -768,31 +768,7 @@ typedef struct RiderData
     int xac0;                           // 0xac0
 } RiderData;
 
-typedef struct CamData
-{
-    int x0;                 // 0x0
-    int x4;                 // 0x4
-    int x8;                 // 0x8
-    int kind;               // 0xc
-    int x10;                // 0x10
-    CameraParam x14;        // 0x14  (copied from x138)
-    u8 x3c[0x84];           // 0x3c
-    CameraParam xc0;        // 0xc0
-    CameraParam xe8;        // gets copied directly from the cobj eye position @ 800b783c
-    CameraParam x110;       // 0x110
-    CameraParam x138;       // 0x138
-    u8 x160[0x20];
-    Vec3 eye_pos;           // 0x180
-    Vec3 interest_pos;      // 0x18c
-} CamData;
-
-typedef struct RiderCamData
-{
-    CamData *cam_data;  // 0x0
-} RiderCamData;
-
 static rdDataKirby **stc_rdDataKirby = (rdDataKirby **)0x80559fa8;
-static GOBJ **stc_ridercam_gobjs = (GOBJ **)0x805572f8; // array of 32, this is actually part of a larger struct
 
 void Rider_RespawnEnter(RiderData *);
 void Rider_GiveAbility(RiderData *, CopyKind);

@@ -256,6 +256,7 @@ SECTIONS
   Pad_GetDown = 0x8000ECF0;
   Pad_GetRapidHeld = 0x8000ED30;
   Pad_GetHeld = 0x8000ECD0;
+  Pad_StopRumbleAll = 0x80071d7c;
   Gm_GetPauseKind = 0x80005D04;
   Preload_CreateEntry = 0x80072C90;
   Preload_CreateEntryByEntrynum = 0x80072AD8;
@@ -281,6 +282,7 @@ SECTIONS
   FGM_PauseKind = 0x80444CC4;
   FGM_ResumeKind = 0x80444FE0;
   FGM_LoadInGameBanks = 0x8005A348;
+  FGM_StopAll = 0x8005e788;
   Gm_LoadGroundFGMBank = 0x8005a474;
   ceil = 0x803bcb64;
   fmod = 0x803BD408;
@@ -393,6 +395,7 @@ SECTIONS
   Machine_SetMaxHP = 0x801cb4a4;
   Machine_GiveIntangibility = 0x801d6c50;
   Machine_ApplyColAnim = 0x801d5ca0;
+  Machine_GivePatch = 0x801cad40;
   Machine_GiveAllUp = 0x801cad40;
   Machine_IsDead = 0x801c856c;
   Machine_AllocAudioSource = 0x8005dc5c;

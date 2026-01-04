@@ -483,6 +483,7 @@ int BGM_GetPreferredVolume();            // 0 - > 127, derived from sound option
 void BGM_SetVolume(int volume, int unk); // 0 - > 127, unk is 1
 int FGM_CheckActive(u32 fgm_id);
 void FGM_Stop(u32 fgm_id);
+void FGM_StopAll();
 int FGM_SetVolume(u32 sfxid, u8 volume);
 int FGM_SetPanning(u32 sfxid, u8 panning);
 void FGM_ResumeKind(int kind); //

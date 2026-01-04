@@ -63,8 +63,8 @@ typedef enum PKind
 {
     PKIND_HMN,
     PKIND_CPU,
-    PKIND_2,
-    PKIND_3,
+    PKIND_DEMO,
+    PKIND_BOSS,
     PKIND_NONE,
 } PKind;
 
@@ -89,6 +89,14 @@ typedef enum GameMode
     GMMODE_CITYTRIAL,
     GMMODE_NUM,
 } GameMode;
+
+typedef enum PlayerCamFlag
+{
+    PLYCAM_OFF, 
+    PLYCAM_ON, 
+    PLYCAM_LIVE, 
+    PLYCAM_REPLAY, 
+} PlayerCamFlag;
 
 typedef enum GmIntroState
 {
@@ -133,10 +141,13 @@ typedef struct PlayerDesc
     u8 is_bike;                  // 0x02
     u8 machine_kind;             // 0x03
     u8 color;                    // 0x04
-    u8 x5;                       // 0x05
+    u8 rumble;                   // 0x05
     u8 ply;                      // 0x06
     s8 x7;                       // 0x07
-    int x8;                      // 0x08
+    u8 cpu_level;                // 0x08
+    s8 x9;                       // 0x09
+    u8 xa;                       // 0x0a
+    u8 xb;                       // 0x0b
     int xc;                      // 0x0c
     int x10;                     // 0x10
     int x14;                     // 0x14
@@ -672,8 +683,11 @@ typedef struct GameData // 805359d8
     int x848;                        // 0x848
     int x84c;                        // 0x84c
     int x850;                        // 0x850
-    int x854;                        // 0x854
-    int x858;                        // 0x858
+    u8 x854;                         // 0x854
+    u8 x855;                         // 0x855
+    u8 x856;                         // 0x856
+    u8 x857_ply[4];                  // 0x857, accessed by 8000981c
+    u8 x858;                         // 0x85b
     int x85c;                        // 0x85c
     int x860;                        // 0x860
     int x864;                        // 0x864
@@ -864,8 +878,8 @@ typedef struct GameData // 805359d8
     struct                           // 0xbb8
     {
         s8 ply;                      // 0x0
-        s8 is_enabled;               // 0x1
-        s8 x2;
+        s8 flag;                     // 0x1 PlayerCamFlag
+        s8 x2;                       // 0x2
     } ply_view_desc[4];              //
     int xbc4;                        // 0xbc4
     StadiumResults stadium_results;  // 0xbc8
@@ -1104,11 +1118,8 @@ typedef struct Game3dData
     int xb4;                                      // 0xb4
     int xb8;                                      // 0xb8
     int xbc;                                      // 0xbc
-    int xc0;                                      // 0xc0
-    int xc4;                                      // 0xc4
-    int xc8;                                      // 0xc8
-    int xcc;                                      // 0xcc
-    int xd0;                                      // 0xd0
+    JOBJSet *ScInfPlynum_scene_models;            // 0xc0
+    GOBJ *plynum_gobj[4];                         // 0xc4
     int xd4;                                      // 0xd4
     int xd8;                                      // 0xd8
     int xdc;                                      // 0xdc
@@ -2227,6 +2238,9 @@ float Gm_GetDownVector(Vec3 *pos, Vec3 *out); // 800ceb18. unsure what the float
 
 void Gm_SetCameraNormal();
 int Gm_IsDamageEnabled();
+
+void Pad_StopRumbleAll();
+
 int hash_32(const void *data, int size);
 int hash_32_str(const void *data);
 void Gm_LoadGroundFGMBank(GroundKind gr_kind); //

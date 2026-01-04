@@ -16,6 +16,22 @@ typedef struct HudPliconData
     int ply; // 0x1c
 } HudPliconData;
 
+typedef struct HudPlyNumData
+{
+    int x0;                 // 0x0
+    int x4;                 // 0x4
+    u8 x8_f0 : 4;           // 0x8, 0xf0
+    u8 x8_0c : 2;           // 0x8, 0x0c
+    u8 x8_02 : 1;           // 0x8, 0x02, does not display if this is enabled
+    u8 x8_01 : 1;           // 0x8, 0x01
+    float xc;               // 0xc
+    float x10;              // 0x10
+    int hud_kind;           // 0x14, is 1 for this
+    int hidden;             // 0x18, does not display if this is enabled
+    int ply;                // 0x1c
+    int x20;                // 0x20
+} HudPlyNumData;
+
 typedef struct HudHpBarData
 {
     int x0;           // 0x00

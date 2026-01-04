@@ -762,13 +762,16 @@ typedef struct MachineData
     int x838;                             // 0x838
     int x83c;                             // 0x83c
     int x840;                             // 0x840
-    int x844;                             // 0x844
-    int x848;                             // 0x848
-    int x84c;                             // 0x84c
-    int x850;                             // 0x850
-    int x854;                             // 0x854
-    int x858;                             // 0x858
-    int x85c;                             // 0x85c
+    struct
+    {
+        AudioSource source;             // 0x844
+        int track;                      // 0x848
+        int track2;                     // 0x84c, used when releasing a charge
+        int track3;                     // 0x850, used during nice landings
+        int track4;                     // 0x854, used when collecting a patch
+        int track5;                     // 0x858, read every state change
+        float radius;                   // 0x85c
+    } audio;
     int x860;                             // 0x860
     int x864;                             // 0x864
     int x868;                             // 0x868
@@ -779,8 +782,8 @@ typedef struct MachineData
     int x87c;                             // 0x87c
     int x880;                             // 0x880
     int x884;                             // 0x884
-    int x888;                             // 0x888
-    int x88c;                             // 0x88c
+    int charge_fgm_instance;              // 0x888
+    int charge_fgm_kind;                  // 0x88c
     int x890;                             // 0x890
     int x894;                             // 0x894
     int x898;                             // 0x898

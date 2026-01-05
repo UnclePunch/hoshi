@@ -483,7 +483,7 @@ typedef struct MachineData
     int x40c;                             // 0x40c
     int x410;                             // 0x410
     int x414;                             // 0x414
-    Vec3 vel;                             // 0x418, velocity vector
+    Vec3 forward;                         // 0x418, velocity vector?
     Vec3 up;                              // 0x424, up vector
     int x430;                             // 0x430
     int x434;                             // 0x434

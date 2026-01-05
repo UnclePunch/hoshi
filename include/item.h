@@ -23,7 +23,6 @@ typedef enum ItemPri
     ITPRI_15 = 15,
 } ItemPri;
 
-
 typedef enum BoxKind
 {
     BOXKIND_ALL = -1,
@@ -193,7 +192,6 @@ typedef struct itData
     TriggerDesc *trigger;       // 0x14
 } itData;
 
-
 typedef struct ItemCommonParam
 {
     float scale;           // 0x0
@@ -234,6 +232,27 @@ typedef struct ItemFallDesc
     int spawn_time_min;   // min
     int spawn_time_max;   // max
 } ItemFallDesc;
+
+typedef struct ItemDesc // used to spawn an item
+{
+    int x0;             // 0x00, is 0x4 of ItemData
+    ItemKind kind;      // 0x04
+    int x8;             // 0x08, is x20 of ItemData
+    Vec3 pos;           // 0x0C
+    Vec3 forward;       // 0x18, normalized,
+    Vec3 up;            // 0x24, normalized,
+    float scale;        // 0x30
+    int exist_index;    // 0x34, this item is the nth to exist
+    int x38;            // 0x38, is 0x34 of ItemData
+    int x3c;            // 0x3C, is 0x38 of ItemData
+    int x40;            // 0x40, is 0x3C of ItemData
+    int x44;            // 0x44, is 0x40 of ItemData
+    int lifetime;       // 0x48
+    int coll_kind;      // 0x4C, unsure, is stored to 0x359 of ItemData. most items seem to use 3
+    int enable_shadow;  // 0x50
+    int x54;            // 0x54, is 0x35B_40 of ItemData
+    int flags;          // 0x58, is 0x48 of ItemData
+} ItemDesc;
 
 typedef struct ItemData
 {
@@ -279,7 +298,7 @@ typedef struct ItemData
     int x9c;                    // 0x9c
     int xa0;                    // 0xa0
     int xa4;                    // 0xa4
-    int xa8;                    // 0xa8
+    float xa8;                  // 0xa8
     float scale;                // 0xac
     float alpha;                // 0xb0
     float alpha_addend;         // 0xb4, is added to alpha each frame, for box at least 
@@ -291,10 +310,8 @@ typedef struct ItemData
     int xf4;                    // 0xf4
     int xf8;                    // 0xf8
     int xfc;                    // 0xfc
-    Vec3 x100;                  // 0x100
-    int x10c;                   // 0x10c
-    int x110;                   // 0x110
-    int x114;                   // 0x114
+    Vec3 forward;               // 0x100
+    Vec3 up;                    // 0x10c
     int x118;                   // 0x118
     int x11c;                   // 0x11c
     int x120;                   // 0x120
@@ -407,13 +424,15 @@ typedef struct ItemData
     int x334;                   // 0x334
     int x338;                   // 0x338
     int x33c;                   // 0x33c
-    int x340;                   // 0x340
+    CollData coll_data;         // 0x340
     int x344;                   // 0x344
     int x348;                   // 0x348
     int x34c;                   // 0x34c
     int x350;                   // 0x350
     int x354;                   // 0x354
-    int x358;                   // 0x358
+    u8 x358;                    // 0x358
+    u8 x359_f8 : 5;             // 0x359, 0xf8
+    u8 coll_kind : 3;           // 0x359, 0x07. not really sure, is set @ 80254368
     int x35c;                   // 0x35c
     int x360;                   // 0x360
     int x364;                   // 0x364
@@ -950,8 +969,9 @@ static ItemCommonParam **stc_item_param = (ItemCommonParam **)(0x805dd0e0 + 0x7E
 static ItemParam2 **stc_item_param2 = (ItemParam2 **)(0x805dd0e0 + 0x7EC);
 
 ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); // group: -1 = sky, 0 = blue box, 1 = green box, 2 = red box. r4 = -1 = everything, 0 = down only, 1 = up only. spawn_flags: 0x1 = ?, 0x2 = patch, 0x4 = box,
-GOBJ *Item_Create(void *spawn_desc);
-ItemCommonAttr *Item_GetCommonAttr(ItemKind it_kind);
+GOBJ *Item_Create(ItemDesc *desc);
+ItemCommonAttr *Item_GetCommonAttr(ItemKind kind);
+void Item_InitDesc(ItemDesc *, ItemKind kind, int r5, Vec3 *pos, Vec3 *up, Vec3 *forward, int r9, int r10); // r5 is 0x20 of ItemData (can use 0). up and forward can be left as 0, will use defaults. r9 and r10 are usually both -1. 
 
 AudioSource Item_AllocAudioSource(int index);
 #endif

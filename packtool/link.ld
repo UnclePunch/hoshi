@@ -380,6 +380,7 @@ SECTIONS
   Item_Create = 0x8024EEF4;
   Item_GetCommonAttr = 0x802500B0;
   Item_AllocAudioSource = 0x8005de3c;
+  Item_InitDesc = 0x802509a0;
   CityTrial_DecideStadium = 0x8003F808;
   HUD_PauseCreate = 0x801285DC;
   HUD_PauseDestroy = 0x80128A68;

@@ -424,7 +424,7 @@ typedef struct ItemData
     int x334;                   // 0x334
     int x338;                   // 0x338
     int x33c;                   // 0x33c
-    CollData coll_data;         // 0x340
+    void *x340;                 // 0x340
     int x344;                   // 0x344
     int x348;                   // 0x348
     int x34c;                   // 0x34c
@@ -970,8 +970,8 @@ static ItemParam2 **stc_item_param2 = (ItemParam2 **)(0x805dd0e0 + 0x7EC);
 
 ItemKind Gm_GetRandomItem(BoxKind box_kind, ItemGroup group, int spawn_flags); // group: -1 = sky, 0 = blue box, 1 = green box, 2 = red box. r4 = -1 = everything, 0 = down only, 1 = up only. spawn_flags: 0x1 = ?, 0x2 = patch, 0x4 = box,
 GOBJ *Item_Create(ItemDesc *desc);
-ItemCommonAttr *Item_GetCommonAttr(ItemKind kind);
 void Item_InitDesc(ItemDesc *, ItemKind kind, float scale, int r5, Vec3 *pos, Vec3 *up, Vec3 *forward, int r9, int r10); // r5 is 0x20 of ItemData (can use 0). up and forward can be left as 0, will use defaults. r9 and r10 are usually both -1. 
+ItemCommonAttr *Item_GetCommonAttr(ItemKind kind);
 
 AudioSource Item_AllocAudioSource(int index);
 #endif

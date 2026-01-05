@@ -284,8 +284,8 @@ typedef struct RiderData
     int x318;                             // 0x318
     int x31c;                             // 0x31c
     int x320;                             // 0x320
-    Vec3 x324;                            // 0x324, forward movement vector
-    Vec3 x330;                            // 0x330, up vector
+    Vec3 forward;                         // 0x324, forward movement vector
+    Vec3 up;                              // 0x330, up vector
     Vec3 x33c;                            // 0x33c
     int x348;                             // 0x348
     int x34c;                             // 0x34c
@@ -357,7 +357,7 @@ typedef struct RiderData
     int x444;                  // 0x444
     int x448;                  // 0x448
     int x44c;                  // 0x44c
-    PlayerCamLink *x450;       // 0x450
+    CamInterest *x450;       // 0x450
     CopyKind copy_kind;        // 0x454
     int x458;                  // 0x458
     int x45c;                  // 0x45c
@@ -523,15 +523,7 @@ typedef struct RiderData
     int x738;                  // 0x738
     int x73c;                  // 0x73c
     int x740;                  // 0x740
-    int x744;                  // 0x744
-    int x748;                  // 0x748
-    int x74c;                  // 0x74c
-    int x750;                  // 0x750
-    int x754;                  // 0x754
-    int x758;                  // 0x758
-    int x75c;                  // 0x75c
-    int x760;                  // 0x760
-    int x764;                  // 0x764
+    float stat[9];             // 0x744
     int x768;                  // 0x768
     int x76c;                  // 0x76c
     int x770;                  // 0x770

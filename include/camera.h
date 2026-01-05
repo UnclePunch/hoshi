@@ -12,11 +12,15 @@ typedef struct CameraParam
     float fov;             // 0x24
 } CameraParam;
 
-typedef struct PlayerCamLink
+typedef struct CamInterest
 {
-    u8 x0[0xa6];        // 0x00
+    int x0;             // 0x00
+    int x4;             // 0x04
+    Vec3 pos;           // 0x08
+    Vec3 pos_high;      // 0x14, this position is a little higher than the previous lol, its referenced when adjusting the camera position based on the c stick zoom value
+    u8 x20[0x86];       // 0x20
     u16 ply;            // 0xa6
-} PlayerCamLink;
+} CamInterest;
 
 typedef struct CamData
 {
@@ -32,12 +36,12 @@ typedef struct CamData
     float rotation_amt;     // 0x88
     float zoom_amt;         // 0x8c, max is 8.4
     float x90;              // 0x90
-    PlayerCamLink *ply_link;// 0x94, is 0x450 of riderdata?
+    CamInterest *target;    // 0x94, camera target. is 0x450 of riderdata?
     u8 x98[0x28];           // 0x98
     CameraParam xc0;        // 0xc0
-    CameraParam xe8;        // gets copied directly from the cobj eye position @ 800b783c
-    CameraParam x110;       // 0x110
-    CameraParam x138;       // 0x138
+    CameraParam xe8;        // 0xe8, gets copied directly from the cobj eye position @ 800b783c
+    CameraParam x110;       // 0x110, final set of values? not sure
+    CameraParam x138;       // 0x138, 
     u8 x160[0x20];
     Vec3 eye_pos;           // 0x180
     Vec3 interest_pos;      // 0x18c

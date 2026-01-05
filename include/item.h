@@ -249,7 +249,7 @@ typedef struct ItemDesc // used to spawn an item
     int x44;            // 0x44, is 0x40 of ItemData
     int lifetime;       // 0x48
     int coll_kind;      // 0x4C, unsure, is stored to 0x359 of ItemData. most items seem to use 3
-    int enable_shadow;  // 0x50
+    int is_airborne;    // 0x50, if 0, will raycast and snap to the ground below it
     int x54;            // 0x54, is 0x35B_40 of ItemData
     int flags;          // 0x58, is 0x48 of ItemData
 } ItemDesc;

@@ -410,6 +410,7 @@ SECTIONS
   Ply_SetPKind = 0x8022C86C;
   Ply_GetRiderKind = 0x8022C880;
   Ply_SetRiderKind = 0x8022C898;
+  PlyCam_GetCObj = 0x800b8054;
   Gm_GetIfAllScreenArchive = 0x80112058;
   Gm_GetIfAllCityArchive = 0x80112050;
   Gm_FadeOutMusic = 0x80061df0;

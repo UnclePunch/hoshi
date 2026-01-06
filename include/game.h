@@ -387,8 +387,12 @@ typedef struct GameData // 805359d8
     int x348;                        // 0x348
     int x34c;                        // 0x34c
     int x350;                        // 0x350
-    int x354;                        // 0x354
-    int x358;                        // 0x358
+    u8 x354;                         // 0x354, this gets copied to city_kind 
+    u8 x355;                         // 0x355
+    u16 x356;                        // 0x356
+    u16 x358;                        // 0x358
+    u8 x35a;                         // 0x35a, copied to 0xaa6
+    u8 x35b;                         // 0x35b
     u8 x35c;                         // 0x35c
     AirRideMode airride_mode : 8;    // 0x35d
     u8 x35e;                         // 0x35e
@@ -422,16 +426,7 @@ typedef struct GameData // 805359d8
         int x39a : 8;                // 0x39a,
         int scene : 8;               // 0x39b, 3 = player select screen, 4 = in game, 5 = properties graph, 6 = stadium splash, 7 = stadium, 8 = results screen
         int x39c;                    // 0x39c
-        float ply_stats[9][4];       // 0x3a0, copied from playerblock @ 80040024
-        int x430;                    // 0x430
-        int x434;                    // 0x434
-        int x438;                    // 0x438
-        int x43c;                    // 0x43c
-        int x440;                    // 0x440
-        int x444;                    // 0x444
-        int x448;                    // 0x448
-        int x44c;                    // 0x44c
-        int x450;                    // 0x450
+        float ply_stats[5][9];       // 0x3a0, copied from playerblock @ 80040024
         u8 is_bike[5];               // 0x454
         u8 machine_kind[5];          // 0x459
         u8 prev_stadium_kind[5];     // 0x45e

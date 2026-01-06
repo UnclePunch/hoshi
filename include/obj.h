@@ -749,12 +749,21 @@ struct HSD_SObjDesc
     HSD_FogDesc **fog;
 };
 
+typedef struct HSD_GObjInitData {
+    u8 p_link_max;
+    u8 gx_link_max;
+    u8 proc_pri_max;
+    void* funcs; 
+    u64* unk;
+} HSD_GObjInitData;
+
 /*** Static Variables ***/
-static GOBJ ***stc_gobj_lookup = (GOBJ ***)(0x805de334);           //
-static u8 *stc_gobj_proc_num = (u8 *)0x804ce382;                   // number of elements in the below array
-static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x804D7840; // array of gobj procs ptrs
-static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x804d7838;      // current gobj proc being processed
-static u32 *stc_gobjproc_updateidx_cur = (u32 *)0x804d783c;        // update index of the current gobj proc being processed. this is compared to
+static GOBJ ***stc_gobj_lookup = (GOBJ ***)(0x805de334);                        //
+static u8 *stc_gobj_proc_num = (u8 *)0x804ce382;                                // number of elements in the below array
+static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x804D7840;              // array of gobj procs ptrs
+static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x804d7838;                   // current gobj proc being processed
+static u32 *stc_gobjproc_updateidx_cur = (u32 *)0x804d783c;                     // update index of the current gobj proc being processed. this is compared to
+static HSD_GObjInitData *stc_gobj_init_data = (HSD_GObjInitData *)0x8058c190;
 
 /*** Functions ***/
 int JObj_GetWorldPosition(JOBJ *source, Vec3 *add, Vec3 *dest);

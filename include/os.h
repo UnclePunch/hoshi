@@ -674,7 +674,7 @@ int DVDWaitForRead();
 int File_Read(int entrynum, int file_offset, void *buffer, int read_size, int flags, int unk_index, void (*cb)(int r3, void *arg), void *cb_arg2); // just use 0x21 for flags if dram, 0x23 if aram, 1 for unk_index
 int File_CopyFromARAMToDRAM(int entrynum, int file_offset, void *buffer, int read_size, int flags, int unk_index);                                          // just use 0x21 for flags if dram, 0x23 if aram, 1 for unk_index
 int File_LoadSync(char *file_name, void *buffer, int *out_size);
-void Gm_LoadGameFile(HSD_Archive **out, char *file_name);
+int Gm_LoadGameFile(HSD_Archive **out, char *file_name);
 int File_GetSize(char *file_name);
 // void memcpy(void *dest, void *source, int size);
 // void memset(void *dest, int fill, int size);

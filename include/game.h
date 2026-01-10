@@ -1766,13 +1766,13 @@ typedef struct GameClearData
     u8 x0[0x7c];
     struct
     {
-        u8 x0_80 : 1;       //
-        u8 x0_40 : 1;       //
-        u8 x0_20 : 1;       //
-        u8 x0_10 : 1;       //
+        u8 x0_80 : 1;       // 0x80
+        u8 x0_40 : 1;       // 0x40
+        u8 x0_20 : 1;       // 0x20
+        u8 is_visible : 1;  // 0x10, is visible in the checklist
         u8 has_reward : 1;  // 0x08, checked and assigned @ 8017e008. function gets clear_kind from reward_kind
         u8 is_unlocked : 1; // 0x04, raised after displaying the unlocked animation
-        u8 x0_02 : 1;       //
+        u8 is_filler : 1;   // 0x02, checkbox filler was used
         u8 is_new : 1;      // 0x01, raised when the match ends after unlocking it
     } clear[120];
 } GameClearData;
@@ -1801,8 +1801,11 @@ typedef struct gmDataAll
 
 typedef struct PlayerData
 {
-    u8 x0[0x90c];
+    u8 x0[0x8B0];
+    u32 objectsDestroyed;  // 0x8B0
+    u8 x8B4[0x90C - 0x8B4];
 } PlayerData;
+
 
 
 typedef struct LegendaryPieceData           // 80ae2cec

@@ -1017,6 +1017,7 @@ void Machine_GiveIntangibility(MachineData *md, int time);
 void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
 void Machine_GivePatch(MachineData *, PatchKind, int num);
 void Machine_GiveAllUp(MachineData *, int num);
+void Machine_OnTouchItem(MachineData *, ItemData *);
 int Machine_IsDead(MachineData *);
 
 AudioSource Machine_AllocAudioSource(int index);

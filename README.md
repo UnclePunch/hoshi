@@ -12,7 +12,7 @@
 - **Code Hooking**  
   Define callback functions for injecting code at key points in game execution.
 
-- **Unique Save File System**  
+- **Save File System**  
   **hoshi** creates and manages its own save file, automatically handling save slots for each mod.
 
 - **Custom Settings Menu**  

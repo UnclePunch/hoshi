@@ -456,8 +456,6 @@ void Text_SetPosition(Text *text, int subtext, float x, float y);
 void Text_SetText(Text *text, int subtext, char *string, ...);
 u8 *Text_Alloc(int size);
 void Text_Free(u8 *alloc);
-void Text_DestroyAlloc(u8 *alloc);
-void Text_DestroyAllAlloc(Text *text);
 int Text_ConvertASCIIToShiftJIS(char *out, char *in);
 void Text_GX(GOBJ *gobj, int pass);
 void Text_LoadSisFile(int index, char *filename, char *symbol);

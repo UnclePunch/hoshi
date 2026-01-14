@@ -19753,8 +19753,8 @@
 8044e7f8 0004d4 8044e7f8 0 zz_8044e7f8_
 8044eccc 000030 8044eccc 0 zz_8044eccc_
 8044ecfc 0000f0 8044ecfc 0 zz_8044ecfc_
-8044edec 0001bc 8044edec 0 Text_AllocFromHeap
-8044efa8 0000e0 8044efa8 0 Text_FreeAlloc
+8044edec 0001bc 8044edec 0 TextHeap_Alloc
+8044efa8 0000e0 8044efa8 0 TextHeap_Free
 8044f088 0000a0 8044f088 0 zz_8044f088_
 8044f128 000228 8044f128 0 Text_CreateGObj
 8044f350 0000e8 8044f350 0 Text_Destroy

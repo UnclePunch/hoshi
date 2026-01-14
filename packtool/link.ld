@@ -302,8 +302,8 @@ SECTIONS
   tolower = 0x803B3870;
   tan = 0x803BD518;
   Text_AddSubtext = 0x8044FEC4;
-  Text_Alloc = 0x8044EDEC;
-  Text_Free = 0x8044EFA8;
+  TextHeap_Alloc = 0x8044EDEC;
+  TextHeap_Free = 0x8044EFA8;
   Text_ConvertASCIIToShiftJIS = 0x8044FB0C;
   Text_CreateCanvas = 0x8044F674;
   Text_CreateText = 0x8044FA70;

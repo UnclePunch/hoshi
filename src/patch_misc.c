@@ -79,11 +79,11 @@ void TextHeap_Init()
     HSD_ObjAllocInit(&text_obj, 0xa0, 4);
 }
 CODEPATCH_HOOKCREATE(0x8044f634, "", TextHeap_Init, "", 0)
-void *TextHeap_Alloc(int size)
+void *TextObj_Alloc(int size)
 {
     return HSD_ObjAlloc(&text_obj);
 }
-void TextHeap_Free(void *obj)
+void TextObj_Free(void *obj)
 {
     HSD_ObjFree(&text_obj, obj);
 }
@@ -139,6 +139,6 @@ void Patches_Apply()
 
     // Text HSDObj
     CODEPATCH_HOOKAPPLY(0x8044f634);
-    CODEPATCH_REPLACECALL(0x8044f214, TextHeap_Alloc);
-    CODEPATCH_REPLACECALL(0x8044f0fc, TextHeap_Free);
+    CODEPATCH_REPLACECALL(0x8044f214, TextObj_Alloc);
+    CODEPATCH_REPLACECALL(0x8044f0fc, TextObj_Free);
 }

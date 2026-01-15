@@ -82,11 +82,12 @@ struct MinorSceneDesc
 {
     s8 idx;                                    // 0x00, MinorKind
     s8 x1;                                     // 0x01
+    u8 x2;                                     // 0x02
     void (*cb_Load)();                         // 0x04
     void (*cb_Exit)(void *data);               // 0x08
     void (*cb_ThinkPreGObjProc)(void *data);   // 0x0C, executed first at @ 800068bc
     void (*cb_ThinkPostGObjProc)(void *data);  // 0x10, executed second after GObj proc's have been udpated @ 80006a4c
-    void (*cb_ThinkPostGObjProc2)(void *data); // 0x14, executed third, directly after the previous (what is this for...) @ 80006a64
+    void (*cb_ThinkPostGObjProc2)(void *data); // 0x14, executed third, directly after the previous (seems to be reserved for debug input commands) @ 80006a64
     void (*cb_ThinkPreRender)(void *data);     // 0x18, execute fourth, before rendering
     void (*cb_ThinkPostRender)(void *data);    // 0x1c, executed last, after all rendering
     int preload_kind;                          // 0x20. copied to Preload::kind

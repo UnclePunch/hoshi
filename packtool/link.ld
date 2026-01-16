@@ -89,6 +89,8 @@ SECTIONS
   COBJ_GetEyeDistance = 0x80401A9C;
   COBJ_GetViewingMtx = 0x80402704;
   COBJ_SetupViewingMtx = 0x80401014;
+  COBJ_IsPositionVisible = 0x80067438;
+  COBJ_ProjectPoint = 0x800644ac;
   cos = 0x8041FC98;
   DOBJ_ClearFlags = 0x803F4410;
   DOBJ_SetFlags = 0x803F43F8;
@@ -138,6 +140,7 @@ SECTIONS
   GXSetTevKColor = 0x803CEE20;
   GXLoadPosMtxImm = 0x803D073C;
   GXSetCurrentMtx = 0x803D07DC;
+  GXSetScissor = 0x803d0a28;
   GXInvalidateVtxCache = 0x803cb728;
   GXInvalidateTexAll = 0x803ce084;
   HSD_Free = 0x8041CEB4;
@@ -377,6 +380,7 @@ SECTIONS
   Gm_ShowHUD = 0x80112464;
   Gm_SetCameraNormal = 0x800BC17C;
   Gm_IsDamageEnabled = 0x8000a188;
+  Gm_IsReplay = 0x8000aac4;
   Item_Create = 0x8024EEF4;
   Item_GetCommonAttr = 0x802500B0;
   Item_AllocAudioSource = 0x8005de3c;
@@ -403,14 +407,16 @@ SECTIONS
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
-  Ply_CheckIfHMN = 0x800098c0;
   Ply_CheckIfCPU = 0x8000948C;
+  Ply_IsViewOn = 0x800098c0;
   Ply_GetViewIndex = 0x80009908;
   Ply_GetPKind = 0x8022C858;
   Ply_SetPKind = 0x8022C86C;
   Ply_GetRiderKind = 0x8022C880;
   Ply_SetRiderKind = 0x8022C898;
   PlyCam_GetCObj = 0x800b8054;
+  PlyCam_GetFullscreenScissor = 0x80068574;
+  PlyCam_GetViewIndexScissor = 0x80068588;
   Gm_GetIfAllScreenArchive = 0x80112058;
   Gm_GetIfAllCityArchive = 0x80112050;
   Gm_FadeOutMusic = 0x80061df0;

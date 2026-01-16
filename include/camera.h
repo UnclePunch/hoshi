@@ -4,6 +4,15 @@
 #include "datatypes.h"
 
 #define CM_CAMERA_MAX 32
+
+typedef struct CamScissor
+{
+    u16 left;
+    u16 right;
+    u16 bottom;
+    u16 top;
+} CamScissor;
+
 typedef struct CameraParam
 {
     Vec3 interest;         // 0x00
@@ -92,5 +101,6 @@ typedef struct PlayerCamLookup
 static PlayerCamLookup *stc_plycam_lookup = (PlayerCamLookup *)0x80557248; // array of 32, this is actually part of a larger struct
 
 COBJ *PlyCam_GetCObj(int cam_index);
-
+void PlyCam_GetFullscreenScissor(CamScissor *out);
+void PlyCam_GetViewIndexScissor(int view_index, CamScissor *out);
 #endif

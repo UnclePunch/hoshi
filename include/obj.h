@@ -854,6 +854,8 @@ void COBJ_GetInterest(COBJ *cobj, Vec3 *interest);
 float COBJ_GetEyeDistance(COBJ *cobj);
 void COBJ_GetViewingMtx(COBJ *cobj, Mtx *out);
 Mtx *COBJ_SetupViewingMtx(COBJ *cobj);
+int COBJ_IsPositionVisible(COBJ *cobj, Vec3 *pos, Vec3 *out, int check_scissor);
+Vec3 *COBJ_ProjectPoint(COBJ *cobj, Vec3 *pos, Vec3 *out, int unk); // returns the out vector, weird
 GOBJ *GObj_Create(int entity_class, int p_link, int p_priority);
 void GObj_Destroy(GOBJ *gobj);
 void GObj_AddGXLink(GOBJ *gobj, void *cb, int gx_link, int gx_pri);

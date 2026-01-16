@@ -59,6 +59,11 @@ typedef enum GamePLink
     GAMEPLINK_CARDCAM, // renders memcard save prompt
 } GamePLink;
 
+typedef enum GameGXLink
+{
+    GAMEGX_HUD = 18,
+} GameGXLink;
+
 typedef enum PKind
 {
     PKIND_HMN,
@@ -1114,23 +1119,7 @@ typedef struct Game3dData
     int xb8;                                      // 0xb8
     int xbc;                                      // 0xbc
     JOBJSet *ScInfPlynum_scene_models;            // 0xc0
-    GOBJ *plynum_gobj[4];                         // 0xc4
-    int xd4;                                      // 0xd4
-    int xd8;                                      // 0xd8
-    int xdc;                                      // 0xdc
-    int xe0;                                      // 0xe0
-    int xe4;                                      // 0xe4
-    int xe8;                                      // 0xe8
-    int xec;                                      // 0xec
-    int xf0;                                      // 0xf0
-    int xf4;                                      // 0xf4
-    int xf8;                                      // 0xf8
-    int xfc;                                      // 0xfc
-    int x100;                                     // 0x100
-    int x104;                                     // 0x104
-    int x108;                                     // 0x108
-    int x10c;                                     // 0x10c
-    int x110;                                     // 0x110
+    GOBJ *plynum_gobj[4][5];                      // 0xc4
     int x114;                                     // 0x114
     int x118;                                     // 0x118
     int x11c;                                     // 0x11c
@@ -2194,8 +2183,8 @@ float Ply_GetCityStatNum(int ply, int stat_idx, int unk);
 GOBJ *Ply_GetRiderGObj(int ply);
 GOBJ *Ply_GetMachineGObj(int ply);
 int Ply_GetColor(int ply);
-int Ply_CheckIfHMN(int ply);
 int Ply_CheckIfCPU(int ply);
+int Ply_IsViewOn(int ply);
 int Ply_GetViewIndex(int ply);
 RiderKind Ply_GetRiderKind2(int ply);
 PKind Ply_GetPKind(int ply);
@@ -2233,6 +2222,7 @@ float Gm_GetDownVector(Vec3 *pos, Vec3 *out); // 800ceb18. unsure what the float
 
 void Gm_SetCameraNormal();
 int Gm_IsDamageEnabled();
+int Gm_IsReplay();
 
 void Pad_StopRumbleAll();
 

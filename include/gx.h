@@ -627,6 +627,7 @@ void GXCopyTex(void *dest, GXBool clear);                          // 8033dcbc
 void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht);           // 8033d4c8
 void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap); // 8033d5cc
 void GXSetDither(GXBool dither);
+void GXSetScissor(u32 xOrig, u32 yOrig, u32 wd, u32 ht);
 void VIWaitForRetrace();
 void VIConfigure(GXRenderModeObj *rm);
 void VISetPostRetraceCallback(void *cb);

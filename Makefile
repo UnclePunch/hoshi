@@ -86,7 +86,7 @@ $(TARGET_BIN): $(LINKED_O)
 
 # --- dol Target ---
 dol:
-	$(MAKE) -C dol
+	$(MAKE) -C dol MOD_NAME="$(MOD_NAME)"
 
 # --- Install Target ---
 # Copies the final .bin files from $(OUT_DIR) to $(INSTALL_DIR)

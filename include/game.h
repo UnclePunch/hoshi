@@ -40,7 +40,7 @@ typedef enum GamePLink
     GAMEPLINK_MACHINE,
     GAMEPLINK_RIDER,
     GAMEPLINK_11,
-    GAMEPLINK_EVENTACTOR,   // dyna blade, tac, meteor, etc
+    GAMEPLINK_ENEMY,   // dyna blade, tac, meteor, etc
     GAMEPLINK_ITEM,         // anything in ItemKind
     GAMEPLINK_PROJECTILE,   // bomb, plasma bullet, flame, firework etc
     GAMEPLINK_SHADOW,       // circular shadow beneath most objects

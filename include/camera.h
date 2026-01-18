@@ -51,7 +51,8 @@ typedef struct CamData
     CameraParam xe8;        // 0xe8, gets copied directly from the cobj eye position @ 800b783c
     CameraParam x110;       // 0x110, final set of values? not sure
     CameraParam x138;       // 0x138, 
-    u8 x160[0x20];
+    Vec3 x160;              // 0x160, position referenced when updating audio sources
+    u8 x16c[0x14];          // 0x16c
     Vec3 eye_pos;           // 0x180
     Vec3 interest_pos;      // 0x18c
     u8 x198[0x28];          // 0x198

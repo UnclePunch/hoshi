@@ -50,6 +50,7 @@ SECTIONS
   EXISync = 0x803ea440;
   EXIProbe = 0x803ea8c4;
   EXIGetID = 0x803eb590;
+  EXIGetType = 0x803eb940;
   DevelopText_Create = 0x800ab2d4;
   DevelopText_Activate = 0x0;
   DevelopText_Deactivate = 0x0;

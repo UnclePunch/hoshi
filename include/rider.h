@@ -527,15 +527,15 @@ typedef struct RiderData
     float x748;                // 0x748
     union {                    // 0x74C
         struct {
-            float WEIGHT;
-            float BOOST;
-            float TOP_SPEED;
-            float TURN;
-            float CHARGE;
-            float GLIDE;
-            float OFFENSE;
-            float DEFENSE;
-            float HP;
+            float weight;
+            float boost;
+            float top_speed;
+            float turn;
+            float charge;
+            float glide;
+            float offense;
+            float defense;
+            float hp;
         };
         float values[9];
     } stats;

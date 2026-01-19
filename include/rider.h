@@ -287,7 +287,7 @@ typedef struct RiderData
     Vec3 forward;                         // 0x324, forward movement vector
     Vec3 up;                              // 0x330, up vector
     Vec3 x33c;                            // 0x33c
-    int x348;                             // 0x348
+    float model_scale;                    // 0x348, Kirby model scale
     int x34c;                             // 0x34c
     int x350;                             // 0x350
     int x354;                             // 0x354

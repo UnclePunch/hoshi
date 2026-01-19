@@ -1801,12 +1801,40 @@ typedef struct gmDataAll
 
 typedef struct PlayerData
 {
-    u8 x0[0x8B0];
+    u8 x0[0x34];
+    float hp;                  // 0x34
+    float max_hp;              // 0x38
+    GOBJ *rider_gobj;          // 0x3C
+    GOBJ *machine_gobj;        // 0x40
+    union {                    // 0x44
+        struct {
+            float WEIGHT;
+            float BOOST;
+            float TOP_SPEED;
+            float TURN;
+            float CHARGE;
+            float GLIDE;
+            float OFFENSE;
+            float DEFENSE;
+            float HP;
+        };
+        float values[9];
+    } stats;
+    u8 x68[0x8B0 - 0x68];
     u32 objectsDestroyed;  // 0x8B0
-    u8 x8B4[0x90C - 0x8B4];
+    u8 x8B4[0x908 - 0x8B4];
+    u16 x_bit15 : 1;            // bit 15 (MSB)
+    u16 x908_flag6 : 1;         // bit 14 (byte 0x908, bit 6)
+    u16 x908_flag5 : 1;         // bit 13 (byte 0x908, bit 5)
+    u16 hydra_piece_2 : 1;      // bit 12 (byte 0x908, bit 4)
+    u16 hydra_piece_1 : 1;      // bit 11 (byte 0x908, bit 3)
+    u16 hydra_piece_0 : 1;      // bit 10 (byte 0x908, bit 2)
+    u16 dragoon_piece_2 : 1;    // bit 9  (halfword bit 9)
+    u16 dragoon_piece_1 : 1;    // bit 8  (halfword bit 8)
+    u16 dragoon_piece_0 : 1;    // bit 7  (halfword bit 7)
+    u16 x_bits0_6 : 7;          // bits 6-0 (LSB side)
+    u8 x90A[0x90C - 0x90A];
 } PlayerData;
-
-
 
 typedef struct LegendaryPieceData           // 80ae2cec
 {                                           //

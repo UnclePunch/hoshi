@@ -1895,20 +1895,20 @@ typedef struct PlayerData
     GOBJ *machine_gobj;        // 0x40
     union {                    // 0x44
         struct {
-            float WEIGHT;
-            float BOOST;
-            float TOP_SPEED;
-            float TURN;
-            float CHARGE;
-            float GLIDE;
-            float OFFENSE;
-            float DEFENSE;
-            float HP;
+            float weight;
+            float boost;
+            float top_speed;
+            float turn;
+            float charge;
+            float glide;
+            float offense;
+            float defense;
+            float hp;
         };
         float values[9];
     } stats;
     u8 x68[0x8B0 - 0x68];
-    u32 objectsDestroyed;  // 0x8B0
+    u32 objects_destroyed_num;  // 0x8B0 running total of number of breakable objects destroyed (e.g. star pole, coral, rocks, houses, trees)
     u8 x8B4[0x908 - 0x8B4];
     u16 x_bit15 : 1;            // bit 15 (MSB)
     u16 x908_flag6 : 1;         // bit 14 (byte 0x908, bit 6)

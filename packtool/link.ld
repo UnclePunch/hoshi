@@ -69,8 +69,7 @@ SECTIONS
   PADReset = 0x803DC4CC;
   COBJ_Alloc = 0x80402F64;
   COBJ_LoadDesc = 0x804031EC;
-  COBJ_LoadDescSetScissor = 0x80066DF8;
-  COBJ_LoadDescSetAspect = 0x80402c94;
+  COBJ_LoadDescSetAspect = 0x80066DF8;
   COBJ_Init = 0x80402FC0;
   CObjThink_Common = 0x8042a29c; 
   CObj_SetCurrent = 0x80401150;
@@ -85,6 +84,7 @@ SECTIONS
   CObj_SetEyePosition = 0x804018AC;
   CObj_SetInterest = 0x804017D4;
   CObj_SetRoll = 0x804027CC;
+  CObj_SetAspect = 0x80402c94;
   CObj_Release = 0x80403324;
   COBJ_GetCurrent = 0x80402F5C;
   COBJ_GetEyeVector = 0x80401918;

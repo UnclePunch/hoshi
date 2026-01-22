@@ -764,6 +764,7 @@ static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x804D7840;              
 static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x804d7838;                   // current gobj proc being processed
 static u32 *stc_gobjproc_updateidx_cur = (u32 *)0x804d783c;                     // update index of the current gobj proc being processed. this is compared to
 static HSD_GObjInitData *stc_gobj_init_data = (HSD_GObjInitData *)0x8058c190;
+static float *stc_cobj_aspect = (float *)0x805deb20;
 
 /*** Functions ***/
 int JObj_GetWorldPosition(JOBJ *source, Vec3 *add, Vec3 *dest);
@@ -830,7 +831,6 @@ void TOBJ_AddAnim(TOBJ *tobj, void *textureanim);
 void TOBJ_RemoveAnimAll(TOBJ *tobj);
 COBJ *COBJ_Alloc();
 COBJ *COBJ_LoadDesc(COBJDesc *cobj);
-COBJ *COBJ_LoadDescSetScissor(COBJDesc *cobj);
 COBJ *COBJ_LoadDescSetAspect(COBJDesc *cobj);
 void COBJ_Init(COBJ *cobj, COBJDesc *cobj_desc); // re-initializes a live cobj using its descriptor
 void CObjThink_Common(GOBJ *gobj);
@@ -847,6 +847,7 @@ void CObj_SetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void COBJ_GetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void CObj_SetInterest(COBJ *cobj, Vec3 *pos);
 void CObj_SetRoll(COBJ *cobj, float roll);
+void CObj_SetAspect(COBJ *cobj, float aspect);
 void CObj_Release(COBJ *cobj);
 void CObj_Destroy(COBJ *cobj);
 COBJ *COBJ_GetCurrent();

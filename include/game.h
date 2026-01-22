@@ -61,7 +61,8 @@ typedef enum GamePLink
 
 typedef enum GameGXLink
 {
-    GAMEGX_HUD = 18,
+    GAMEGX_HUDORTHO = 18,
+    GAMEGX_HUD = 21,
 } GameGXLink;
 
 typedef enum PKind

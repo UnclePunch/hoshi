@@ -831,6 +831,7 @@ void TOBJ_RemoveAnimAll(TOBJ *tobj);
 COBJ *COBJ_Alloc();
 COBJ *COBJ_LoadDesc(COBJDesc *cobj);
 COBJ *COBJ_LoadDescSetScissor(COBJDesc *cobj);
+COBJ *COBJ_LoadDescSetAspect(COBJDesc *cobj);
 void COBJ_Init(COBJ *cobj, COBJDesc *cobj_desc); // re-initializes a live cobj using its descriptor
 void CObjThink_Common(GOBJ *gobj);
 int CObj_SetCurrent(COBJ *cobj);

@@ -10,6 +10,7 @@ SECTIONS
   AOBJ_ClearFlags = 0x803FB1AC;
   atan = 0x803BC94C;
   atan2 = 0x803BD3C8;
+  tanf = 0x803bccd0;
   AudioHeap_SetAllocAndFree = 0x804479d4;
   AudioSource_Alloc = 0x8005d864;
   AudioSource_Free = 0x8005e08c;
@@ -69,6 +70,7 @@ SECTIONS
   COBJ_Alloc = 0x80402F64;
   COBJ_LoadDesc = 0x804031EC;
   COBJ_LoadDescSetScissor = 0x80066DF8;
+  COBJ_LoadDescSetAspect = 0x80402c94;
   COBJ_Init = 0x80402FC0;
   CObjThink_Common = 0x8042a29c; 
   CObj_SetCurrent = 0x80401150;
@@ -271,6 +273,7 @@ SECTIONS
   PSMTXCopy = 0x803D1428;
   PSMTXIdentity = 0x803D13FC;
   PSMTXConcat = 0x803D145C;
+  PSMTXMultVec = 0x803d1dec;
   Scene_GetCurrentMajor = 0x8000AEA8;
   Scene_GetCurrentMinor = 0x8000AECC;
   Scene_SetNextMajor = 0x800082A0;

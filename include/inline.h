@@ -201,7 +201,7 @@ static inline GOBJ *GOBJ_EZCreator(int entity_class, int p_link, int flags, int 
         else if (obj_kind == HSD_OBJKIND_LOBJ)
             obj = LObj_LoadDesc(obj_desc);
         else if (obj_kind == HSD_OBJKIND_COBJ)
-            obj = COBJ_LoadDescSetScissor(obj_desc);
+            obj = COBJ_LoadDescSetAspect(obj_desc);
 
         GObj_AddObject(g, obj_kind, obj);
 

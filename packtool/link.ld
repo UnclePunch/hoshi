@@ -473,4 +473,5 @@ SECTIONS
   Hoshi_ExportMod = 0x80495178;
   Hoshi_ImportMod = 0x8049517c;
   Hoshi_CreateScreenText = 0x80495180;
+  Hoshi_AdjustWidePos = 0x80495184;
 }

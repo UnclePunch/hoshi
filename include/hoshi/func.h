@@ -13,7 +13,4 @@ int Hoshi_WriteSave();
 
 int Hoshi_AddPreloadMenuFile(char *file_name);
 int Hoshi_AddPreloadGameFile(char *file_name, PreloadHeapKind heap_kind);
-
-void *Hoshi_ImportMod(char *id, int version_major, int version_minor);
-void Hoshi_ExportMod(void *export);
 #endif

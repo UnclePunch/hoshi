@@ -32,5 +32,4 @@ typedef struct ModDesc
 
 void *Hoshi_ImportMod(char *id, int version_major, int version_minor);
 void Hoshi_ExportMod(void *export);
-
 #endif

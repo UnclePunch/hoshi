@@ -420,7 +420,8 @@ SECTIONS
   Ply_SetRiderKind = 0x8022C898;
   PlyCam_GetCObj = 0x800b8054;
   PlyCam_GetFullscreenScissor = 0x80068574;
-  PlyCam_GetViewIndexScissor = 0x80068588;
+  PlyCam_Get2PScissor = 0x80068588;
+  PlyCam_Get4PScissor = 0x800685ac;
   Gm_GetIfAllScreenArchive = 0x80112058;
   Gm_GetIfAllCityArchive = 0x80112050;
   Gm_FadeOutMusic = 0x80061df0;

@@ -21,13 +21,14 @@
 
 /*** Functions ***/
 
-// float fabs(float x)
-// {
-//     if (x < 0)
-//         return -x;
-//     else
-//         return x;
-// }
+static inline float _fabs(float x)
+{
+    float r;
+    __asm__ ("fabs %0, %1"
+             : "=f"(r)
+             : "f"(x));
+    return r;
+}
 
 static void OSClearReports()
 {

@@ -9,8 +9,8 @@ typedef struct CamScissor
 {
     u16 left;
     u16 right;
-    u16 bottom;
     u16 top;
+    u16 bottom;
 } CamScissor;
 
 typedef struct CameraParam
@@ -103,5 +103,6 @@ static PlayerCamLookup *stc_plycam_lookup = (PlayerCamLookup *)0x80557248; // ar
 
 COBJ *PlyCam_GetCObj(int cam_index);
 void PlyCam_GetFullscreenScissor(CamScissor *out);
-void PlyCam_GetViewIndexScissor(int view_index, CamScissor *out);
+void PlyCam_Get2PScissor(int view_index, CamScissor *out);
+void PlyCam_Get4PScissor(int view_index, CamScissor *out);
 #endif

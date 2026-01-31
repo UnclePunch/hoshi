@@ -24,9 +24,9 @@
 // Hoshi
 #include "export.h"
 #include "screen_cam.h"
+#include "wide.h"
 #include "hoshi/func.h"
 #include "hoshi/log.h"
-
 
 // Lib
 #include "code_patch/code_patch.h"
@@ -246,8 +246,9 @@ void OnFileLoad(ModHeader *file)
     Scenes_Init();      // init scene expansion
     Preload_Init();     // init preload expansion
     Stack_Init();       // init stack print patch
-    ScreenCam_Init();    // init screen camera
+    ScreenCam_Init();   // init screen camera
     KARPlusSave_Init(); // Init save data
+    Wide_Init();        // init widescreen adjustments
 
     CODEPATCH_REPLACEFUNC(hash_32, _hash_32);         // install our hash function
     CODEPATCH_REPLACEFUNC(hash_32_str, _hash_32_str); // install our string hash function

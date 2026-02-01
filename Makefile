@@ -2,6 +2,12 @@ ifeq ($(strip $(DEVKITPPC)),)
 $(error "Please set DEVKITPPC in your environment.")
 endif
 
+ifeq ($(OS),Windows_NT)
+    PYTHON := python
+else
+    PYTHON := python3
+endif
+
 # === Tools ===
 CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc
 LD = $(DEVKITPPC)/bin/powerpc-eabi-ld
@@ -80,7 +86,7 @@ $(LINKED_O): $(OBJECTS)
 # === Pack custom binary ===
 $(TARGET_BIN): $(LINKED_O)
 	mkdir -p $(BINDIR)
-	python $(PACKDIR)/main.py $< -m $(MODTYPE) -o $@
+	$(PYTHON) $(PACKDIR)/main.py $< -m $(MODTYPE) -o $@
 
 -include $(OBJECTS:.o=.d)
 

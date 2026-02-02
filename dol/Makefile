@@ -4,7 +4,11 @@ CC      := $(DEVKITPPC)/bin/powerpc-eabi-gcc
 OBJDUMP := $(DEVKITPPC)/bin/powerpc-eabi-objdump
 NM      := $(DEVKITPPC)/bin/powerpc-eabi-nm
 
-PYTHON  := python
+ifeq ($(OS),Windows_NT)
+    PYTHON := python
+else
+    PYTHON := python3
+endif
 
 CFLAGS  := -O2 -Wall -mcpu=750 -meabi -mhard-float
 ASFLAGS := -mcpu=750 -meabi -mhard-float -mregnames
@@ -44,11 +48,11 @@ $(DIRS):
 	mkdir -p $@
 
 # generate .S.tmp from .S
-$(BUILD)/%.S.tmp: $(SRC_DIR)/%.S $(PREPROCESS_SCRIPT)
+$(BUILD)/%.S.tmp: $(SRC_DIR)/%.S $(PREPROCESS_SCRIPT) | $(DIRS)
 	$(PYTHON) $(PREPROCESS_SCRIPT) $< $@
 
 # compile assembly -> build/%.o
-$(BUILD)/%.o: $(BUILD)/%.S.tmp | $(BUILD)
+$(BUILD)/%.o: $(BUILD)/%.S.tmp | $(DIRS)
 	$(CC) -I $(INC_DIR) $(ASFLAGS) -x assembler-with-cpp -c $< -o $@
 
 # compile C -> build/%.o

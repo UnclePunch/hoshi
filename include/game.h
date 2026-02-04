@@ -1083,7 +1083,7 @@ typedef struct Game3dData
     int x1c;                                      // 0x1c
     int x20;                                      // 0x20
     int x24;                                      // 0x24
-    int x28;                                      // 0x28
+    GOBJ *mapcam_gobj;                            // 0x28
     int x2c;                                      // 0x2c
     int x30;                                      // 0x30
     int x34;                                      // 0x34

@@ -90,6 +90,7 @@ SECTIONS
   COBJ_GetEyeVector = 0x80401918;
   COBJ_GetInterest = 0x80401768;
   COBJ_GetEyeDistance = 0x80401A9C;
+  CObj_SetMtxDirty = 0x804026a8;
   COBJ_GetViewingMtx = 0x80402704;
   COBJ_SetupViewingMtx = 0x80401014;
   COBJ_IsPositionVisible = 0x80067438;
@@ -132,6 +133,8 @@ SECTIONS
   GXSetVtxDesc = 0x803CA184;
   GXClearVtxDesc = 0x803CAC04;
   GXSetVtxAttrFmt = 0x803CAC3C;
+  GXSetChanCtrl = 0x803cd4e4;
+  GXSetNumChans = 0x803cd4a0;
   GXSetNumTexGens = 0x803CBA08;
   GXSetCullMode = 0x803CC518;
   GXSetAlphaCompare = 0x803CF05C;
@@ -474,6 +477,4 @@ SECTIONS
   Hoshi_ExportMod = 0x80495178;
   Hoshi_ImportMod = 0x8049517c;
   Hoshi_CreateScreenText = 0x80495180;
-  Hoshi_AdjustWidePos = 0x80495184;
-  Hoshi_GetWideMult = 0x80495188;
 }

@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 5
+#define HOSHI_VERSION 6
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -14,6 +14,7 @@
    3 - (12-15-25) define all mod data in a single ModDesc struct 
    4 - (12-24-25) split On3DLoad() into On3DLoadStart() and On3DLoadEnd()
    5 - (01-15-26) add OnFrameEnd()
+   6 - (02-04-26) add mod export support
 */
 
 typedef struct MenuDesc MenuDesc;

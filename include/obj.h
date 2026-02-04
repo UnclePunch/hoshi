@@ -854,6 +854,7 @@ COBJ *COBJ_GetCurrent();
 void COBJ_GetEyeVector(COBJ *cobj, Vec3 *eye_vec);
 void COBJ_GetInterest(COBJ *cobj, Vec3 *interest);
 float COBJ_GetEyeDistance(COBJ *cobj);
+void CObj_SetMtxDirty(COBJ *cobj);
 void COBJ_GetViewingMtx(COBJ *cobj, Mtx *out);
 Mtx *COBJ_SetupViewingMtx(COBJ *cobj);
 int COBJ_IsPositionVisible(COBJ *cobj, Vec3 *pos, Vec3 *out, int check_scissor);

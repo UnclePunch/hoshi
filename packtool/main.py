@@ -9,7 +9,7 @@ import argparse
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
-VERSION = 5
+VERSION = 6
 
 # Version History:
 #  1 - (07-01-25) introductory version
@@ -17,6 +17,7 @@ VERSION = 5
 #  3 - (12-15-25) define all mod data in a single ModDesc struct 
 #  4 - (12-24-25) split On3DLoad() into On3DLoadStart() and On3DLoadEnd()
 #  5 - (01-15-26) add OnFrameEnd()
+#  6 - (01-15-26) add export support
 
 build_dir = "_build"
 

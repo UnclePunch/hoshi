@@ -183,18 +183,22 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
     packed_data = bytes_pack(all_sections)
     packed_size = len(packed_data)
 
+    # Sort function symbols by their offset
+    func_symbols = [s for s in symbols if s.type == 'STT_FUNC']
+    func_symbols.sort(key=lambda s: all_sections[s.section_index].bytes_offset + s.section_value)
+
     # create debug symbol bytearrays. one for lookup data and one for the symbol data
     func_lookup_data = bytearray()
     func_name_data = bytearray()
     func_num = 0
-    for symbol in symbols:
-        if symbol.type == 'STT_FUNC':
-            symbol_name_offset = len(func_name_data)
-            symbol_size = all_sections[symbol.section_index].size
-            func_lookup_data += struct.pack(">I I I", symbol_name_offset, all_sections[symbol.section_index].bytes_offset, symbol_size)
-            func_name_data += symbol.name.encode('ascii') + b'\x00'
-            func_num += 1
-            # print(f"{key:<18} starts at offset {all_sections[symbol.section_index].bytes_offset:X} with size {all_sections[symbol.section_index].size:X}")
+    for symbol in func_symbols:
+        symbol_name_offset = len(func_name_data)
+        symbol_size = all_sections[symbol.section_index].size
+        func_file_offset = all_sections[symbol.section_index].bytes_offset + symbol.section_value
+        func_lookup_data += struct.pack(">I I I", symbol_name_offset, func_file_offset, symbol_size)
+        func_name_data += symbol.name.encode('ascii') + b'\x00'
+        func_num += 1
+        # print(f"{key:<18} starts at offset {all_sections[symbol.section_index].bytes_offset:X} with size {all_sections[symbol.section_index].size:X}")
 
     # create reloc data
     encoded_relocs = bytearray()

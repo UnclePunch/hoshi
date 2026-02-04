@@ -133,8 +133,10 @@ SECTIONS
   GXSetVtxDesc = 0x803CA184;
   GXClearVtxDesc = 0x803CAC04;
   GXSetVtxAttrFmt = 0x803CAC3C;
+  GXSetTevOp = 0x803ceb54;
   GXSetChanCtrl = 0x803cd4e4;
   GXSetNumChans = 0x803cd4a0;
+  GXSetNumTevStages = 0x803cf30c;
   GXSetNumTexGens = 0x803CBA08;
   GXSetCullMode = 0x803CC518;
   GXSetAlphaCompare = 0x803CF05C;

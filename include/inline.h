@@ -790,35 +790,30 @@ static void GX_DrawLine(Vec3 *start, Vec3 *end, u8 width, GXColor *color)
 static void GX_DrawRect(Vec3 *bl, Vec3 *tr, GXColor *color)
 {
     HSD_StateInitDirect(GX_VTXFMT0, 4);
-    GXLoadPosMtxImm(&COBJ_GetCurrent()->view_mtx, GX_PNMTX0);
-    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
-    GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+    
+    GXSetNumTevStages(1);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+    GXSetNumTexGens(0);
+
     GXSetNumChans(1);
-    GXSetChanCtrl(
-        GX_COLOR0,
-        GX_DISABLE,      // lighting OFF
-        Vertex,      // color comes from vertex
-        Vertex,
-        GX_LIGHT_NULL,
-        GX_DF_NONE,
-        GX_AF_NONE
-    );
+    GXSetChanCtrl(GX_COLOR0, GX_DISABLE, Vertex, Vertex, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
+    GXSetZMode(GX_DISABLE, GX_ALWAYS, GX_DISABLE);
+    GXSetCullMode(GX_CULL_NONE);
+
+    GXLoadPosMtxImm(&COBJ_GetCurrent()->view_mtx, GX_PNMTX0);
 
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
 
-    // Bottom-left
     GXPosition3f32(bl->X, bl->Y, bl->Z);
     GXColor4u8(color->r, color->g, color->b, color->a);
 
-    // Bottom-right
     GXPosition3f32(tr->X, bl->Y, bl->Z);
     GXColor4u8(color->r, color->g, color->b, color->a);
 
-    // Top-right
     GXPosition3f32(tr->X, tr->Y, bl->Z);
     GXColor4u8(color->r, color->g, color->b, color->a);
 
-    // Top-left
     GXPosition3f32(bl->X, tr->Y, bl->Z);
     GXColor4u8(color->r, color->g, color->b, color->a);
 

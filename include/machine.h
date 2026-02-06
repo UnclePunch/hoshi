@@ -421,12 +421,12 @@ typedef struct MachineData
     int x304;                             // 0x304
     int x308;                             // 0x308
     int x30c;                             // 0x30c
-    int x310;                             // 0x310
+    float model_scale;                    // 0x310
     int x314;                             // 0x314
     int x318;                             // 0x318
     int x31c;                             // 0x31c
     int x320;                             // 0x320
-    Vec3 x324;                            // 0x324
+    Vec3 x324;                            // 0x324 related to charge calculations?
     int x330;                             // 0x330
     int x334;                             // 0x334
     int x338;                             // 0x338
@@ -533,11 +533,11 @@ typedef struct MachineData
     int x4e4;                             // 0x4e4
     int x4e8;                             // 0x4e8
     int x4ec;                             // 0x4ec
-    int x4f0;                             // 0x4f0
+    float top_speed_ground;               // 0x4f0
     int x4f4;                             // 0x4f4
     int x4f8;                             // 0x4f8
-    int x4fc;                             // 0x4fc
-    int x500;                             // 0x500
+    float base_charge_rate;               // 0x4fc scaled by charge patches
+    float turning_charge_rate;            // 0x500 maybe?
     int x504;                             // 0x504
     int x508;                             // 0x508
     int x50c;                             // 0x50c
@@ -716,7 +716,7 @@ typedef struct MachineData
     int x780;                             // 0x780
     int x784;                             // 0x784
     int x788;                             // 0x788
-    int x78c;                             // 0x78c
+    float charge_value;                   // 0x78c ranges from 0-1
     int x790;                             // 0x790
     int x794;                             // 0x794
     int x798;                             // 0x798
@@ -831,15 +831,20 @@ typedef struct MachineData
     int x940;                             // 0x940
     int x944;                             // 0x944
     int x948;                             // 0x948
-    int x94c;                             // 0x94c
-    int x950;                             // 0x950
-    int x954;                             // 0x954
-    int x958;                             // 0x958
-    int x95c;                             // 0x95c
-    int x960;                             // 0x960
-    int x964;                             // 0x964
-    int x968;                             // 0x968
-    int x96c;                             // 0x96c
+    union {                               // 0x94C
+        struct {
+            float weight;
+            float boost;
+            float top_speed;
+            float turn;
+            float charge;
+            float glide;
+            float offense;
+            float defense;
+            float hp;
+        };
+        float values[9];
+    } stats;
     int x970;                             // 0x970
     int x974;                             // 0x974
     int x978;                             // 0x978
@@ -1017,6 +1022,7 @@ void Machine_GiveIntangibility(MachineData *md, int time);
 void Machine_ApplyColAnim(MachineData *md, int col_anim, int unk);
 void Machine_GivePatch(MachineData *, PatchKind, int num);
 void Machine_GiveAllUp(MachineData *, int num);
+void Machine_OnTouchItem(MachineData *, ItemData *);
 int Machine_IsDead(MachineData *);
 
 AudioSource Machine_AllocAudioSource(int index);

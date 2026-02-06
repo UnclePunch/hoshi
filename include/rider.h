@@ -287,7 +287,7 @@ typedef struct RiderData
     Vec3 forward;                         // 0x324, forward movement vector
     Vec3 up;                              // 0x330, up vector
     Vec3 x33c;                            // 0x33c
-    int x348;                             // 0x348
+    float model_scale;                    // 0x348, Kirby model scale
     int x34c;                             // 0x34c
     int x350;                             // 0x350
     int x354;                             // 0x354
@@ -523,7 +523,22 @@ typedef struct RiderData
     int x738;                  // 0x738
     int x73c;                  // 0x73c
     int x740;                  // 0x740
-    float stat[9];             // 0x744
+    float x744;                // 0x744
+    float x748;                // 0x748
+    union {                    // 0x74C
+        struct {
+            float weight;
+            float boost;
+            float top_speed;
+            float turn;
+            float charge;
+            float glide;
+            float offense;
+            float defense;
+            float hp;
+        };
+        float values[9];
+    } stats;
     int x768;                  // 0x768
     int x76c;                  // 0x76c
     int x770;                  // 0x770
@@ -772,6 +787,7 @@ void Rider_GiveIntangibility(RiderData *, int time);
 void Rider_GiveInvincibility(RiderData *, int time);
 int Rider_IsOnMachine(RiderData *);
 int Rider_IsMachineDead(RiderData *);       // can only be called between the RDPRI_HITCOLL and RDPRI_DMGAPPLY priority.
+void Rider_DropPatches(RiderData *, float stat_array[9], int drop_mode); // drop_mode=0,1,2 mode 0 drops a random individual patch, mode 1 drop many patches behind the player, mode 2 drops many patches in front of the player. Mode 1/2 drop all ups if stats are high enough
 
 AudioSource Rider_AllocAudioSource(int index);
 

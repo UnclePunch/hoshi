@@ -1766,13 +1766,13 @@ typedef struct GameClearData
     u8 x0[0x7c];
     struct
     {
-        u8 x0_80 : 1;       //
-        u8 x0_40 : 1;       //
-        u8 x0_20 : 1;       //
-        u8 x0_10 : 1;       //
+        u8 x0_80 : 1;       // 0x80
+        u8 x0_40 : 1;       // 0x40
+        u8 x0_20 : 1;       // 0x20
+        u8 is_visible : 1;  // 0x10, is visible in the checklist
         u8 has_reward : 1;  // 0x08, checked and assigned @ 8017e008. function gets clear_kind from reward_kind
         u8 is_unlocked : 1; // 0x04, raised after displaying the unlocked animation
-        u8 x0_02 : 1;       //
+        u8 is_filler : 1;   // 0x02, checkbox filler was used
         u8 is_new : 1;      // 0x01, raised when the match ends after unlocking it
     } clear[120];
 } GameClearData;
@@ -1801,9 +1801,40 @@ typedef struct gmDataAll
 
 typedef struct PlayerData
 {
-    u8 x0[0x90c];
+    u8 x0[0x34];
+    float hp;                  // 0x34
+    float max_hp;              // 0x38
+    GOBJ *rider_gobj;          // 0x3C
+    GOBJ *machine_gobj;        // 0x40
+    union {                    // 0x44
+        struct {
+            float weight;
+            float boost;
+            float top_speed;
+            float turn;
+            float charge;
+            float glide;
+            float offense;
+            float defense;
+            float hp;
+        };
+        float values[9];
+    } stats;
+    u8 x68[0x8B0 - 0x68];
+    u32 objects_destroyed_num;  // 0x8B0 running total of number of breakable objects destroyed (e.g. star pole, coral, rocks, houses, trees)
+    u8 x8B4[0x908 - 0x8B4];
+    u16 x_bit15 : 1;            // bit 15 (MSB)
+    u16 x908_flag6 : 1;         // bit 14 (byte 0x908, bit 6)
+    u16 x908_flag5 : 1;         // bit 13 (byte 0x908, bit 5)
+    u16 hydra_piece_2 : 1;      // bit 12 (byte 0x908, bit 4)
+    u16 hydra_piece_1 : 1;      // bit 11 (byte 0x908, bit 3)
+    u16 hydra_piece_0 : 1;      // bit 10 (byte 0x908, bit 2)
+    u16 dragoon_piece_2 : 1;    // bit 9  (halfword bit 9)
+    u16 dragoon_piece_1 : 1;    // bit 8  (halfword bit 8)
+    u16 dragoon_piece_0 : 1;    // bit 7  (halfword bit 7)
+    u16 x_bits0_6 : 7;          // bits 6-0 (LSB side)
+    u8 x90A[0x90C - 0x90A];
 } PlayerData;
-
 
 typedef struct LegendaryPieceData           // 80ae2cec
 {                                           //

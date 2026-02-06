@@ -412,6 +412,8 @@ SECTIONS
   Machine_GivePatch = 0x801cacf4;
   Machine_GiveAllUp = 0x801cad40;
   Machine_IsDead = 0x801c856c;
+  Machine_OnTouchItem = 0x801db34c;
+  Rider_DropPatches = 0x8019d330;
   Machine_AllocAudioSource = 0x8005dc5c;
   Ply_GetRiderGObj = 0x8022CB74;
   Ply_GetMachineGObj = 0x8022d230;

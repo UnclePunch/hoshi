@@ -339,6 +339,8 @@ SECTIONS
   VECDotProduct = 0x803D219C;
   VECNormalize = 0x803D20FC;
 
+  VIWaitForRetrace = 0x803de164;
+  
   SOInit = 0x8047b020;
   SOGetHostID = 0x8047db1c;
   SOStartup = 0x8047b0a0;

@@ -246,27 +246,21 @@ struct HSD_Archive
     u32 flags;                                    /* 0x3C */
     void *top_ptr;                                /* 0x40 */
 };
-struct HSD_PollData // unofficial name, not sure what its actually called
-{
-    u8 pad_status_num;             // array size of pad_status
-    u8 x1;                         //
-    u8 index;                      // 0x2 index of next pad_status buffer to write to
-    u8 x3;                         //
-    u8 x4;                         //
-    u8 x5;                         //
-    u8 x6;                         //
-    u8 x7;                         //
-    PADStatus (*pad_status)[5][4]; // 0x8, circular buffer of recent pad statuses. array of 5
-};
+typedef struct {
+    u8 padstatus_arr_len;       // 0x00  (number of queue slots)
+    u8 write_index;             // 0x01
+    u8 read_index;              // 0x02
+    u8 count;                   // 0x03
+} HSD_PadQueueInfo;
 
 /*** Static Variables ***/
 static HSD_IDTable *stc_hsd_default_table = (HSD_IDTable *)0x804C23EC;
 static HSD_VI *stc_HSD_VI = (HSD_VI *)0x8046b0f0;
 static HSD_Update *stc_hsd_update = (HSD_Update *)0x80479d58;
-static int **stc_rng_seed = (int **)0x804D5F94;
+static int **stc_rng_seed = (int **)0x805dcd38;
 static HSD_Pad *stc_engine_pads = (HSD_Pad *)0x8058b634;
 static u64 *stc_pause_plink_whitelists = (u64 *)0x80494f68; // array of u64 bitfields defining which gobj p_links should run for the corresponding PauseKind
-static HSD_PollData *stc_hsd_polldata = (HSD_PollData *)0x804c1f78;
+static HSD_PadQueueInfo *stc_hsd_padqueue = (HSD_PadQueueInfo *)0x8058b080;
 static GXPixelFmt *stc_hsd_pixelfmt = (GXPixelFmt *)0x804d76c8;
 static DebugLevel *stc_dblevel = (DebugLevel *)0x805DD630;
 static int *hsd_rand_seed = (int *)0x805dcd30;

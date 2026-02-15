@@ -1759,6 +1759,93 @@ typedef struct Game3dData
     int xb80;                                     // 0xb80
     int xb84;                                     // 0xb84
     int xb88;                                     // 0xb88
+    int xb8c;                                     // 0xb8c
+    int xb90;                                     // 0xb90
+    int xb94;                                     // 0xb94
+    int xb98;                                     // 0xb98
+    int xb9c;                                     // 0xb9c
+    int xba0;                                     // 0xba0
+    int xba4;                                     // 0xba4
+    int xba8;                                     // 0xba8
+    int xbac;                                     // 0xbac
+    int xbb0;                                     // 0xbb0
+    int xbb4;                                     // 0xbb4
+    int xbb8;                                     // 0xbb8
+    int xbbc;                                     // 0xbbc
+    int xbc0;                                     // 0xbc0
+    int xbc4;                                     // 0xbc4
+    int xbc8;                                     // 0xbc8
+    int xbcc;                                     // 0xbcc
+    int xbd0;                                     // 0xbd0
+    int xbd4;                                     // 0xbd4
+    int xbd8;                                     // 0xbd8
+    int xbdc;                                     // 0xbdc
+    int xbe0;                                     // 0xbe0
+    int xbe4;                                     // 0xbe4
+    int xbe8;                                     // 0xbe8
+    int xbec;                                     // 0xbec
+    int xbf0;                                     // 0xbf0
+    int xbf4;                                     // 0xbf4
+    int xbf8;                                     // 0xbf8
+    int xbfc;                                     // 0xbfc
+    int xc00;                                     // 0xc00
+    int xc04;                                     // 0xc04
+    int xc08;                                     // 0xc08
+    int xc0c;                                     // 0xc0c
+    int xc10;                                     // 0xc10
+    int xc14;                                     // 0xc14
+    int xc18;                                     // 0xc18
+    int xc1c;                                     // 0xc1c
+    int xc20;                                     // 0xc20
+    int xc24;                                     // 0xc24
+    int xc28;                                     // 0xc28
+    int xc2c;                                     // 0xc2c
+    int xc30;                                     // 0xc30
+    int xc34;                                     // 0xc34
+    int xc38;                                     // 0xc38
+    int xc3c;                                     // 0xc3c
+    int xc40;                                     // 0xc40
+    int xc44;                                     // 0xc44
+    int xc48;                                     // 0xc48
+    int xc4c;                                     // 0xc4c
+    int xc50;                                     // 0xc50
+    int xc54;                                     // 0xc54
+    int xc58;                                     // 0xc58
+    int xc5c;                                     // 0xc5c
+    struct                                        // 0xc60
+    {
+        int x0;                                   // 0x4
+        int x4;                                   // 0x4
+        GOBJ *score_gobj[4];                // 0x08
+        GOBJ *machineicon_gobj[4];                // 0x18
+    } highjump_hud;
+    int xc88;                                     // 0xc88
+    struct                                        // 0xc8c
+    {
+        int x0;                                   // 0x4
+        int x4;                                   // 0x4
+        GOBJ *score_gobj[4];                // 0x08
+        GOBJ *machineicon_gobj[4];                // 0x18
+    } airglider_hud;
+    int xcb4;                                     // 0xcb4
+    int xcb8;                                     // 0xcb8
+    int xcbc;                                     // 0xcbc
+    int xcc0;                                     // 0xcc0
+    int xcc4;                                     // 0xcc4
+    int xcc8;                                     // 0xcc8
+    int xccc;                                     // 0xccc
+    int xcd0;                                     // 0xcd0
+    int xcd4;                                     // 0xcd4
+    int xcd8;                                     // 0xcd8
+    int xcdc;                                     // 0xcdc
+    int xce0;                                     // 0xce0
+    int xce4;                                     // 0xce4
+    int xce8;                                     // 0xce8
+    int xcec;                                     // 0xcec
+    int xcf0;                                     // 0xcf0
+    int xcf4;                                     // 0xcf4
+    int xcf8;                                     // 0xcf8
+    int xcfc;                                     // 0xcfc
 } Game3dData;
 
 typedef struct GameClearData

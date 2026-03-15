@@ -41,6 +41,11 @@
 #define HSD_BUTTON_LEFT 0x40000
 #define HSD_BUTTON_RIGHT 0x80000
 
+#define HSD_VI_XFB_MAX 3
+
+typedef void (*HSD_VIGXDrawDoneCallback)(int);
+typedef void (*HSD_VIRetraceCallback)(u32);
+
 typedef enum DebugLevel
 {
     DB_MASTER,        // off
@@ -62,6 +67,25 @@ typedef enum PauseKind
     PAUSEKIND_6,        //
     PAUSEKIND_7,        //
 } PauseKind;
+
+typedef enum _HSD_VIXFBDrawDispStatus {
+    HSD_VI_XFB_NONE,
+    HSD_VI_XFB_NOUSE,
+    HSD_VI_XFB_FREE,
+    HSD_VI_XFB_DRAWING,
+    HSD_VI_XFB_WAITDONE,
+    HSD_VI_XFB_DRAWDONE,
+    HSD_VI_XFB_NEXT,
+    HSD_VI_XFB_DISPLAY,
+    HSD_VI_XFB_COPYEFB,
+    HSD_VI_XFB_TERMINATE
+} HSD_VIXFBDrawDispStatus;
+
+typedef enum _HSD_VIEFBDrawDispStatus {
+    HSD_VI_EFB_FREE,
+    HSD_VI_EFB_DRAWDONE,
+    HSD_VI_EFB_TERMINATE
+} HSD_VIEFBDrawDispStatus;
 
 /*** Structs ***/
 
@@ -166,7 +190,7 @@ struct HSD_Update
 {
     int x7e0;                       // 0x7e0
     u32 engine_frames;              // 0x7e4
-    u32 sys_frames;                 // 0x7e8
+    u32 rendered_frames;            // 0x7e8
     u32 x7ec;                       // 0x7ec,
     u8 pause_kind;                  // 0x7f0, 1 << PauseKind
     u8 pause_kind_prev;             // 0x7f1, 1 << PauseKind
@@ -177,7 +201,11 @@ struct HSD_Update
     int x7fc;                       // 0x7fc
     u64 plink_whitelist;            // 0x800, code @ 801a4eac determines which gobj plinks to allow when changing the pause state.
     u64 plink_whitelist_prev;       // 0x808
-    void *funcs;                    // 0x810
+    void *funcs;                    // 0x814
+    int x818;                       // 0x818
+    int x81c;                       // 0x81c
+    int x820;                       // 0x820
+    int x824;                       // 0x824
 };
 
 struct HSD_VI
@@ -186,6 +214,57 @@ struct HSD_VI
     int x4;
     int is_prog;
 };
+
+typedef struct _HSD_VIStatus {
+    GXRenderModeObj rmode;
+    s32 black;
+    u8 vf;
+    GXGamma gamma;
+    GXColor clear_clr;
+    u32 clear_z;
+    u8 update_clr;
+    u8 update_alpha;
+    u8 update_z;
+} HSD_VIStatus;
+
+typedef struct _current {
+    struct _HSD_VIStatus vi;
+    u8 chg_flag;
+} Current;
+
+typedef struct _XFB {
+    void* buffer;
+    HSD_VIXFBDrawDispStatus status;
+    Current vi_all;
+} XFB;
+
+typedef struct _HSD_VIInfo {
+    Current current;
+
+    XFB xfb[3];
+
+    struct _EFB {
+        HSD_VIEFBDrawDispStatus status;
+        Current vi_all;
+    } efb;
+
+    s32 nb_xfb;
+
+    void (*pre_cb)();
+    HSD_VIRetraceCallback post_cb;
+
+    struct drawdone {
+        s32 waiting;
+        s32 arg;
+        HSD_VIGXDrawDoneCallback cb;
+    } drawdone;
+
+    struct perf {
+        s32 frame_period;
+        s32 frame_renew;
+    } perf;
+
+} HSD_VIInfo;
 
 // struct HSD_Archive
 // {
@@ -264,6 +343,7 @@ static HSD_PadQueueInfo *stc_hsd_padqueue = (HSD_PadQueueInfo *)0x8058b080;
 static GXPixelFmt *stc_hsd_pixelfmt = (GXPixelFmt *)0x804d76c8;
 static DebugLevel *stc_dblevel = (DebugLevel *)0x805DD630;
 static int *hsd_rand_seed = (int *)0x805dcd30;
+static HSD_VIInfo *hsd_vi_info = (HSD_VIInfo *)0x80589a80;
 
 /*** Functions ***/
 

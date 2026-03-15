@@ -45,6 +45,7 @@ typedef struct GXPipe GXPipe;
 typedef struct VIUnknown VIUnknown;
 
 // Audio
+typedef struct FGMInstanceData FGMInstanceData;
 typedef struct BGMData BGMData;
 typedef struct VPB VPB;
 typedef struct AXLive AXLive;

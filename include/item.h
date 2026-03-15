@@ -973,5 +973,5 @@ GOBJ *Item_Create(ItemDesc *desc);
 void Item_InitDesc(ItemDesc *, ItemKind kind, float scale, int r5, Vec3 *pos, Vec3 *up, Vec3 *forward, int r9, int r10); // r5 is 0x20 of ItemData (can use 0). up and forward can be left as 0, will use defaults. r9 and r10 are usually both -1. 
 ItemCommonAttr *Item_GetCommonAttr(ItemKind kind);
 
-AudioSource Item_AllocAudioSource(int index);
+AudioEmitter Item_AllocAudioEmitter(int index);
 #endif

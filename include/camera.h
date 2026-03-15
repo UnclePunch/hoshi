@@ -76,7 +76,7 @@ typedef struct PlayerCamData
     u16 view_index;         // 0x6a, for example if p1 and p4 are playing with 2 views, p4 would have 1 for this variable
     int x6c;                // 0x6c
     u8 controller_idx;      // 0x70
-    u8 lod;                 // 0x71, level of detail this camera uses (1 = highest?), 0 = none?
+    u8 lod;                 // 0x71, level of detail this camera uses (1 = highest poly, 2 is 2p, 3 is 4p?), 0 = none?
     u8 x72;                 // 0x72
     u8 x73;                 // 0x73
 } PlayerCamData;

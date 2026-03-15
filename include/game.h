@@ -668,10 +668,6 @@ typedef struct GameData // 805359d8
     int x7d8;                        // 0x7d8
     int x7dc;                        // 0x7dc
     HSD_Update update;               // 0x7e0
-    int x818;                        // 0x818
-    int x81c;                        // 0x81c
-    int x820;                        // 0x820
-    int x824;                        // 0x824
     int x828;                        // 0x828
     int x82c;                        // 0x82c
     u8 pause_ply;                    // 0x830, player who paused the game
@@ -1069,6 +1065,7 @@ typedef struct GameData // 805359d8
     int xef4;                        // 0xef4
     int xef8;                        // 0xef8
     int xefc;                        // 0xefc
+    // actual size is 0x1518
 } GameData;
 
 typedef struct Game3dData

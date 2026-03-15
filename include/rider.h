@@ -388,7 +388,7 @@ typedef struct RiderData
     int x4c0;                  // 0x4c0
     int x4c4;                  // 0x4c4
     int x4c8;                  // 0x4c8
-    AudioSource audio_source;  // 0x4cc
+    AudioEmitter audio_3d;  // 0x4cc
     int audio_track;           // 0x4d0
     int x4d4;                  // 0x4d4
     int x4d8;                  // 0x4d8
@@ -528,7 +528,7 @@ typedef struct RiderData
     int x76c;                  // 0x76c
     int x770;                  // 0x770
     int x774;                  // 0x774
-    int x778;                  // 0x778
+    void *cpu;                 // 0x778. 0x114 of this struct is cmd_read_ptr. u8 @ 0x0 of cmd_read_ptr is cmd
     int x77c;                  // 0x77c
     int x780;                  // 0x780
     int x784;                  // 0x784
@@ -773,6 +773,6 @@ void Rider_GiveInvincibility(RiderData *, int time);
 int Rider_IsOnMachine(RiderData *);
 int Rider_IsMachineDead(RiderData *);       // can only be called between the RDPRI_HITCOLL and RDPRI_DMGAPPLY priority.
 
-AudioSource Rider_AllocAudioSource(int index);
+AudioEmitter Rider_AllocAudioEmitter(int index);
 
 #endif

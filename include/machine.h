@@ -679,7 +679,7 @@ typedef struct MachineData
     int x6ec;                             // 0x6ec
     int x6f0;                             // 0x6f0
     int x6f4;                             // 0x6f4
-    int x6f8;                             // 0x6f8
+    void *x6f8;                           // 0x6f8
     int x6fc;                             // 0x6fc
     int x700;                             // 0x700
     int x704;                             // 0x704
@@ -693,12 +693,12 @@ typedef struct MachineData
     int x724;                             // 0x724
     int x728;                             // 0x728
     int x72c;                             // 0x72c
-    int x730;                             // 0x730
-    int x734;                             // 0x734
+    int ground_type_prev;                 // 0x730
+    int ground_type_cur;                  // 0x734
     int x738;                             // 0x738
     int x73c;                             // 0x73c
     int x740;                             // 0x740
-    int x744;                             // 0x744
+    int ground_traction_cur;              // 0x744
     int x748;                             // 0x748
     int x74c;                             // 0x74c
     int x750;                             // 0x750
@@ -764,32 +764,32 @@ typedef struct MachineData
     int x840;                             // 0x840
     struct
     {
-        AudioSource source;             // 0x844
-        int track;                      // 0x848
-        int track2;                     // 0x84c, used when releasing a charge
-        int track3;                     // 0x850, used during nice landings
-        int track4;                     // 0x854, used when collecting a patch
-        int track5;                     // 0x858, read every state change
-        float radius;                   // 0x85c
+        AudioEmitter source;                 // 0x844
+        int track;                          // 0x848
+        int track2;                         // 0x84c, used when releasing a charge
+        int track3;                         // 0x850, used during nice landings
+        int track4;                         // 0x854, used when collecting a patch
+        int track5;                         // 0x858, read every state change
+        float radius;                       // 0x85c
+        int x860;                           // 0x860
+        int x864;                           // 0x864
+        int x868;                           // 0x868
+        int x86c;                           // 0x86c
+        int x870;                           // 0x870
+        int x874;                           // 0x874
+        int x878;                           // 0x878
+        int x87c_fgm_instance;              // 0x87c
+        int x880;                           // 0x880
+        int x884;                           // 0x884
+        int charge_fgm_instance;            // 0x888
+        int charge_fgm_kind;                // 0x88c
+        int x890;                           // 0x890
+        int x894;                           // 0x894
+        int x898;                           // 0x898
+        int x89c;                           // 0x89c
+        int x8a0;                           // 0x8a0
+        FGMInstance skid_fgm_instance;      // 0x8a4
     } audio;
-    int x860;                             // 0x860
-    int x864;                             // 0x864
-    int x868;                             // 0x868
-    int x86c;                             // 0x86c
-    int x870;                             // 0x870
-    int x874;                             // 0x874
-    int x878;                             // 0x878
-    int x87c;                             // 0x87c
-    int x880;                             // 0x880
-    int x884;                             // 0x884
-    int charge_fgm_instance;              // 0x888
-    int charge_fgm_kind;                  // 0x88c
-    int x890;                             // 0x890
-    int x894;                             // 0x894
-    int x898;                             // 0x898
-    int x89c;                             // 0x89c
-    int x8a0;                             // 0x8a0
-    int x8a4;                             // 0x8a4
     int x8a8;                             // 0x8a8
     int x8ac;                             // 0x8ac
     int x8b0;                             // 0x8b0
@@ -986,8 +986,8 @@ typedef struct MachineData
     int xc24;                             // 0xc24
     int xc28;                             // 0xc28
     int xc2c;                             // 0xc2c
-    int xc30_80 : 1;                      // 0xc30, 0x80
-    int charge_isgain : 1;                // 0xc30, 0x40. flag that dictates whether kirby should gain charge when holding A
+    int charge_is_playing_skid_sfx : 1;   // 0xc30, 0x80
+    int charge_is_grounded : 1;           // 0xc30, 0x40. flag that dictates whether kirby should gain charge when holding A. it actually is raised when the machine touches the ground? bikes always seem to have this raised
     int xc30_20 : 1;                      // 0xc30, 0x20
     int xc30_10 : 1;                      // 0xc30, 0x10
     int xc30_08 : 1;                      // 0xc30, 0x08
@@ -1019,5 +1019,5 @@ void Machine_GivePatch(MachineData *, PatchKind, int num);
 void Machine_GiveAllUp(MachineData *, int num);
 int Machine_IsDead(MachineData *);
 
-AudioSource Machine_AllocAudioSource(int index);
+AudioEmitter Machine_AllocAudioEmitter(int index);
 #endif

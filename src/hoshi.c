@@ -228,7 +228,7 @@ CODEPATCH_HOOKCREATE(0x80006a60, "", Hook_OnFrameEnd, "", 0)
 
 void OnFileLoad(ModHeader *file)
 {
-    void *hoshi_data_start = *(void **)0x805de290;
+    void *hoshi_data_start = (void *)file;
 
     // replace hsd_memalloc for the duration of this callback
     // this allows us to make persistent allocations by simply calling hsd_memalloc
@@ -313,6 +313,11 @@ void OnFileLoad(ModHeader *file)
     int remaining_size = *(int *)0x805de294 - *(int *)0x805de290;
     LOG_INFO("hoshi + mods using %.2fkb.", BytesToKB(hoshi_data_size));
     LOG_INFO("Remaining memory: %.2fkb.", BytesToKB(remaining_size));
+
+    void **gb_hoshi_data_start_addr = (void **)0x804bdb34;
+    int *gb_hoshi_data_size = (void *)0x804bdb38;
+    *gb_hoshi_data_start_addr = hoshi_data_start;
+    *gb_hoshi_data_size = hoshi_data_size;
 
     return;
 }

@@ -1,4 +1,5 @@
 .set AUDIO_HEAP_SIZE, 0x00034140
+.set AUDIO_LOG, 0x804adb2c
 
 /*
 .set DVDConvertPathToEntrynum, 0x803c4ed4
@@ -52,19 +53,3 @@ mtlr r0
 .macro bp
 branchl r12,0x8021b2d8
 .endm
-
-#xFunction struct
-  .set  ftX_Code,0x0
-  .set  ftX_InstructionRelocTable,0x4
-  .set  ftX_InstructionRelocTableCount,0x8
-  .set  ftX_FunctionRelocTable,0xC
-    .set  FunctionRelocTable_ReplaceThis,0x0
-    .set  FunctionRelocTable_ReplaceWith,0x4
-  .set  ftX_FunctionRelocTableCount,0x10
-  .set  ftX_CodeSize,0x14
-  .set  ftX_DebugSymCount,0x18
-  .set  ftX_DebugSym,0x1C
-    .set ftX_DebugSym_Start, 0x0
-    .set ftX_DebugSym_End, ftX_DebugSym_Start + 0x4
-    .set ftX_DebugSym_FuncName, ftX_DebugSym_End + 0x4
-    .set ftX_DebugSym_Size, ftX_DebugSym_FuncName + 0x4

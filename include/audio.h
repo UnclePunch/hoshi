@@ -545,11 +545,6 @@ if there are no emitter's in state 1 that aren't playing any active sounds, it w
 
 the gameplay consists of many objects spawning in and out which all contain audio emitters and play sounds. some objects destroy their 
 emitters as soon as they play their sound, presumably because the sound doesn't move after being played (e.g. an item hitting the ground sound).
-
-use track to find the emitter to find the owner and instance to prevent duplicate sfx
-ensure the sounds array in the emitter is updated using an old sound effect
-
-to-do: initialize the emitter after using an old allocation (8005da14)
 */
 
 typedef struct

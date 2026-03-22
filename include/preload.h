@@ -93,7 +93,7 @@ struct PreloadHeap //
     int heap_index;             // 0x0, is a heap ID returned by OSCreateHeap, is = -1 if the heap doesnt use OSCreateHeap
     PreloadHandle *handle;      // 0x4, name evidenced by assert @ 80014f10
     void *addr_start;           // 0x8
-    int size;                   // 0xC
+    u32 size;                   // 0xC
     PreloadHeapPriority pri;    // 0x10. 0 will allocate using OSCreateHeap, 1 will create heap using 80014e24. 2 = use main heap AND handles?? has something to do with how the heap is built. is referencedwhen freeing a preloaded file. if this is 1 it will properly free up the preload entry
     int req_disable;            // 0x14, temp variable used in Preload_ResetHeaps
     int is_disabled;            // 0x18,

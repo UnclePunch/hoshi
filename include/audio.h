@@ -520,13 +520,43 @@ The story so far:
         and updates the volume for the AXVPB, typically using 
         AXSetVoiceVeDelta. this is as low level as it gets i think
 
+AudioEmitter_Alloc @ 8005d864:
+    - this function also doubles as a garbage collector for sg's where
+        its emitter was freed. if none are playing it  frees sg's and sets 
+        the emitter's sg to -1.
+    - try to reuse emitters in state == 1 whose sg's are no longer active.
+        if none qualify, find a slot whose state == 0. if none exist, print 
+        an error and return -1. after finding one, initialize the emitter data.
+
+
+Audio Emitter Debug Display:
+    V = number of sounds this emitter is currently playing
+    S = number of sounds this emitter was told to play (can be less than V if listener is out of range)
+
+the process for acquiring a voice is as follows: when an emitter tries to play a sound, it checks if a voice has been assigned to it yet. 
+if not, it loops through a static array of bools to find a free voice to assign the emitter. upon assignment, it marks the voice as used 
+by updating the array of bools. when the emitter is destroyed and it has a voice assigned to either ig or sg, it sets the emitter's state 
+to 1. if the emitter doe snot have a voice assigned to it, it sets its state to 0. when an emitter is created, it loops through all 
+emitters to find one to use and performs a sort of garbage collection on the way. this garbage collection consists of checking if the 
+emitter is in state 1 and has a voice assigned to it, and if it does, it checks every active sound playing and checks if its using the 
+emitter's voice. if the emitter's voice is still in use, the code doesn't modify it and checks the next emitter. if the emitter's voice 
+is not in use, it nulls the voice index in the emitter data, sets the voice usage bool in the array to false, and allocates this emitter. 
+if there are no emitter's in state 1 that aren't playing any active sounds, it will grab the first emitter in state 0.
+
+the gameplay consists of many objects spawning in and out which all contain audio emitters and play sounds. some objects destroy their 
+emitters as soon as they play their sound, presumably because the sound doesn't move after being played (e.g. an item hitting the ground sound).
+
+use track to find the emitter to find the owner and instance to prevent duplicate sfx
+ensure the sounds array in the emitter is updated using an old sound effect
+
+to-do: initialize the emitter after using an old allocation (8005da14)
 */
 
 typedef struct
 {
-    AudioEmitterKind kind;   // 0x0, 0x33c
-    int identifier;         // 0x4, for items, this is exist_index. machines will be kind==player and this will be 5. riders will use ply here
-    int state;              // 0x8, 0 = free, 1 = free and has a sg assigned, 3 = unk @ 8005e0a8
+    AudioEmitterKind kind;  // 0x0, 0x33c
+    int instance;           // 0x4, for items, this is exist_index. machines will be kind==player and this will be 5. riders will use ply here
+    int state;              // 0x8, 0 = free, 1 = free and has a sg assigned (FLG contains R in debug display when this is set), 3 = unk (setting manual position) @ 8005db68
     Vec3 xc;                // 0xc
     Vec3 x18;               // 0x18
     Vec3 x24;               // 0x24
@@ -534,7 +564,7 @@ typedef struct
     int x34;                // 0x34 
     float distance;         // 0x38
     int x3c;                // 0x3c
-    s16 x40;                // 0x40, is also a sound generator, not sure when this one is used
+    s16 ig;                 // 0x40, is also a sound generator, used for sfx's that come from pinfo.ssm (bank 0)
     s16 sg;                 // 0x42, "sound generator". is used to match with FGMInstances that use this data. this function determines/gets it 8005d6dc 
     u16 volume;             // 0x44, doesnt play if this is under 10? 8005f558
     u16 pitch;              // 0x46
@@ -542,20 +572,18 @@ typedef struct
     u16 spa;                // 0x4a, spatial attenuation? higher = more positional based?
     u16 x4c;                // 0x4c
     u16 x4e;                // 0x4e
-    u16 x50;                // 0x50
+    u16 mix;                // 0x50
     u16 pri;                // 0x52
     u8 is_disable : 1;      // 0x54 0x80, gates logic @ 8005efc8. only used for debugging i think
-    u8 is_paused : 1;       // 0x54 0x40, not sure but sounds are unconditionally played with the params specified when this is raised @ 80060168
-    u8 is_playing : 1;      // 0x54 0x20
+    u8 is_paused : 1;       // 0x54 0x40, is I flag in the debug display. not sure but sounds are unconditionally played with the params specified when this is raised @ 80060168
+    u8 is_playing : 1;      // 0x54 0x20. is P flag in the debug display
     u8 x54_10 : 1;          // 0x54 0x10, gates logic @ 8005efec
     u8 x54_08 : 1;          // 0x54 0x08
     u8 x54_04 : 1;          // 0x54 0x04
     u8 x54_02 : 1;          // 0x54 0x02
     u8 x54_01 : 1;          // 0x54 0x01
     u8 x55_80 : 1;          // 0x55 0x80
-    u8 x55_40 : 1;          // 0x55 0x40
-    u8 x55_20 : 1;          // 0x55 0x20
-    u8 x55_10 : 1;          // 0x55 0x10
+    u8 x55_70 : 3;          // 0x55 0x70, is D in the debug display
     u8 x55_08 : 1;          // 0x55 0x08
     u8 x55_04 : 1;          // 0x55 0x04
     u8 x55_02 : 1;          // 0x55 0x02
@@ -603,10 +631,10 @@ typedef struct Audio3D
         u8 status[LBAUDIO_TRACK_AUTO_NUM];      // 0x43, 0 = F, free?. 1 = R, released?. 2 = S, stay?. 3 = M, mixing? used by riders and machines. 4 = O, off? seems everything up to LBAUDIO_TRACK_AUTO_START is reserved
         u8 x1a0;                                // 
         u8 owner[LBAUDIO_TRACK_AUTO_NUM];       // AudioTrackOwner
-        u8 x2f8[0xC];                           // unk
+        u8 x2f3[0x8];                           // unk
     } tracks;
-    u8 sg_status[64];                   // 0x2ff, 0x80538387. 0 = free, 1 in use. 0-2 are reserved. index to this is stored to 0x42 of AudioEmitterData its looped through @ 8005d720
-    AudioEmitterData sources[512];       // 0x33c, 0x805383c4. indexed by audio_3d
+    u8 sg_status[64];                   // 0x2fb, 0x80538383. 0 = free, 1 in use. 0-2 are reserved. index to this is stored to 0x42 of AudioEmitterData its looped through @ 8005d720
+    AudioEmitterData emitters[512];     // 0x33c, 0x805383c4. indexed by audio_3d
     u8 x1733C[0x6D4];                   // 8054F3C4
     int x17a10;                         // 8054fa98
     int x17a14;                         // 8054fa9c
@@ -633,10 +661,10 @@ static int **stc_fgm_bank_start_script = (int **)0x805de468;    // 0x1388(r13), 
 static int *stc_fgm_bank_num = (int *)0x805de46c;               // 0x138C(r13) seems to be the total number of banks on disc
 
 static int *stc_fgm_instance_activenum = (int *)0x805de454;                     // 0x1374(r13), 
-static FGMInstanceData **stc_fgm_data_start = (FGMInstanceData **)0x805de480;   // 0x13A0(r13), points to the first FGMInstanceData, used for iterating through
+static FGMInstanceData **stc_fgm_data_start = (FGMInstanceData **)0x805de480;   // 0x13A0(r13), points to the first FGMInstanceData, used for iterating through with the next pointer
 static FGMInstanceData **stc_fgm_data_next = (FGMInstanceData **)0x805de484;    // 0x13A4(r13), points to the next free FGMInstanceData @ 80442780
 static int *stc_fgm_tick = (int *)0x805de488;                                   // 0x13A8(r13) how many times fgm audio has been updated (incremented @ 804422cc)
-static FGMInstanceData **stc_fgm_data_unk = (FGMInstanceData **)0x805de48c;     // 0x13AC(r13) 
+static FGMInstanceData **stc_fgm_data_unk = (FGMInstanceData **)0x805de48c;     // 0x13AC(r13) points to the 0th FGM, can directly access the Nth element using this array
 static int *stc_fgm_instance_totalnum = (int *)0x805de490;                      // 0x13B0(r13) how many times an SFX has been created
 static int *stc_fgm_instance_mask = (int *)0x805de494;                          // 0x13B4(r13), AND'd with FGMInstance to get index
 static int *stc_fgm_unk = (int *)0x805de498;                                    // 0x13B8(r13)

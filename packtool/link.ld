@@ -295,6 +295,7 @@ SECTIONS
   FGM_PauseKind = 0x80444CC4;
   FGM_ResumeKind = 0x80444FE0;
   FGM_LoadInGameBanks = 0x8005A348;
+  FGM_Stop = 0x8005e7d8;
   FGM_StopAll = 0x8005e788;
   FGM_CheckEnded = 0x8005e108;
   Gm_LoadGroundFGMBank = 0x8005a474;

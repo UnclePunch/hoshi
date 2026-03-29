@@ -388,7 +388,7 @@ typedef struct RiderData
     int x4c0;                  // 0x4c0
     int x4c4;                  // 0x4c4
     int x4c8;                  // 0x4c8
-    AudioEmitter audio_3d;  // 0x4cc
+    AudioEmitter audio_emitter;// 0x4cc
     int audio_track;           // 0x4d0
     int x4d4;                  // 0x4d4
     int x4d8;                  // 0x4d8
@@ -705,8 +705,11 @@ typedef struct RiderData
     int x9e4;                           // 0x9e4
     int x9e8;                           // 0x9e8
     int x9ec;                           // 0x9ec
-    int x9f0;                           // 0x9f0
-    int x9f4;                           // 0x9f4
+    struct
+    { 
+        int is_bike;                    // 0x9f0
+        MachineKind kind;               // 0x9f4
+    } machine_saved;                    // used to remember your actual machine when an ability changes your machine
     int x9f8;                           // 0x9f8
     int x9fc;                           // 0x9fc
     int xa00;                           // 0xa00

@@ -764,7 +764,7 @@ typedef struct MachineData
     int x840;                             // 0x840
     struct
     {
-        AudioEmitter source;                 // 0x844
+        AudioEmitter emitter;               // 0x844
         int track;                          // 0x848
         int track2;                         // 0x84c, used when releasing a charge
         int track3;                         // 0x850, used during nice landings

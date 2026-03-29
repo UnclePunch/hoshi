@@ -20,6 +20,7 @@ SECTIONS
   AudioEmitter_CheckUnk = 0x800623ec;
   AudioTrack_Alloc = 0x8005d2b4;
   AudioTrack_Free = 0x8005d64c;
+  Audio_GetFGMNumUsingSoundGenerator = 0x80443d8c;
   bp = 0x802D4BB0;
   CARDCheckAsync = 0x803E55D8;
   CARDClose = 0x803E7264;

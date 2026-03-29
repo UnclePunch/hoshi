@@ -10,6 +10,8 @@
 #define LBAUDIO_TRACK_AUTO_END      383 // evidenced @ 8005d684
 #define LBAUDIO_TRACK_AUTO_NUM      (LBAUDIO_TRACK_AUTO_END - LBAUDIO_TRACK_AUTO_START)
 
+#define USERVOL_NUM 2                   // evidenced @ 80449c28
+
 // FGMInstanceData flags
 #define FGMINSTANCE_PRIORITY            0x2
 #define FGMINSTANCE_VOLUME              0x4
@@ -258,15 +260,15 @@ typedef struct _AXPBADPCMLOOP
 
 typedef struct _AXPB
 {
-    u16 nextHi;              // 0x0, pointer to next parameter buffer (MRAM)
-    u16 nextLo;              // 0x2,
-    u16 currHi;              // 0x4, pointer to this parameter buffer (MRAM)
-    u16 currLo;              // 0x6
-    u16 srcSelect;           // 0x8, Select type of sample rate conversion (none,4-tap,linear)
-    u16 coefSelect;          // 0xa, Coef. to be used with 4-tap SRC
-    u16 mixerCtrl;           // 0xc, Mixer control bits
-    u16 state;               // 0xe, current state
-    u16 type;                // 0x10, type of voice
+    u16 nextHi;              // 0x00, 0x138, pointer to next parameter buffer (MRAM)
+    u16 nextLo;              // 0x02, 0x13a,
+    u16 currHi;              // 0x04, 0x13c, pointer to this parameter buffer (MRAM)
+    u16 currLo;              // 0x06, 0x13e.
+    u16 srcSelect;           // 0x08, 0x140, Select type of sample rate conversion (none,4-tap,linear)
+    u16 coefSelect;          // 0x0a, 0x142, Coef. to be used with 4-tap SRC
+    u16 mixerCtrl;           // 0x0c, 0x144, Mixer control bits
+    u16 state;               // 0x0e, 0x146, current state
+    u16 type;                // 0x10, 0x148, type of voice
     AXPBMIX mix;             // 0x12
     AXPBITD itd;             // 0x36
     AXPBUPDATE update;       // 0x44
@@ -339,46 +341,54 @@ struct BGMData // this name sucks, dont know enough about it to rename it
     unsigned int vpb_index : 6;
 };
 
+typedef struct 
+{
+    float current;              // 0x00, 0x34
+    int x4;                     // 0x04, 0x38
+    float target;               // 0x08, 0x3c
+    int xc;                     // 0x0c, 0x40
+    int ramp_num;               // 0x10, 0x44. number of ticks to ramp towards target_volume
+    int x14;                    // 0x14, 0x48
+} UserVolume;
+
 struct VPB
 {
-    PID pid;                // 0x0, internally "vID". if this is 0, its inactive?
-    int x4;                 // 0x4
-    u8 x8;                  // 0x8
-    u8 x9_80 : 1;           // 0x9, 0x80, doesnt adjust volume when this is raised
-    u8 x9_40 : 1;           // 0x9, 0x40
-    u8 x9_20 : 1;           // 0x9, 0x20
-    u8 x9_10 : 1;           // 0x9, 0x10
-    u8 is_initializing : 1; // 0x9, 0x08, is raised when initalizing the hps load process @ 8038b76c, is lowered when the first chunk is played @ 8038b310
-    u8 x9_04 : 1;           // 0x9, 0x04
-    u8 pause : 1;           // 0x9, 0x02, will not update the sound on audio frames. if this is not set it inits x24 when playing the hps @ 8038b180
-    u8 req_stop : 1;        // 0x9, 0x01, set to delete? set @ 804496d0.
-    u8 axvpb_num;           // 0xa, number of present axvpb's at 0xc
-    u8 sg;                  // 0xb, seems to be used to access the static volume data indexed by sg at 8059a178
-    AXVPB *axvpb[2];        // 0xc
-    s16 x14;                // 0x14
-    float pitch_x18;        // 0x18, are combined together to set ratioHi of AXPBSRC @ 8038b244
-    float pitch_x1c;        // 0x1c, are combined together to set ratioHi of AXPBSRC @ 8038b244
-    u16 currentVolume;      // 0x20, name derived from r4 @ 8038b200
-    u8 is_updated_prev;     // 0x22, raised when prev is set @ 8038b33c
-    u8 x27;                 // 0x23
-    VPB *prev;              // 0x24, is equal to the previous value of stc_bgm_vpb, before it was replaced with a ptr to this one
-    float volume_x28;       // 0x28, is used to calculate x24 @ 8038b194
-    u16 x2c;                // 0x2c, seems to be the amount the volume needs to be lowered before reaching 0? is decremented each audio tick after stopping a sound (8044aa94). when its fully muted it begins freeing the voice (8044ac50 r25 is the amount of volume left to reach 0)
-    u8 adjust_queued;       // 0x2e, bool raised when a change is queued, like volume. gets lowered @ 8044acf4 after its adjusted
-    u8 x2f;                 // 0x2f
-    int *x30;               // 0x30, 0x8 of this pointer is hps entrynum
-    float volume_x34;       // 0x34, is used to calculate x24 @ 8038b194
-    float volume_x38;       // 0x38 (gets ignored completely?)
-    u8 x3c[0x5c];           // 0x3c
+    PID pid;                            // 0x0, internally "vID". if this is 0, its inactive?
+    int x4;                             // 0x4
+    u8 x8;                              // 0x8
+    u8 x9_80 : 1;                       // 0x9, 0x80, doesnt adjust volume when this is raised
+    u8 x9_40 : 1;                       // 0x9, 0x40
+    u8 x9_20 : 1;                       // 0x9, 0x20
+    u8 x9_10 : 1;                       // 0x9, 0x10
+    u8 is_initializing : 1;             // 0x9, 0x08, is raised when initalizing the hps load process @ 8038b76c, is lowered when the first chunk is played @ 8038b310
+    u8 x9_04 : 1;                       // 0x9, 0x04
+    u8 pause : 1;                       // 0x9, 0x02, will not update the sound on audio frames. if this is not set it inits x24 when playing the hps @ 8038b180
+    u8 req_stop : 1;                    // 0x9, 0x01, set to delete? set @ 804496d0.
+    u8 axvpb_num;                       // 0xa, number of present axvpb's at 0xc
+    u8 sg;                              // 0xb, seems to be used to access the static volume data indexed by sg at 8059a178
+    AXVPB *axvpb[2];                    // 0xc
+    s16 x14;                            // 0x14
+    float pitch_x18;                    // 0x18, are combined together to set ratioHi of AXPBSRC @ 8038b244
+    float pitch_x1c;                    // 0x1c, are combined together to set ratioHi of AXPBSRC @ 8038b244
+    float x20;                          // 0x20
+    VPB *prev;                          // 0x24, is equal to the previous value of stc_bgm_vpb, before it was replaced with a ptr to this one
+    float volume_x28;                   // 0x28, is used to calculate x24 @ 8038b194
+    u16 x2c;                            // 0x2c, seems to be the amount the volume needs to be lowered before reaching 0? is decremented each audio tick after stopping a sound (8044aa94). when its fully muted it begins freeing the voice (8044ac50 r25 is the amount of volume left to reach 0)
+    u8 adjust_queued;                   // 0x2e, bool raised when a change is queued, like volume. gets lowered @ 8044acf4 after its adjusted
+    u8 x2f;                             // 0x2f
+    int *x30;                           // 0x30, 0x8 of this pointer is hps entrynum
+    UserVolume user_vol[USERVOL_NUM];   // 0x34
+    u8 x64[0x34];
     // 0x98
 };
 
 struct AXLive
 {
-    VPB voice_data[64];                  // 0x0
-    u8 x1784[0xc0];                      // ?, some constants
-    BGMData bgm_data_lookup[263];        // 0x1D80, array of BGMData corresponding to SFX that were played with an instance_slot param > 0 when calling SFX_PlayRaw. this is used to stop previous instances when playing the same sfx
-    HPSChunkHeader hps_chunk_headers[3]; // 0x1c60, circular buffer of 3 most recent hps headers
+    // this struct actually starts at 80596da0, not sure what that data is tho
+    VPB voice_data[64];                  // 0x80597660, 0x0
+    u8 x2600[0x518];                     // 0x80599c60, unk
+    UserVolume main_vol;                 // 0x8059a160, set from sound settings
+    UserVolume user_vol[64];             // 0x8059a178, indexed by sg
 };
 
 typedef struct 
@@ -647,7 +657,7 @@ static Audio3D *audio_3d_data = (Audio3D *)0x80538088;   // indexed by value ret
 
 static PID *stc_bgm_pid = (PID *)0x80508bc8;                            // 0 = ?, 1 = main song, 2 = secondary song (event) is -1 when nothing is playing
 static FGMInstanceData **p_voices = (FGMInstanceData **)0x8058e298;         // FGMInstance pointers that correspond to each pid. they are stored when the sfx script plays a sound @ 80441298
-static AXLive *ax_live = (AXLive *)0x80597660;
+static AXLive *ax_live = (AXLive *)0x80597660;                          // indexe by pid & AXDRIVER_PIDMASK
 static VPB **stc_vpb_adjust_queue = (VPB **)0x805de504;                 // 0x1424(r13), function 8044adb4 adds VPB's to this linked list and adjusts them next audio frame
 
 static void **stc_fgm_script_data = (void **)0x805de460;        // 0x1380(r13)
@@ -660,7 +670,7 @@ static FGMInstanceData **stc_fgm_data_start = (FGMInstanceData **)0x805de480;   
 static FGMInstanceData **stc_fgm_data_next = (FGMInstanceData **)0x805de484;    // 0x13A4(r13), points to the next free FGMInstanceData @ 80442780
 static int *stc_fgm_tick = (int *)0x805de488;                                   // 0x13A8(r13) how many times fgm audio has been updated (incremented @ 804422cc)
 static FGMInstanceData **stc_fgm_data_unk = (FGMInstanceData **)0x805de48c;     // 0x13AC(r13) points to the 0th FGM, can directly access the Nth element using this array
-static int *stc_fgm_instance_totalnum = (int *)0x805de490;                      // 0x13B0(r13) how many times an SFX has been created
+static int *stc_fgm_instance_create_num = (int *)0x805de490;                    // 0x13B0(r13) how many times an SFX has been created
 static int *stc_fgm_instance_mask = (int *)0x805de494;                          // 0x13B4(r13), AND'd with FGMInstance to get index
 static int *stc_fgm_unk = (int *)0x805de498;                                    // 0x13B8(r13)
 
@@ -710,7 +720,7 @@ int AudioEmitter_CheckUnk(AudioEmitter source);
 void AudioEmitter_Play(int sfx, int audio_track, AudioEmitter source); // you can play multiple sounds per track and prox?
 int AudioTrack_Alloc(); // 
 void AudioTrack_Free(int audio_track); // 
-
+int Audio_GetFGMNumUsingSoundGenerator(int sg);
 AXVPB *AXAcquireVoice(u32 priority, void *callback, u32 userContext);
 
 #endif

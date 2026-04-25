@@ -196,6 +196,7 @@ void Preload_RequestLoadEntry(int preload_entry_index);                         
 void Preload_FreeEntry(int preload_entry_index);                                                                                                                                                     // 800174e8
 HSD_Archive *Preload_GetArchive_Init_ReturnSymbols(int unk, char *filename, void *symbol_return, ...);                                                                                               // variadic args are symbol strings, terminate the variadic args with a 0
 HSD_Archive *Preload_GetArchiveByEntrynum(int entrynum);                                                                                                                                             // will wait if the file isnt loaded yet
+HSD_Archive *Preload_GetArchiveByFilename(char *file_name);     
 int Preload_CheckFileStatus(int entrynum);                                                                                                                                                           // 0 = not loading, 1 = loading, 2 = loaded
 int Preload_CheckIfFilesAreLoading(int preload_flags);                                                                                                                                               // use PRELOADFLAG_ definitions
 void Preload_FreeUnneededInitializedArchivesInHeap(PreloadHeapKind heap_kind);                                                                                                                       // arg is heap_kind in PreloadEntry

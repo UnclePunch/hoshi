@@ -38,7 +38,7 @@ typedef enum PreloadHeapKind // 0x2 of PreloadEntry
     PRELOADHEAPKIND_STAY,   // IfAll, ItCommon, RdCommon, etc
     PRELOADHEAPKIND_ALLM,   // game files like rider dat, animations, stage. also stage and special allocations (entrynum 2000+)
     PRELOADHEAPKIND_NET,    //
-    PRELOADHEAPKIND_ALLA,   //
+    PRELOADHEAPKIND_ALLA,   // aram file cache. frequently accessed files are requested to load here to replace a disc read with a much faster ARAM DMA operation. its invalidated at the top level of the main menu
     PRELOADHEAPKIND_STAY2D, //
     PRELOADHEAPKIND_ALL2D,  //
     PRELOADHEAPKIND_DAT,    //

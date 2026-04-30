@@ -187,6 +187,7 @@ void Hook_PlayerSelectLoad()
     return;
 };
 CODEPATCH_HOOKCREATE(0x8003b48c, "", Hook_PlayerSelectLoad, "", 0)
+CODEPATCH_HOOKCREATE(0x8003c6e8, "", Hook_PlayerSelectLoad, "", 0)
 
 // runs every tick
 void Hook_OnFrameStart()
@@ -294,6 +295,7 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80014448);
     CODEPATCH_HOOKAPPLY(0x80014d3c);
     CODEPATCH_HOOKAPPLY(0x8003b48c);
+    CODEPATCH_HOOKAPPLY(0x8003c6e8);
     CODEPATCH_HOOKAPPLY(0x80041160);
     CODEPATCH_HOOKAPPLY(0x80113a30);
     CODEPATCH_HOOKAPPLY(0x80015274);

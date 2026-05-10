@@ -205,7 +205,7 @@ void Hook_OnFrameStart()
 };
 CODEPATCH_HOOKCREATE(0x80006844, "", Hook_OnFrameStart, "", 0)
 
-// runs every tick
+// runs at the end of every tick, before the frame index is incremented
 void Hook_OnFrameEnd()
 {
     // loop through installed mods, run their function
@@ -219,7 +219,7 @@ void Hook_OnFrameEnd()
 
     return;
 };
-CODEPATCH_HOOKCREATE(0x80006a60, "", Hook_OnFrameEnd, "", 0)
+CODEPATCH_HOOKCREATE(0x80006a30, "", Hook_OnFrameEnd, "", 0)
 
 ////////////////////////////////////////////
 //                                        //
@@ -300,7 +300,7 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80113a30);
     CODEPATCH_HOOKAPPLY(0x80015274);
     CODEPATCH_HOOKAPPLY(0x80006844);
-    CODEPATCH_HOOKAPPLY(0x80006a60);
+    CODEPATCH_HOOKAPPLY(0x80006a30);
     
     Settings_Init(stc_modloader_data);
     MainMenu_ApplyPatches();

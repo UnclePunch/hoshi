@@ -188,7 +188,7 @@ struct HSD_Pads
 
 struct HSD_Update
 {
-    int x7e0;                       // 0x7e0
+    u8 is_req_exit_minor;              // 0x7e0
     u32 engine_frames;              // 0x7e4
     u32 rendered_frames;            // 0x7e8
     u32 x7ec;                       // 0x7ec,

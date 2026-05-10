@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 7
+#define HOSHI_VERSION 8
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -16,6 +16,7 @@
    5 - (01-15-26) add OnFrameEnd()
    6 - (02-04-26) add mod export support
    7 - (03-14-26) write audio heap whereabouts to game memory
+   8 - (05-10-26) move OnFrameEnd() to execute before engine frame increments
 */
 
 typedef struct MenuDesc MenuDesc;

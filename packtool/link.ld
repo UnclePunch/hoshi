@@ -270,7 +270,7 @@ SECTIONS
   Pad_GetRapidHeld = 0x8000ED30;
   Pad_GetHeld = 0x8000ECD0;
   Pad_StopRumbleAll = 0x80071d7c;
-  Gm_GetPauseKind = 0x80005D04;
+  Gm_CheckPauseKind = 0x80005D04;
   Preload_CreateEntry = 0x80072C90;
   Preload_CreateEntryByEntrynum = 0x80072AD8;
   Preload_CreateAllMEntry = 0x8019065c;
@@ -486,4 +486,7 @@ SECTIONS
   Hoshi_ExportMod = 0x80495178;
   Hoshi_ImportMod = 0x8049517c;
   Hoshi_CreateScreenText = 0x80495180;
+  Hoshi_GetBackupSize = 0x80495184;
+  Hoshi_BackupModSave = 0x80495188;
+  Hoshi_RestoreModSave = 0x8049518c;
 }

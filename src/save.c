@@ -17,6 +17,7 @@
 #include "save.h"
 #include "hash.h"
 #include "hoshi.h"
+#include "settings.h"
 
 #include "hoshi/func.h"
 #include "hoshi/log.h"
@@ -26,6 +27,8 @@
 static char *save_name = "hoshi";
 static KARPlusSave *stc_hoshi_save;
 static int stc_hoshi_save_hash;
+
+extern ModloaderData *stc_modloader_data;
 
 /*---------------------------------------------------------------------*
 Name:           KARPlusSave_OnSetDefault
@@ -625,5 +628,88 @@ void KARPlusSave_Init()
     CODEPATCH_REPLACEFUNC(Hoshi_WriteSave, KARPlusSave_Write);
     CODEPATCH_HOOKAPPLY(0x80007630);
 
+    CODEPATCH_REPLACEFUNC(Hoshi_GetBackupSize, _Hoshi_GetBackupSize);
+    CODEPATCH_REPLACEFUNC(Hoshi_BackupModSave, _Hoshi_BackupModSave);
+    CODEPATCH_REPLACEFUNC(Hoshi_RestoreModSave, _Hoshi_RestoreModSave);
+
     return;
+}
+
+/*---------------------------------------------------------------------*
+Name:           _Hoshi_GetBackupSize
+
+Description:    Determines the size of the ModSaveBackup array which
+                is comprised of the save data of mods that affect gameplay.
+
+Arguments:      None.
+
+Returns:        Size.
+
+*---------------------------------------------------------------------*/
+int _Hoshi_GetBackupSize()
+{
+    int size = 0;
+
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *mod = &stc_modloader_data->mods[i];
+
+        if (mod->desc->affects_gameplay)
+            size += sizeof(ModSaveBackup) + (mod->save.menu_num * sizeof(MenuSave)) + mod->save.user_size;
+    }
+    
+    return size;
+}
+int _Hoshi_BackupModSave(u8 *save)
+{
+    int cur_offset = 0;
+    int num = 0;
+
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *mod = &stc_modloader_data->mods[i];
+
+        if (mod->desc->affects_gameplay)
+        {
+            ModSaveBackup *mod_backup = (ModSaveBackup *)&save[cur_offset];
+            mod_backup->name[sizeof(mod_backup->name) - 1] = '\0';
+
+            strncpy(mod_backup->name, mod->desc->name, sizeof(mod_backup->name));
+            mod_backup->version.major = mod->desc->version.major;
+            mod_backup->version.minor = mod->desc->version.minor;
+            mod_backup->save_size = (mod->save.menu_num * sizeof(MenuSave)) + mod->save.user_size;
+            memcpy(mod_backup->save_data, mod->save.menu_data, mod_backup->save_size);
+            
+            cur_offset += sizeof(ModSaveBackup) + mod_backup->save_size;
+            num++;
+        }
+    }
+    
+    return num;
+}
+void _Hoshi_RestoreModSave(u8 *save, int num)
+{
+    // to-do: link up menu save via hash so replays recorded 
+    // with old mod versions can be replayed on newer ones
+
+    int cur_offset = 0;
+
+    for (int i = 0; i < num; i++)
+    {
+        ModSaveBackup *mod_backup = (ModSaveBackup *)&save[cur_offset];
+        GlobalMod *mod = Mods_GetFromName(mod_backup->name);
+
+        cur_offset += sizeof(ModSaveBackup) + mod_backup->save_size;
+        
+        if (!mod)
+            continue; // warn about this?
+
+        if (mod_backup->version.major > mod->desc->version.major)
+            continue;
+        
+        memcpy(mod->save.menu_data, mod_backup->save_data, mod_backup->save_size);
+            
+    }
+
+    Mod_CopyAllFromSave();
 }

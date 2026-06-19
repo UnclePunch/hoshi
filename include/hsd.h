@@ -55,19 +55,6 @@ typedef enum DebugLevel
     DB_DEVELOP,       //
 } DebugLevel;
 
-typedef enum PauseKind
-{
-    PAUSEKIND_SYS,      // debug pause (uses Z to frame advance)
-    PAUSEKIND_GAME,     // match pause (i dont think any other scene uses this?) allows p_links 0(sys),2,16,18(matchcam),19(misccam),20(hudcam),21(coincam),22(screenflashcam),24(devtext)+ to run
-    PAUSEKIND_2,        // unknown what uses this, it whitelists everything
-    PAUSEKIND_MATCHEND, // is used when the match ends, it allows p_links 0(sys),2,12(effect2),13(mapmisc),14(misc),15(hud),16,17,18(matchcam),19,20,21,22,24+ to run
-    PAUSEKIND_3,        //
-    PAUSEKIND_4,        //
-    PAUSEKIND_5,        //
-    PAUSEKIND_6,        //
-    PAUSEKIND_7,        //
-} PauseKind;
-
 typedef enum _HSD_VIXFBDrawDispStatus {
     HSD_VI_XFB_NONE,
     HSD_VI_XFB_NOUSE,
@@ -199,8 +186,8 @@ struct HSD_Update
     int (*isRequestPause)();        // 0x7f4,
     int (*isRequestFrameAdvance)(); // 0x7f8,
     int x7fc;                       // 0x7fc
-    u64 plink_whitelist;            // 0x800, code @ 801a4eac determines which gobj plinks to allow when changing the pause state.
-    u64 plink_whitelist_prev;       // 0x808
+    u64 plink_blacklist;            // 0x800, code @ 801a4eac determines which gobj plinks to allow when changing the pause state.
+    u64 plink_blacklist_prev;       // 0x808
     void *funcs;                    // 0x814
     int x818;                       // 0x818
     int x81c;                       // 0x81c
@@ -338,7 +325,7 @@ static HSD_VI *stc_HSD_VI = (HSD_VI *)0x8046b0f0;
 static HSD_Update *stc_hsd_update = (HSD_Update *)0x80479d58;
 static int **stc_rng_seed = (int **)0x805dcd38;
 static HSD_Pad *stc_engine_pads = (HSD_Pad *)0x8058b634;
-static u64 *stc_pause_plink_whitelists = (u64 *)0x80494f68; // array of u64 bitfields defining which gobj p_links should run for the corresponding PauseKind
+static u64 *stc_pause_plink_blacklists = (u64 *)0x80494f68; // array of u64 bitfields defining which gobj p_links should run for the corresponding PauseKind
 static HSD_PadQueueInfo *stc_hsd_padqueue = (HSD_PadQueueInfo *)0x8058b080;
 static GXPixelFmt *stc_hsd_pixelfmt = (GXPixelFmt *)0x804d76c8;
 static DebugLevel *stc_dblevel = (DebugLevel *)0x805DD630;

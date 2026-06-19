@@ -114,6 +114,19 @@ typedef enum GmIntroState
     GMINTRO_COUNTDOWN,
 } GmIntroState;
 
+typedef enum PauseKind
+{
+    PAUSEKIND_SYS,      // debug pause (uses Z to frame advance)
+    PAUSEKIND_GAME,     // match pause (i dont think any other scene uses this?) allows p_links 0(sys),2,16,18(matchcam),19(misccam),20(hudcam),21(coincam),22(screenflashcam),24(devtext)+ to run
+    PAUSEKIND_2,        // unknown what uses this, it blacklists everything
+    PAUSEKIND_MATCHEND, // is used when the match ends, it allows p_links 0(sys),2,12(effect2),13(mapmisc),14(misc),15(hud),16,17,18(matchcam),19,20,21,22,24+ to run
+    PAUSEKIND_EXPLODE,  // used when a machine blows up. allows 
+    PAUSEKIND_5,        //
+    PAUSEKIND_6,        //
+    PAUSEKIND_7,        //
+    PAUSEKIND_8,        //
+} PauseKind;
+
 typedef enum CityClearKind
 {
     CITYCLEARKIND_0,
@@ -2298,9 +2311,9 @@ int Gm_IsGrKindCity(GroundKind gr_kind);
 int Gm_IsDestructionDerby();
 void CitySelect_Cursor6Update(int ply, int color_idx);
 void AirRideSelect_Cursor6Update(int ply, int color_idx);
-int Gm_GetPauseKind(int type);
-void Gm_Pause(int pause_kind);
-void Gm_Resume(int pause_kind);
+int Gm_CheckPauseKind(PauseKind pause_kind);
+void Gm_Pause(PauseKind pause_kind);
+void Gm_Resume(PauseKind pause_kind);
 void Gm_PlayPauseSFX();
 void Gm_PauseAllSFX();
 void Gm_ResumeAllSFX();

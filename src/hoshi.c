@@ -704,6 +704,15 @@ void Mod_CopyToSave(GlobalMod *mod)
         }
     }
 }
+void Mod_CopyAllFromSave()
+{
+    // for each mod
+    for (int mod_idx = 0; mod_idx < stc_modloader_data->mod_num; mod_idx++)
+    {
+        GlobalMod *mod = &stc_modloader_data->mods[mod_idx];
+        Mod_CopyFromSave(mod);
+    }
+}
 void Mod_CopyAllToSave()
 {
     // for each mod

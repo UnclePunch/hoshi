@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 8
+#define HOSHI_VERSION 9
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -17,6 +17,7 @@
    6 - (02-04-26) add mod export support
    7 - (03-14-26) write audio heap whereabouts to game memory
    8 - (05-10-26) move OnFrameEnd() to execute before engine frame increments
+   9 - (06-18-26) add a bool to the ModDesc that indicates if the mod impacts gameplay
 */
 
 typedef struct MenuDesc MenuDesc;
@@ -70,6 +71,7 @@ int _hash_32(const void *data, int size);
 
 void Mod_CopyFromSave(GlobalMod *mod);
 void Mod_CopyToSave(GlobalMod *mod);
+void Mod_CopyAllFromSave();
 void Mod_CopyAllToSave();
 
 #endif

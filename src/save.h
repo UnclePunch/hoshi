@@ -51,4 +51,8 @@ KARPlusSave *KARPlusSave_Get();
 int KARPlusSave_Write();
 int KARPlusSave_VerifySize(GlobalMod *mod, int menu_size, int user_size);
 int KARPlusSave_CheckFreeData();
+
+int _Hoshi_GetBackupSize();
+int _Hoshi_BackupModSave(u8 *save);
+void _Hoshi_RestoreModSave(u8 *save, int num);
 #endif

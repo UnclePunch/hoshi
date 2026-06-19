@@ -9,7 +9,7 @@ import argparse
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
-VERSION = 8
+VERSION = 9
 
 # Version History:
 #  1 - (07-01-25) introductory version
@@ -20,7 +20,7 @@ VERSION = 8
 #  6 - (02-04-26) add mod export support
 #  7 - (03-14-26) write audio heap whereabouts to game memory   
 #  8 - (05-10-26) move OnFrameEnd() to execute before engine frame increments
-
+#  9 - (06-18-26) add a bool to the ModDesc that indicates if the mod impacts gameplay
 
 build_dir = "_build"
 

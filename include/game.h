@@ -1737,16 +1737,13 @@ typedef struct Game3dData
     int xb00;                                     // 0xb00
     int xb04;                                     // 0xb04
     int xb08;                                     // 0xb08
-    int xb0c;                                     // 0xb0c
+    JOBJSet *ScInfPlynm_scene_models;             // 0xb0c
     int xb10;                                     // 0xb10
     int xb14;                                     // 0xb14
     int xb18;                                     // 0xb18
     int xb1c;                                     // 0xb1c
     int xb20;                                     // 0xb20
-    int xb24;                                     // 0xb24
-    int xb28;                                     // 0xb28
-    int xb2c;                                     // 0xb2c
-    int xb30;                                     // 0xb30
+    GOBJ *plynm_gobj[4];                          // 0xb24, these are the player indicators in the bottom left of splitscreen matches
     int xb34;                                     // 0xb34
     int xb38;                                     // 0xb38
     int xb3c;                                     // 0xb3c

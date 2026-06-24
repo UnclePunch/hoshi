@@ -21,6 +21,21 @@ typedef struct CameraParam
     float fov;             // 0x24
 } CameraParam;
 
+typedef struct cmMainParamCommon
+{
+    u8 x0[0x32c];
+    float zoom_speed;           // 0x32c
+    float x330;                 // 0x330
+    float x334;                 // 0x334
+    float x338;                 // 0x338
+    float x33c;                 // 0x33c
+    float x340;                 // 0x340
+    float x344;                 // 0x344
+    float zoom_dist_min;        // 0x348
+    float zoom_dist_max;        // 0x34c
+    float x350;                 // 0x350
+} cmMainParamCommon;
+
 typedef struct CamInterest
 {
     int x0;             // 0x00
@@ -89,7 +104,7 @@ typedef struct PlayerCamLookup
     COBJ *cam_cobjs[CM_CAMERA_MAX];     // 0x130
     int x1b0[32];                       // 0x1b0
     int x230;                           // 0x230
-    float *x234;                        // 0x234, unk struct array
+    cmMainParamCommon *param;           // 0x234, 
     int x238;                           // 0x238
     u8 x23c[4];                         // 0x23c
     struct                              // 0x240

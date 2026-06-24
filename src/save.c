@@ -674,13 +674,16 @@ int _Hoshi_BackupModSave(u8 *save)
             ModSaveBackup *mod_backup = (ModSaveBackup *)&save[cur_offset];
             mod_backup->name[sizeof(mod_backup->name) - 1] = '\0';
 
+            int save_size = (mod->save.menu_num * sizeof(MenuSave))+ mod->save.user_size;
+
             strncpy(mod_backup->name, mod->desc->name, sizeof(mod_backup->name));
             mod_backup->version.major = mod->desc->version.major;
             mod_backup->version.minor = mod->desc->version.minor;
-            mod_backup->save_size = (mod->save.menu_num * sizeof(MenuSave)) + mod->save.user_size;
-            memcpy(mod_backup->save_data, mod->save.menu_data, mod_backup->save_size);
+            mod_backup->save.menu_num = mod->save.menu_num;
+            mod_backup->save.user_size = mod->save.user_size;
+            memcpy(mod_backup->save.data, mod->save.menu_data, save_size);
             
-            cur_offset += sizeof(ModSaveBackup) + mod_backup->save_size;
+            cur_offset += sizeof(ModSaveBackup) + save_size;
             num++;
         }
     }
@@ -689,25 +692,41 @@ int _Hoshi_BackupModSave(u8 *save)
 }
 void _Hoshi_RestoreModSave(u8 *save, int num)
 {
-    // to-do: link up menu save via hash so replays recorded 
-    // with old mod versions can be replayed on newer ones
-
     int cur_offset = 0;
 
+    // each mod save
     for (int i = 0; i < num; i++)
     {
         ModSaveBackup *mod_backup = (ModSaveBackup *)&save[cur_offset];
         GlobalMod *mod = Mods_GetFromName(mod_backup->name);
+        
+        int save_size = mod_backup->save.menu_num * sizeof(MenuSave) + mod_backup->save.user_size;
 
-        cur_offset += sizeof(ModSaveBackup) + mod_backup->save_size;
+        cur_offset += sizeof(ModSaveBackup) + save_size;
         
         if (!mod)
             continue; // warn about this?
-
-        if (mod_backup->version.major > mod->desc->version.major)
-            continue;
         
-        memcpy(mod->save.menu_data, mod_backup->save_data, mod_backup->save_size);
+        // each menu option in the mod save
+        MenuSave *menu_save = (MenuSave *)mod_backup->save.data;
+        for (int j = 0; j < mod_backup->save.menu_num; j++)
+        {
+            LOG_DEBUG("looking for hash %04x from backup", menu_save[j].hash);
+
+            // each menu option in the installed mod
+            for (int k = 0; k < mod->save.menu_num; k++)
+            {
+                if (mod->save.menu_data[k].hash == menu_save[j].hash)
+                {
+                    LOG_DEBUG("copying hash %04x to save with val %d", menu_save[j].hash, menu_save[j].val);
+                    mod->save.menu_data[k].val = menu_save[j].val;
+                    break;
+                }
+            }
+        }
+
+        if (mod_backup->version.major <= mod->desc->version.major)
+            memcpy(mod->save.user_data, &mod_backup->save.data[mod_backup->save.menu_num * sizeof(MenuSave)], mod_backup->save.user_size);
             
     }
 

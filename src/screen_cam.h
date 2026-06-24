@@ -5,6 +5,6 @@
 
 void ScreenCam_Create();
 void ScreenCam_Init();
-int ScreenCam_GetCanvasIdx();
+Text *ScreenCam_CreateText();
 
 #endif

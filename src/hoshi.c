@@ -59,7 +59,7 @@ void Hook_SceneChange()
     {
         // watermark
         // int canvas_idx = Text_CreateCanvas(1, 0, 0, 0, 0, 63, 0, 63);
-        Text *t = Text_CreateText(1, ScreenCam_GetCanvasIdx());
+        Text *t = ScreenCam_CreateText();
         t->kerning = 1;
         t->use_aspect = 1;
         t->viewport_scale = (Vec2){0.5, 0.5};

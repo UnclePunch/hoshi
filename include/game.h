@@ -1898,7 +1898,6 @@ typedef struct PlayerData
     u8 x0[0x90c];
 } PlayerData;
 
-
 typedef struct LegendaryPieceData           // 80ae2cec
 {                                           //
     void *x0;                               // 0x0
@@ -2249,6 +2248,7 @@ static LegendaryPieceData **stc_legendary_piece_data = (LegendaryPieceData **)(0
 static grBoxGeneObj **stc_grBoxGeneObj = (grBoxGeneObj **)(0x805dd0e0 + 0x608);
 static grBoxGeneInfo **stc_grBoxGeneInfo = (grBoxGeneInfo **)(0x805dd0e0 + 0x610);
 static itCommonDataAll **stc_it_common_data = (itCommonDataAll **)(0x805dd0e0 + 0x7f0);
+static cmMainParamCommon **stc_cm_main_param = (cmMainParamCommon **)0x8055747c;
 static gmDataAll **stc_gmdataall = (gmDataAll **)(0x805dd0e0 + 0x494);
 static int *stc_city_machine_num = (int *)(0x805dd0e0 + 0x754); //
 static u8 *stc_city_starting_machine = (u8 *)0x80495816;

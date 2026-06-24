@@ -909,7 +909,7 @@ void Option_CopyToSave(GlobalMod *mod, char *menu_name, OptionDesc *desc)
         else if (save[i].hash == (u16)-1)
         {
             // free space, insert it
-            LOG_DEBUG(" %s hash created, copying value %d to save.", desc->name, *desc->val);
+            LOG_DEBUG(" %s hash created (%04X), copying value %d to save.", desc->name, opt_hash, *desc->val);
             save[i].hash = opt_hash;
             save[i].val = *desc->val;
             break;
@@ -943,8 +943,6 @@ void Menu_CopyToSave(GlobalMod *mod, char *menu_name, MenuDesc *desc)
 }
 u16 Option_Hash(char *menu_name, char *option_name)
 {
-    LOG_DEBUG("hashing %s + %s", menu_name, option_name);
-
     int menu_name_len = strlen(menu_name);
     int opt_name_len = strlen(option_name);
 
@@ -954,6 +952,8 @@ u16 Option_Hash(char *menu_name, char *option_name)
     full_name[menu_name_len + opt_name_len] = '\0';
 
     u16 hash = hashstr_16(full_name);
+
+    LOG_DEBUG("hashing %s + %s (%04X)", menu_name, option_name, hash);
 
     HSD_Free(full_name);
 

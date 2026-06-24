@@ -9,7 +9,7 @@ typedef struct ModDesc
     char *author;
     struct 
     {
-        u16 major;
+        u16 major;                          // increment this if your save data struct changes! does not apply to settings menu changes as they are hashed by name.
         u16 minor;
     } version;
     void *save_ptr;                         // read-only! hoshi will write this pointer during installation.
@@ -41,8 +41,12 @@ typedef struct ModSaveBackup
         u16 major;
         u16 minor;
     } version;
-    int save_size;
-    u8 save_data[];
+    struct
+    {
+        int menu_num;
+        int user_size;
+        u8 data[];
+    } save;
 } ModSaveBackup;
 #pragma pack(pop)
 

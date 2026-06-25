@@ -537,12 +537,9 @@ typedef struct GameData // 805359d8
         u8 stadium_kind;             // 0x5ad
         u8 x5ae;                     // 0x5ae
         u8 stadium_round;            // 0x5af
+        int x5b0;                    // 0x5b0
+        int stadium_score[4];        // 0x5b4
     } city;                          //
-    int x5b0;                        // 0x5b0
-    int x5b4;                        // 0x5b4
-    int x5b8;                        // 0x5b8
-    int x5bc;                        // 0x5bc
-    int x5c0;                        // 0x5c0
     int x5c4;                        // 0x5c4
     int x5c8;                        // 0x5c8
     int x5cc;                        // 0x5cc

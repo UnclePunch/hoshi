@@ -30,12 +30,10 @@ void ScreenCam_Create()
     // COBJ *c = g->hsd_object;
     // CObj_SetOrtho(c, 0, -480, 0, 640);
 }
-
 Text *ScreenCam_CreateText()
 {
     return Text_CreateText(1, canvas_idx);
 }
-
 void ScreenCam_Init()
 {
     CODEPATCH_REPLACEFUNC(Hoshi_CreateScreenText, ScreenCam_CreateText); // install function to get screen canvas idx 

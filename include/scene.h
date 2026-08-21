@@ -143,10 +143,14 @@ struct ScMenuCommon
     u8 x54[0x298];              // 0x60
     struct
     {
-        GOBJ *menu_name;            // 0x2f8
-        u8 x2fc[0x7C];              // 0x2fc
-        GOBJ *ScMenOpdelpanel_gobj; // 0x378
-        u8 x37c[0x144];             // 0x37c
+        GOBJ *menu_name;                    // 0x2f8
+        u8 x2fc[0x1C];                      // 0x2fc
+        GOBJ *ScMenCursorpos_gobj[2];       // 0x318
+        JOBJSet *ScMenCursor1_scene_models; // 0x320
+        GOBJ *ScMenCursor1_gobj[2][6];      // 0x324
+        u8 x354[0x24];                      // 0x354
+        GOBJ *ScMenOpdelpanel_gobj;         // 0x378
+        u8 x37c[0x144];                     // 0x37c
     } main;
     struct
     {

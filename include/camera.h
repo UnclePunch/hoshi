@@ -62,7 +62,7 @@ typedef struct CamData
     float x90;              // 0x90
     CamInterest *target;    // 0x94, camera target. is 0x450 of riderdata?
     u8 x98[0x28];           // 0x98
-    CameraParam xc0;        // 0xc0
+    CameraParam xc0;        // 0xc0. bp this one to find what game code affects the camera?
     CameraParam xe8;        // 0xe8, gets copied directly from the cobj eye position @ 800b783c
     CameraParam x110;       // 0x110, final set of values? not sure
     CameraParam x138;       // 0x138, 

@@ -86,10 +86,33 @@ typedef struct MenuElementData
     u8 x8_40 : 1;      // 0x8, 0x40
     u8 x8_20 : 1;      // 0x8, 0x20
     u8 x8_10 : 1;      // 0x8, 0x10
-    u8 x8_08 : 2;      // 0x8, 0x08
-    u8 x8_04 : 2;      // 0x8, 0x04
+    u8 x8_08 : 1;      // 0x8, 0x08
+    u8 x8_04 : 1;      // 0x8, 0x04
     u8 x8_02 : 1;      // 0x8, 0x02
     u8 x8_01 : 1;      // 0x8, 0x01
+    u8 x9;
+    u8 xa;
+    u8 xb;
+    union 
+    {
+        struct 
+        {
+            u8 xc;
+            u8 xd;
+            u8 cursor_pos_id;       // 0x0E, cursorpos model this belongs to
+            u8 id;                  // 0x0F, index in the cursorpos this cursor is
+            u8 state;               // 0x10, 0 == unselected, 2 == selected
+            u8 timer;               // 0x11, anim timer? counts down from 9 repeatedly
+        } cursor1;
+        struct 
+        {
+            u8 xc[0xa8];
+            u8 xb4;
+            u8 xb5;
+            u8 anim_direction;      // 0 = not moving, 1 = moving out, 2 = moving in 
+            u8 anim_timer;          // seems to tick down from 4
+        } cursor1_pos;
+    };
 } MenuElementData;
 
 typedef struct SoundTestDesc

@@ -752,6 +752,21 @@ static JOBJ* JObj_Reparent(JOBJ* jobj, JOBJ* parent)
     return next;
 }
 
+static void JObj_ForEachJoint(JOBJ* root, void (*cb)(JOBJ *j, void *arg), void *arg)
+{
+    JOBJ *j = root;
+
+    cb(j, arg);
+
+    if (j->child)
+        JObj_ForEachJoint(j->child, cb, arg);
+    if (j->sibling)
+        JObj_ForEachJoint(j->sibling, cb, arg);
+
+    return;
+}
+
+
 // static float Math_Vec2Distance(Vec2 *a, Vec2 *b)
 // {
 //     return sqrtf(pow((a->X - b->X), 2) + pow((a->Y - b->Y), 2));

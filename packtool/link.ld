@@ -404,6 +404,7 @@ SECTIONS
   Gm_Pause = 0x80005D78;
   Gm_Resume = 0x80005DCC;
   Gm_HidePauseHUD = 0x80113A24;
+  Gm_HideHUD = 0x801126f4;
   Gm_ShowHUD = 0x80112464;
   Gm_SetCameraNormal = 0x800BC17C;
   Gm_IsDamageEnabled = 0x8000a188;

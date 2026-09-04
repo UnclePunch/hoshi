@@ -40,6 +40,51 @@ CODEPATCH_HOOKCREATE(0x8045038c, "mr 3, 25\n\t"
                                  "mr 4, 12\n\t",
                      Text_SetTextAlign, "mr 7, 3\n\t", 0x804503d4)
 
+// Text Commands in ASCII
+int Text_CommandCheck(u8 *in, int *in_cur, u8 *out, int *out_cur)
+{
+    if (in[*in_cur] == TEXTCMD_COLOR)
+    {
+        memcpy(&out[*out_cur], &in[*in_cur], sizeof(TextCmdColor) + 1);
+
+        (*in_cur) += sizeof(TextCmdColor);
+        (*out_cur) += sizeof(TextCmdColor) + 1;
+        return 1;
+    }
+
+    return 0;
+}
+CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, "stwu	1, -40 (1)\n\t"
+                                            "mflr 0\n\t"
+                                            "stw 0, 44 (1)\n\t"
+                                            "stw 3, 8 (1)\n\t"
+                                            "stw 4, 12 (1)\n\t"
+                                            "stw 5, 16 (1)\n\t"
+                                            "stw 6, 20 (1)\n\t"
+                                            "stw 7, 24 (1)\n\t"
+                                            "stw 8, 28 (1)\n\t"
+                                            "stw 9, 32 (1)\n\t"
+                                            "stw 10, 36 (1)\n\t"
+                                            "lwz 3, 12 (1)\n\t"    // in
+                                            "addi 4, 1, 16\n\t"   // in cur
+                                            "lwz 5, 8 (1)\n\t"    // out
+                                            "addi 6, 1, 20\n\t",   // out_cur
+                                            Text_CommandCheck, 
+                                            "cmpwi 3, 0\n\t"
+                                            "lwz 3, 8 (1)\n\t"
+                                            "lwz 4, 12 (1)\n\t"
+                                            "lwz 5, 16 (1)\n\t"
+                                            "lwz 6, 20 (1)\n\t"
+                                            "lwz 7, 24 (1)\n\t"
+                                            "lwz 8, 28 (1)\n\t"
+                                            "lwz 9, 32 (1)\n\t"
+                                            "lwz 10, 36 (1)\n\t"
+                                            "lwz 0, 44 (1)\n\t"
+                                            "mtlr 0\n\t"
+                                            "addi 1, 1, 40\n\t"
+                                            "b 0x8\n\t", 
+                                            0, 0x8044fea4)
+
 // MemAlloc Assert
 void *MemAlloc_Error(void *addr, int size)
 {
@@ -118,6 +163,9 @@ void Patches_Apply()
     CODEPATCH_HOOKAPPLY(0x80450030);
     CODEPATCH_HOOKAPPLY(0x8045038c);
     CODEPATCH_REPLACEFUNC(0x80450774, Text_SetScale);
+
+    // text ascii commands
+    CODEPATCH_HOOKAPPLY(0x8044fb54);
 
     // remove main menu input lockout
     CODEPATCH_REPLACEINSTRUCTION(0x80018278, 0x48000010);

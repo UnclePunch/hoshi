@@ -2272,6 +2272,7 @@ void CityTrial_DecideStadium();
 
 void Gm_HidePauseHUD();
 void Gm_ShowHUD();
+void Gm_HideHUD();
 
 int Gm_IsInCity();
 

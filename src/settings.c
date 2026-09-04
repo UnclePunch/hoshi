@@ -101,6 +101,7 @@ void Settings_Create()
     stc_settings_data.ScMenSelruleFrame_scene_models = Archive_GetPublicAddress(MnSettings_archive, "ScMenSelruleFrame_scene_models");
     stc_settings_data.ScMenSelruleFrame2_scene_models = Archive_GetPublicAddress(MnSettings_archive, "ScMenSelruleFrame2_scene_models");
     stc_settings_data.ScMenTransition_scene_models = Archive_GetPublicAddress(MnSettings_archive, "ScMenTransition_scene_models");
+    stc_settings_data.ScMenArrow_scene_models = Archive_GetPublicAddress(MnSettings_archive, "ScMenArrow_scene_models");
 
     // GOBJ *p = GOBJ_EZCreator(38, 30, 0,
     //                          0, 0,
@@ -319,13 +320,24 @@ void Settings_Think()
         SFX_Play(FGMMENU_CS_CANCEL);
     }
 
+    // scroll arrows
+    if (mp->desc->scroll > 0)
+        JObj_ClearFlags(mp->arrows.up_jobj, JOBJ_HIDDEN);
+    else
+        JObj_SetFlags(mp->arrows.up_jobj, JOBJ_HIDDEN);
+    if (mp->desc->scroll < (mp->desc->option_num - max_onscreen_opt_num))
+        JObj_ClearFlags(mp->arrows.down_jobj, JOBJ_HIDDEN);
+    else
+        JObj_SetFlags(mp->arrows.down_jobj, JOBJ_HIDDEN);
+
+    // destroy previous menu
     GOBJ *m_prev = stc_settings_data.menu.prev_gobj;
     if (m_prev)
     {
         MenuData *mp = m_prev->userdata;
         if (mp->is_remove)
         {
-            JOBJ *j = JObj_GetIndex(m_prev->hsd_object, 1);
+            JOBJ *j = mp->menu_root_jobj;
 
             if (j->aobj && j->aobj->flags == AOBJ_NO_ANIM)
             {
@@ -393,7 +405,7 @@ void Settings_UpdateCurrentMenu()
     MenuDesc *desc = mp->desc;
 
     // destroy options jobjs
-    JObj_RemoveAll(JObj_GetIndex(stc_settings_data.menu.cur_gobj->hsd_object, 2));
+    JObj_RemoveAll(mp->option_root_jobj);
 
     // destroy all options text
     for (int opt_idx = 0; opt_idx < GetElementsIn(mp->option_data); opt_idx++)
@@ -416,8 +428,12 @@ void Settings_UpdateCurrentMenu()
         }
     }
 
+    // create arrows
+    // Menu_CreateArrows(m);
+
     // create options
     Menu_CreateOptions(m);
+    
 }
 void Settings_Destroy(void *data)
 {
@@ -501,8 +517,8 @@ GOBJ *Menu_Create(MenuDesc *desc)
                                 JObj_GetIndex(Gm_GetMenuData()->main.ScMenOpdelpanel_gobj->hsd_object, 1));
 
     // add extra level to menu jobj to animate transitions
-    JOBJ *mj = JObj_Alloc();
-    JObj_AddNext(m->hsd_object, mj);
+    mp->menu_root_jobj = JObj_Alloc();
+    JObj_AddNext(m->hsd_object, mp->menu_root_jobj);
 
     // determine number of visible options at a time
     int opt_num = desc->option_num;
@@ -512,6 +528,9 @@ GOBJ *Menu_Create(MenuDesc *desc)
     mp->option_num = opt_num;
     mp->desc = desc;
 
+    // create arrows
+    Menu_CreateArrows(m);
+    
     // create options
     Menu_CreateOptions(m);
 
@@ -521,7 +540,10 @@ void Menu_CreateOptions(GOBJ *m)
 {
     MenuData *mp = m->userdata;
     MenuDesc *desc = mp->desc;
-    JOBJ *option_root = JObj_GetIndex(m->hsd_object, 1);
+    mp->option_root_jobj = JObj_Alloc();
+
+    // create root bone to add options to
+    JObj_AddNext(mp->menu_root_jobj, mp->option_root_jobj);
 
     // recreate options
     for (int opt_idx = 0; opt_idx < mp->option_num; opt_idx++)
@@ -531,7 +553,7 @@ void Menu_CreateOptions(GOBJ *m)
 
         JOBJ *oj = Option_Create(this_opt_desc, this_opt_data);
 
-        JObj_AddNext(option_root, oj);
+        JObj_AddNext(mp->option_root_jobj, oj);
 
         // update selected status
         switch (this_opt_desc->kind)
@@ -563,6 +585,20 @@ void Menu_CreateOptions(GOBJ *m)
         Text_Sanitize("No description.", buf, sizeof(buf));
 
     Text_SetText(stc_settings_data.description_text, 0, buf);
+}
+void Menu_CreateArrows(GOBJ *m)
+{
+    MenuData *mp = m->userdata;
+
+    JOBJSet *set = stc_settings_data.ScMenArrow_scene_models[0];
+    JOBJ *aj = JObj_LoadJoint(set->jobj);
+    JObj_AddSetAnim(aj, 0, set, 0, 1.0);
+    JObj_AddNext(mp->menu_root_jobj, aj);
+
+    // JObj_SetFlagsAll(aj, JOBJ_HIDDEN);
+
+    mp->arrows.up_jobj = JObj_GetIndex(aj, 2);
+    mp->arrows.down_jobj = JObj_GetIndex(aj, 4);
 }
 void Menu_Destroy(MenuData *mp)
 {
@@ -750,7 +786,8 @@ void Menu_AddTransitionAnim(GOBJ *m, int anim_id)
 {
     void (*JObj_ApplySetAnim)(JOBJ *j, int anim_id, JOBJSet *set) = (void *)0x80055a30;
 
-    JOBJ *mj = JObj_GetIndex(m->hsd_object, 1);
+    MenuData *mp = m->userdata;
+    JOBJ *mj = mp->menu_root_jobj;
 
     JObj_RemoveAnim(mj);
     JObj_AddAnim(mj, stc_settings_data.ScMenTransition_scene_models[0]->animjoint[anim_id], 0, 0);

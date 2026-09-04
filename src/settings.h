@@ -25,6 +25,7 @@ typedef struct SettingsData
     JOBJSet **ScMenSelruleFrame2_scene_models;
     JOBJSet **ScMenSelruleCursor_scene_models;
     JOBJSet **ScMenTransition_scene_models;
+    JOBJSet **ScMenArrow_scene_models;
     struct
     {
         GOBJ *cur_gobj;
@@ -55,6 +56,13 @@ typedef struct MenuData
 {
     MenuDesc *desc;
     int is_remove;
+    struct 
+    {
+        JOBJ *up_jobj;
+        JOBJ *down_jobj;
+    } arrows;
+    JOBJ *menu_root_jobj;
+    JOBJ *option_root_jobj;
     int option_num;
     OptionData option_data[OPTION_NUM];
 } MenuData;
@@ -71,6 +79,7 @@ void Cursor_Think(GOBJ *g);
 JOBJ *Option_Create(OptionDesc *desc, OptionData *op);
 GOBJ *Menu_Create(MenuDesc *desc);
 void Menu_CreateOptions(GOBJ *m);
+void Menu_CreateArrows(GOBJ *m);
 void Menu_Think(GOBJ *m);
 void Menu_Destroy(MenuData *mp);
 void OptionText_GX(GOBJ *g, int pass);

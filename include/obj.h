@@ -846,6 +846,7 @@ void CObj_SetScissor(COBJ *cobj, u16 left, u16 right, u16 top, u16 bottom);
 void CObj_SetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void COBJ_GetEyePosition(COBJ *cobj, Vec3 *eye_pos);
 void CObj_SetInterest(COBJ *cobj, Vec3 *pos);
+void CObj_SetUp(COBJ *cobj, Vec3 *up);
 void CObj_SetRoll(COBJ *cobj, float roll);
 void CObj_SetAspect(COBJ *cobj, float aspect);
 void CObj_Release(COBJ *cobj);

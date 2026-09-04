@@ -61,10 +61,17 @@ typedef enum GamePLink
 
 typedef enum GameGXLink
 {
+    GAMEGX_MAP = 1,
+    GAMEGX_MACHINE = 5,
+    GAMEGX_RIDER = 6,
+    GAMEGX_ENEMY = 10,
+    GAMEGX_ITEM = 10,
     GAMEGX_HUDORTHO = 18,
     GAMEGX_HUDMAP,
     GAMEGX_HUDMAPDOTS,
     GAMEGX_HUD,
+    GAMEGX_SPLITSCREENSTART,     // ready go finish hud prompt, each screen uses this + view index
+    GAMEGX_26 = 26,
 } GameGXLink;
 
 typedef enum PKind
@@ -1083,7 +1090,7 @@ typedef struct Game3dData
     u8 plyview_num;                               // 0x0
     s8 plyview_lookup[4];                         // 0x1, -1 for not present?
     HSD_SObjDesc *hud_sobj;                       // 0x8
-    int xc;                                       // 0xc
+    GOBJ *hudcam_gobj;                            // 0xc
     int x10;                                      // 0x10
     int x14;                                      // 0x14
     int x18;                                      // 0x18

@@ -552,18 +552,18 @@ typedef struct RiderData
         void (*x7c4)(GOBJ *);  // 0x7c4, runs per frame from gobj proc 8018f7b0
         void (*x7c8)(GOBJ *);  // 0x7c8, runs per frame from gobj proc 8018fc10
         void (*x7cc)(GOBJ *);  // 0x7cc, runs per frame from gobj proc 8018e9f0
-        void (*x7d0)(GOBJ *);  // 0x7d0
+        void (*x7d0)(GOBJ *);  // 0x7d0, runs per frame, cracker launcher uses this to decide when to shoot
         void (*x7d4)(GOBJ *);  // 0x7d4
         void (*x7d8)(GOBJ *);  // 0x7d8
+        void (*x7dc)(GOBJ *);  // 0x7dc
+        void (*x7e0)(GOBJ *);  // 0x7e0
+        void (*x7e4)(GOBJ *);  // 0x7e4
+        void (*x7e8)(GOBJ *);  // 0x7e8
+        void (*x7ec)(GOBJ *);  // 0x7ec
+        void (*x7f0)(GOBJ *);  // 0x7f0
+        void (*x7f4)(GOBJ *);  // 0x7f4
+        void (*x7f8)(GOBJ *);  // 0x7f8
     } cb;
-    int x7dc;                           // 0x7dc
-    int x7e0;                           // 0x7e0
-    int x7e4;                           // 0x7e4
-    int x7e8;                           // 0x7e8
-    int x7ec;                           // 0x7ec
-    int x7f0;                           // 0x7f0
-    int x7f4;                           // 0x7f4
-    int x7f8;                           // 0x7f8
     int x7fc;                           // 0x7fc
     int x800;                           // 0x800
     int x804;                           // 0x804

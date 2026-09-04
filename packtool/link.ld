@@ -66,6 +66,7 @@ SECTIONS
   DevelopText_ShowBG = 0x0;
   DevelopText_HideBG = 0x0;
   DevelopText_StoreTextScale = 0x0;
+  DebugGX_DrawSphere = 0x8007d988;
   PADRead = 0x803DC8E8;
   PADReset = 0x803DC4CC;
   COBJ_Alloc = 0x80402F64;
@@ -84,6 +85,7 @@ SECTIONS
   COBJ_GetEyePosition = 0x80401840;
   CObj_SetEyePosition = 0x804018AC;
   CObj_SetInterest = 0x804017D4;
+  CObj_SetUp = 0x80402138;
   CObj_SetRoll = 0x804027CC;
   CObj_SetAspect = 0x80402c94;
   CObj_Release = 0x80403324;
@@ -172,6 +174,7 @@ SECTIONS
   HSD_StateInvalidate = 0x803F898C;
   HSD_StateInitTev = 0x803F9028;
   HSD_StateInitDirect = 0x8040E390;
+  HSD_StateSetZMode = 0x803f85c8;
   HSD_UpdateAllCObjs = 0x8042a1a8;
   HSD_VICopyXFBASync = 0x804112b4;
   JObj_Alloc = 0x8040C774;

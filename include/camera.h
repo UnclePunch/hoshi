@@ -23,7 +23,13 @@ typedef struct CameraParam
 
 typedef struct cmMainParamCommon
 {
-    u8 x0[0x32c];
+    u8 x0[0x88];                // 
+    float fov_1p;               // 0x88
+    float fov_2p;               // 0x8c
+    float fov_4p;               // 0x90
+    u8 x94[0x1D8];              // 0x94
+    float fov_speed_max;        // 0x26c, maximum amount of added fov based on speed
+    u8 x270[0xbc];              // 0x270
     float zoom_speed;           // 0x32c
     float x330;                 // 0x330
     float x334;                 // 0x334
@@ -62,7 +68,7 @@ typedef struct CamData
     float x90;              // 0x90
     CamInterest *target;    // 0x94, camera target. is 0x450 of riderdata?
     u8 x98[0x28];           // 0x98
-    CameraParam xc0;        // 0xc0. bp this one to find what game code affects the camera?
+    CameraParam xc0;        // 0xc0. bp this one to find what game code affects the camera! fov is set @ 800c2000 
     CameraParam xe8;        // 0xe8, gets copied directly from the cobj eye position @ 800b783c
     CameraParam x110;       // 0x110, final set of values? not sure
     CameraParam x138;       // 0x138, 
@@ -72,6 +78,8 @@ typedef struct CamData
     Vec3 interest_pos;      // 0x18c
     u8 x198[0x28];          // 0x198
     float x1c0;             // 0x1c0, rotation at least for when on foot
+    u8 x1c4[0x104];         // 0x1c4
+    float x2c8;             // 0x2c8,
 } CamData;
 
 typedef struct PlayerCamData
@@ -91,7 +99,7 @@ typedef struct PlayerCamData
     u16 view_index;         // 0x6a, for example if p1 and p4 are playing with 2 views, p4 would have 1 for this variable
     int x6c;                // 0x6c
     u8 controller_idx;      // 0x70
-    u8 lod;                 // 0x71, level of detail this camera uses (1 = highest poly, 2 is 2p, 3 is 4p?), 0 = none?
+    u8 lod;                 // 0x71, level of detail this camera uses (1 = highest poly, 2 is 2p, 3 is 4p?), 0 = none? also dictates fov @ 800c062c
     u8 x72;                 // 0x72
     u8 x73;                 // 0x73
 } PlayerCamData;

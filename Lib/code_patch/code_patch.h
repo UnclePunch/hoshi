@@ -42,9 +42,9 @@ typedef enum HookKind
             "b exit_" #_dol_addr "\n\t" /* glorified pointer to the end of the injection (is not executed) */                                                         \
             _prologue                   /* execute instructions passed into the macro */                                                                              \
             "bl %0\n\t"                 /* call C function */                                                                                                         \
+            "cmpwi 3, 0\n\t"            /* check return value of our function */                                                                                      \
             _epilogue                   /* execute instructions passed into the macro */                                                                              \
             "exit_" #_dol_addr ":\n\t"  /* label indicating the end of the injection */                                                                               \
-            "cmpwi 3, 0\n\t"            /* check return value of our function */                                                                                      \
             "bne 0xc\n\t"               /* if func returns 1, exit to alt addr */                                                                                     \
             ".long 0\n\t"               /* null, replaced with the instruction we clobber to branch here */                                                           \
             ".long %1\n\t"              /* pointer to our return location, relocated to a branch at runtime */                                                        \

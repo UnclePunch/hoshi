@@ -107,9 +107,9 @@ void _CodePatch_HookApply(int *dol_addr, void *hook_func)
     }
     case (HOOKKIND_CONDITIONAL):
     {
-        instr_orig_ptr = &hook_exit_ptr[2];
-        instr_return_ptr = &hook_exit_ptr[3];
-        instr_alt_return_ptr = &hook_exit_ptr[4];
+        instr_orig_ptr = &hook_exit_ptr[1];
+        instr_return_ptr = &hook_exit_ptr[2];
+        instr_alt_return_ptr = &hook_exit_ptr[3];
         break;
     }
     }

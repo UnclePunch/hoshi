@@ -70,7 +70,6 @@ CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, "stwu	1, -40 (1)\n\t"
                                             "lwz 5, 8 (1)\n\t"    // out
                                             "addi 6, 1, 20\n\t",   // out_cur
                                             Text_CommandCheck, 
-                                            "cmpwi 3, 0\n\t"
                                             "lwz 3, 8 (1)\n\t"
                                             "lwz 4, 12 (1)\n\t"
                                             "lwz 5, 16 (1)\n\t"
@@ -81,8 +80,7 @@ CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, "stwu	1, -40 (1)\n\t"
                                             "lwz 10, 36 (1)\n\t"
                                             "lwz 0, 44 (1)\n\t"
                                             "mtlr 0\n\t"
-                                            "addi 1, 1, 40\n\t"
-                                            "b 0x8\n\t", 
+                                            "addi 1, 1, 40\n\t",
                                             0, 0x8044fea4)
 
 // MemAlloc Assert

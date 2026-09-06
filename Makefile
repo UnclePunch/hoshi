@@ -100,7 +100,7 @@ install: all
 	$(MAKE) -C dol install INSTALL_DIR="$(INSTALL_DIR)"
 	@echo ""
 	@echo "--- Installing hoshi to "$(INSTALL_DIR)/files" ---"
-	cp "$(TARGET_BIN)" "$(strip $(INSTALL_DIR)/files)"
+	cp -r "$(BINDIR)/." "$(strip $(INSTALL_DIR)/files)"
 	@echo ""
 	@echo "Successfully installed hoshi."
 

@@ -43,12 +43,44 @@ CODEPATCH_HOOKCREATE(0x8045038c, "mr 3, 25\n\t"
 // Text Commands in ASCII
 int Text_CommandCheck(u8 *in, int *in_cur, u8 *out, int *out_cur)
 {
-    if (in[*in_cur] == TEXTCMD_COLOR)
-    {
-        memcpy(&out[*out_cur], &in[*in_cur], sizeof(TextCmdColor) + 1);
+    static u8 opcode_sizes[] = {
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        4,
+        1,
+        1,
+        4,
+        0,
+        3,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+    };
 
-        (*in_cur) += sizeof(TextCmdColor);
-        (*out_cur) += sizeof(TextCmdColor) + 1;
+    // get the next ascii character
+    u8 val = in[*in_cur];
+
+    // look for a text opcode in the ascii string
+    if (val > TEXTCMD_TERMINATE && val < TEXTCMD_NUM)
+    {
+        int command_size = opcode_sizes[val];
+
+        memcpy(&out[*out_cur], &in[*in_cur], command_size + 1);
+
+        (*in_cur) += command_size;
+        (*out_cur) += command_size + 1;
         return 1;
     }
 

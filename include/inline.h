@@ -20,6 +20,10 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
+#ifndef GIT_COMMIT
+#define GIT_COMMIT "unknown"
+#endif
+
 /*** Functions ***/
 
 static inline float _fabs(float x)

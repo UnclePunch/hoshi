@@ -26,7 +26,7 @@ CFLAGS = -O1 -mcpu=750 -meabi -msdata=none -mhard-float -ffreestanding \
          -fno-merge-constants -ffunction-sections -fdata-sections  -MMD -MP \
 		 $(INCLUDES)
 
-CFLAGS += $(ENABLE_LOGGING)
+CFLAGS += -DGIT_COMMIT=\"$(shell git rev-parse --short HEAD)\"
 
 LDFLAGS = -r -T$(PACKDIR)/link.ld
 

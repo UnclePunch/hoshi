@@ -66,7 +66,7 @@ void Hook_SceneChange()
         t->viewport_scale = (Vec2){0.5, 0.5};
         t->aspect = (Vec2){420, 32};
         t->viewport_color = (GXColor){0, 0, 0, 128};
-        Text_AddSubtext(t, 0, 0, "KARDX Test Build " __DATE__);
+        Text_AddSubtext(t, 0, 0, "hoshi v" STR(HOSHI_VERSION) " " __DATE__ " " GIT_COMMIT);
     }
 #endif
 

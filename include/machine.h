@@ -39,6 +39,39 @@ typedef enum MachineKind
     VCKIND_NUM,
 } MachineKind;
 
+typedef enum MachineStatus
+{
+    VCSTATE_WAITSTOP,
+    VCSTATE_WAITRUN,
+    VCSTATE_WAITFLY,
+    VCSTATE_ADHERE,
+    VCSTATE_READY,
+    VCSTATE_READYPUSH,
+    VCSTATE_RUN,
+    VCSTATE_RUNPUSH,
+    VCSTATE_RUNPUSHFORWARD,
+    VCSTATE_FLY,
+    VCSTATE_FLYPUSH,
+    VCSTATE_LANDING,
+    VCSTATE_DROP,
+    VCSTATE_SUPERJUMP,
+    VCSTATE_RAILRUN,
+    VCSTATE_RAILRUNPUSH,
+    VCSTATE_RAILCHANGE,
+    VCSTATE_GONDOLA,
+    VCSTATE_CANNON,
+    VCSTATE_FALLDEATH,
+    VCSTATE_REBIRTH,
+    VCSTATE_BREAKDOWN,
+    VCSTATE_NUM,
+} MachineStatus;
+
+typedef enum MachineMotionStatus
+{
+    VC_MSTATUS_0,
+    VC_MSTATUS_NUM,
+} MachineMotionStatus;
+
 typedef struct vcStarCommonAttr
 {
     float x0;        // 0x0
@@ -237,10 +270,10 @@ typedef struct MachineData
     MachineKind kind : 8;                 // 0x24
     int x28;                              // 0x28
     vcData *vcData;                       // 0x2c
-    int x30;                              // 0x30
+    MachineStatus status;                  // 0x30
     int x34;                              // 0x34
     int x38;                              // 0x38
-    int x3c;                              // 0x3c
+    MachineMotionStatus mstatus;          // 0x3c
     int x40;                              // 0x40
     int x44;                              // 0x44
     int x48;                              // 0x48
@@ -251,15 +284,15 @@ typedef struct MachineData
     int x5c;                              // 0x5c
     int x60;                              // 0x60
     int x64;                              // 0x64
-    int x68;                              // 0x68
+    float frame;                          // 0x68
     int x6c;                              // 0x6c
     int x70;                              // 0x70
     int x74;                              // 0x74
     int x78;                              // 0x78
-    int x7c;                              // 0x7c
+    MachineStatus status2;                // 0x7c
     int x80;                              // 0x80
     int x84;                              // 0x84
-    int x88;                              // 0x88
+    MachineMotionStatus mstatus2;         // 0x88
     int x8c;                              // 0x8c
     int x90;                              // 0x90
     int x94;                              // 0x94
@@ -270,7 +303,7 @@ typedef struct MachineData
     int xa8;                              // 0xa8
     int xac;                              // 0xac
     int xb0;                              // 0xb0
-    int xb4;                              // 0xb4
+    float frame2;                         // 0xb4
     int xb8;                              // 0xb8
     int xbc;                              // 0xbc
     int xc0;                              // 0xc0
@@ -436,7 +469,7 @@ typedef struct MachineData
     int x348;                             // 0x348
     int x34c;                             // 0x34c
     int x350;                             // 0x350
-    Vec3 displacement;                    // 0x354
+    Vec3 displacement;                    // 0x354, magnitude of this gives current speed
     int x360;                             // 0x360
     int x364;                             // 0x364
     int x368;                             // 0x368
@@ -677,9 +710,9 @@ typedef struct MachineData
     int x6ec;                             // 0x6ec
     int x6f0;                             // 0x6f0
     int x6f4;                             // 0x6f4
-    void *x6f8;                           // 0x6f8
+    CollData *coll_data;                  // 0x6f8
     int x6fc;                             // 0x6fc
-    int x700;                             // 0x700
+    CollData *coll_data_unk;              // 0x700
     int x704;                             // 0x704
     int x708;                             // 0x708
     int x70c;                             // 0x70c
@@ -700,7 +733,7 @@ typedef struct MachineData
     int x748;                             // 0x748
     int x74c;                             // 0x74c
     int x750;                             // 0x750
-    int x754;                             // 0x754
+    int is_airborne;                      // 0x754
     int x758;                             // 0x758
     int x75c;                             // 0x75c
     int x760;                             // 0x760
@@ -725,7 +758,7 @@ typedef struct MachineData
     int x7ac;                             // 0x7ac
     int x7b0;                             // 0x7b0
     int x7b4;                             // 0x7b4
-    int x7b8;                             // 0x7b8
+    int boost_zone_idx;                   // 0x7b8, compared @ 801cf688 to see if we just entered a boost zone
     int x7bc;                             // 0x7bc
     int x7c0;                             // 0x7c0
     int x7c4;                             // 0x7c4
@@ -805,8 +838,8 @@ typedef struct MachineData
     int x8e0;                             // 0x8e0
     int x8e4;                             // 0x8e4
     int x8e8;                             // 0x8e8
-    int x8ec;                             // 0x8ec
-    int x8f0;                             // 0x8f0
+    int rail_idx_cur;                     // 0x8ec
+    int rail_idx_prev;                    // 0x8f0
     int x8f4;                             // 0x8f4
     int x8f8;                             // 0x8f8
     int x8fc;                             // 0x8fc
@@ -949,8 +982,8 @@ typedef struct MachineData
     int xb7c;                             // 0xb7c
     int xb80;                             // 0xb80
     int xb84;                             // 0xb84
-    int xb88;                             // 0xb88
-    int xb8c;                             // 0xb8c
+    int frames_grounded;                  // 0xb88, resets when changing airborne state
+    int frames_airborne;                  // 0xb8c, resets when changing airborne state
     int xb90;                             // 0xb90
     int xb94;                             // 0xb94
     int xb98;                             // 0xb98
@@ -974,8 +1007,8 @@ typedef struct MachineData
     int xbfc;                             // 0xbfc
     int xc00;                             // 0xc00
     int xc04;                             // 0xc04
-    int xc08;                             // 0xc08
-    int xc0c;                             // 0xc0c
+    void (*onTakeDamage1)(GOBJ *m);       // 0xc08
+    void (*onTakeDamage2)(GOBJ *m);       // 0xc0c
     int xc10;                             // 0xc10
     int xc14;                             // 0xc14
     int xc18;                             // 0xc18
@@ -985,13 +1018,23 @@ typedef struct MachineData
     int xc28;                             // 0xc28
     int xc2c;                             // 0xc2c
     int charge_is_playing_skid_sfx : 1;   // 0xc30, 0x80
-    int charge_is_grounded : 1;           // 0xc30, 0x40. flag that dictates whether kirby should gain charge when holding A. it actually is raised when the machine touches the ground? bikes always seem to have this raised
-    int xc30_20 : 1;                      // 0xc30, 0x20
+    int charge_is_grounded : 1;           // 0xc30, 0x40. flag that dictates whether kirby should gain charge when holding A. it actually is raised when the machine touches the ground? bikes always seem to have this raised. game gates some map object collision heind this flag @ 801e3fdc 
+    int unk_is_grounded : 1;              // 0xc30, 0x20, evalutes landing angle when this is raised @ 801e3e60
     int xc30_10 : 1;                      // 0xc30, 0x10
     int xc30_08 : 1;                      // 0xc30, 0x08
     int xc30_04 : 1;                      // 0xc30, 0x04
     int xc30_02 : 1;                      // 0xc30, 0x02
-    int xc30_01 : 1;                      // 0xc30, 0x01
+    int xc30_01 : 1;                      // 0xc30, 0x01    int charge_is_playing_skid_sfx : 1;   // 0xc30, 0x80
+    int xc31_ff : 8;                      // 0xc31, 0xff
+    int xc32_ff : 8;                      // 0xc32, 0xff
+    int is_airborne2 : 1;                 // 0xc33, 0x80
+    int is_ok_land : 1;                   // 0xc33, 0x40
+    int is_perfect_land : 1;              // 0xc33, 0x20
+    int is_bad_land : 1;                  // 0xc33, 0x10
+    int is_on_lift : 1;                   // 0xc33, 0x08
+    int xc33_04 : 1;                      // 0xc33, 0x04
+    int is_on_rail : 1;                   // 0xc33, 0x02
+    int xc33_01 : 1;                      // 0xc33, 0x01
     u8 xc34;                              // 0xc34
     u8 xc35_80 : 1;                       // 0xc35, 0x80
     u8 xc35_40 : 1;                       // 0xc35, 0x40

@@ -1899,6 +1899,44 @@ typedef struct PlayerData
     u8 x0[0x90c];
 } PlayerData;
 
+typedef struct PlayerStats
+{
+    int status_change_num;                  // 0x0, number of times this player has changed states
+    int attack_num[0x168 / 4];              // 0x4, indexed by PlayerAttackKind
+    int land_num;                           // 0x16c
+    int glide_num;                          // 0x170
+    int last_copy_kind;                     // 0x378
+    int ko_ply[4];                          // 0x3e4
+    int machine_mount_kind_num[VCKIND_NUM]; // 0x37c
+    int death_ply[4];                       // 0x44c
+    int item_collect_num[ITKIND_NUM];       // 0x4c8
+    int total_time_spent_moving;            // 0x5e4
+    int total_time_spent_airborne;          // 0x5e8
+    int total_time_spent_rail;              // 0x5ec
+    int x5f0;                               // 0x5f0
+    int max_time_spent_airborne;            // 0x5f4
+    int current_time_spent_airborne;        // 0x5f8
+    int max_time_spent_moving;              // 0x5fc
+    int current_time_spent_moving;          // 0x600
+    float total_distance_grounded;          // 0x60c
+    float total_distance_airborne;          // 0x610
+    float total_distance_rail;              // 0x614
+    float max_speed;                        // 0x618
+    u8 yaku_break_num_kind[0x3c];           // 0x618, indexed by kind
+    u8 rail_bits[0xd];                      // 0x654, not sure how many of these there are
+    u8 lift_bits[128 / 4];                  // 0x661, not sure how many of these there are
+    int yaku_break_num_total;               // 0x800
+    int lift_num;                           // 0x838
+    u8 x84c_80 : 1;                         // 0x84c, 0x80
+    u8 got_wall_stuck : 1;                  // 0x84c, 0x40
+    u8 x84c_20 : 1;                         // 0x84c, 0x20
+    u8 x84c_10 : 1;                         // 0x84c, 0x10
+    u8 x84c_08 : 1;                         // 0x84c, 0x08
+    u8 x84c_04 : 1;                         // 0x84c, 0x04
+    u8 x84c_02 : 1;                         // 0x84c, 0x02
+    u8 x84c_01 : 1;                         // 0x84c, 0x01
+} PlayerStats;
+
 typedef struct LegendaryPieceData           // 80ae2cec
 {                                           //
     void *x0;                               // 0x0
@@ -2282,6 +2320,7 @@ float Ply_GetCityStatNum(int ply, int stat_idx, int unk);
 GOBJ *Ply_GetRiderGObj(int ply);
 GOBJ *Ply_GetMachineGObj(int ply);
 int Ply_GetColor(int ply);
+int Ply_GetControllerIndex(int ply);
 int Ply_CheckIfCPU(int ply);
 int Ply_IsViewOn(int ply);
 int Ply_GetViewIndex(int ply);
@@ -2297,6 +2336,7 @@ void Ply_AddDeath(int ply, DmgLog *dmg_log, int is_bike, MachineKind machine_kin
 void Ply_SetHP(int ply, float hp);
 int Ply_GetAllUpCollected(int ply);
 int Ply_SetAllUpCollected(int ply, int num);
+PlayerStats *Ply_GetStats(int ply);
 
 void Gm_FadeOutMusic(int frame_duration);
 int Gm_GetPlyViewNum();

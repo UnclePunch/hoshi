@@ -96,8 +96,8 @@ typedef enum ItemKind
     ITKIND_COPYPLASMA,
     ITKIND_COPYTORNADO,
     ITKIND_COPYSWORD,
-    ITKIND_COPYSPIKE,
-    ITKIND_COPYMIC,
+    ITKIND_COPYNEEDLE,
+    ITKIND_COPYMIKE,
     ITKIND_FOODMAXIMTOMATO,
     ITKIND_FOODENERGYDRINK,
     ITKIND_FOODICECREAM,
@@ -111,7 +111,7 @@ typedef enum ItemKind
     ITKIND_FOODHOTDOG,
     ITKIND_FOODAPPLE,
     ITKIND_FIREWORKS,
-    ITKIND_PANICSPIN,
+    ITKIND_MININADO,
     ITKIND_TIMEBOMB,
     ITKIND_GORDO,
     ITKIND_HYDRA1,
@@ -322,7 +322,7 @@ typedef struct ItemData
     int x134;                   // 0x134
     Vec3 down;                  // 0x138, like an up vector but down, points in the direction of gravity?
     int x144;                   // 0x144
-    int x148;                   // 0x148
+    HurtData *hurt_data;         // 0x148
     int x14c;                   // 0x14c
     int x150;                   // 0x150
     int x154;                   // 0x154
@@ -356,7 +356,7 @@ typedef struct ItemData
     int x1c0;                   // 0x1c0
     float x1c4;                 // 0x1c4, is the value returned by 800ceb18
     Vec3 x1c8;                  // 0x1c8, multiplied with queued velocity @ 0xb8 when a box is landing. another down vector?
-    int x1d4;                   // 0x1d4
+    int is_airborne;            // 0x1d4
     int x1d8;                   // 0x1d8
     int x1dc;                   // 0x1dc
     int x1e0;                   // 0x1e0
@@ -374,7 +374,7 @@ typedef struct ItemData
     int x210;                   // 0x210
     int x214;                   // 0x214
     int x218;                   // 0x218
-    int x21c;                   // 0x21c
+    int dmg;                    // 0x21c
     int x220;                   // 0x220
     int x224;                   // 0x224
     int x228;                   // 0x228
@@ -435,7 +435,7 @@ typedef struct ItemData
     u8 coll_kind : 3;           // 0x359, 0x07. not really sure, is set @ 80254368
     int x35c;                   // 0x35c
     int x360;                   // 0x360
-    int x364;                   // 0x364
+    int hp;                     // 0x364
     int x368;                   // 0x368
     int x36c;                   // 0x36c
     int x370;                   // 0x370

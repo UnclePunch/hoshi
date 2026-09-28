@@ -49,6 +49,16 @@ typedef struct YakumonoParam
     {
         struct
         {
+            struct  // 0x0
+            {
+                void *x0;
+                int target_num;
+            } *param;
+            u8 x4[0x12c];           // 0x4
+            void **x130;            // 0x130,
+        } *break_weak;
+        struct
+        {
             int joint_idx;
             int x4;
             int x8;
@@ -74,6 +84,8 @@ typedef struct YakumonoData
     YakumonoParam *param; // 0x8
     u8 xc[0x68];          // 0xc
     int state;            // 0x74
+    int x78;              // 0x78
+    int x7c;              // 0x7c
 } YakumonoData;
 
 typedef struct GrModelMotionAnim

@@ -29,6 +29,8 @@ typedef struct ModDesc
     void (*OnPlayerSelectLoad)();
     void (*OnFrameStart)();
     void (*OnFrameEnd)();
+    void (*OnShowHUD)();
+    void (*OnHideHUD)();
 } ModDesc;
 
 

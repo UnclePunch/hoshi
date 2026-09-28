@@ -132,11 +132,11 @@
 #define PROJ_FRUSTRUM 2
 #define PROJ_ORTHO 3
 
-// Anim flags (used for JObj_XByFlags)
-#define JObj_ANIM 0x1
-#define MOBJ_ANIM 0x4
-#define TOBJ_ANIM 0x10
-#define ALL_ANIM 0x7FF
+// Anim flags (used for JObj_XByFlags), see also ForEachAnimFlag for that functions flags
+#define ANIMBYFLAGS_JOBJ 0x1
+#define ANIMBYFLAGS_MOBJ 0x4
+#define ANIMBYFLAGS_TOBJ 0x10
+#define ANIMBYFLAGS_ALL 0x7FF
 
 // Macro
 #define JObj_PauseOnFrame(jobj, child_index, flags, frame)                    \
@@ -171,11 +171,20 @@
 
 typedef enum ForEachAnimFlag //  (used for JObj_ForEachAnim)
 {
-    AOBJFLAG_JOBJ = 0x1,
-    AOBJFLAG_MOBJ = 0x80,
-    AOBJFLAG_TOBJ = 0x400,
-    AOBJFLAG_ALL = 0x7FF,
+    FOREACHANIM_FLAG_JOBJ = 0x20,
+    FOREACHANIM_FLAG_MOBJ = 0x4,
+    FOREACHANIM_FLAG_TOBJ = 0x10,
+    FOREACHANIM_FLAG_ALL = 0x7FF,
 } ForEachAnimFlag;
+
+typedef enum ForEachAnimObjKind //  (used for JObj_ForEachAnim)
+{
+    FOREACHANIM_OBJ_0,
+    FOREACHANIM_OBJ_1,
+    FOREACHANIM_OBJ_2,
+    FOREACHANIM_OBJ_DOBJ,
+    FOREACHANIM_OBJ_JOBJ = 6,
+} ForEachAnimObjKind;
 
 typedef enum HSD_ObjKind
 {
@@ -219,7 +228,7 @@ struct GOBJ
 
 struct GOBJProc
 {
-    GOBJ *parent;
+    GOBJProc *child;
     GOBJProc *next;
     GOBJProc *prev;
     char s_link;     // 0xC
@@ -230,7 +239,7 @@ struct GOBJProc
     char x0d_04 : 1;
     char x0d_02 : 1;
     char x0d_01 : 1;
-    GOBJ *parentGOBJ;       // 0x10
+    GOBJ *gobj;       // 0x10
     void (*cb)(GOBJ *gobj); // function callback
 };
 
@@ -759,9 +768,9 @@ typedef struct HSD_GObjInitData {
 
 /*** Static Variables ***/
 static GOBJ ***stc_gobj_lookup = (GOBJ ***)(0x805de334);                        //
-static u8 *stc_gobj_proc_num = (u8 *)0x804ce382;                                // number of elements in the below array
-static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x804D7840;              // array of gobj procs ptrs
-static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x804d7838;                   // current gobj proc being processed
+static u8 *stc_gobj_proc_num = (u8 *)0x8058c190;                                // number of elements in the below array
+static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x805de348;              // array of gobj procs ptrs
+static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x0;                          // current gobj proc being processed
 static u32 *stc_gobjproc_updateidx_cur = (u32 *)0x804d783c;                     // update index of the current gobj proc being processed. this is compared to
 static HSD_GObjInitData *stc_gobj_init_data = (HSD_GObjInitData *)0x8058c190;
 static float *stc_cobj_aspect = (float *)0x805deb20;
@@ -785,7 +794,7 @@ void JObj_ClearFlags(JOBJ *joint, int flags);
 void JObj_ClearFlagsAll(JOBJ *joint, int flags);
 void JObj_BillBoard(JOBJ *joint, Mtx *m, Mtx *mx);
 void JObj_SetFrameAndRate(JOBJ *j, int frame, float rate);
-void JObj_ForEachAnim(JOBJ *joint, int unk, ForEachAnimFlag flags, void *cb, int argkind, ...); // argkind specifies how to pop args off the va_list
+void JObj_ForEachAnim(void *obj, ForEachAnimObjKind obj_kind, ForEachAnimFlag flags, void *cb, int arg_kind, ...); // argkind specifies how to pop args off the va_list
 void JObj_Anim(JOBJ *joint);
 void JObj_AnimAll(JOBJ *joint);
 void JObj_AddAnim(JOBJ *joint, void *animjoint, void *matanimjoint, void *shapeanimjoint);
@@ -891,6 +900,7 @@ void LObj_ReqAnimAll(LOBJ *lobj, float frame);
 void LObj_AnimAll(LOBJ *lobj);
 void LObj_DeleteCurrentAll(int unk);
 void LObj_RemoveAll(LOBJ *lobj);
+GXLightID HSD_LObjGetLightMaskDiffuse();
 HSD_Fog *Fog_LoadDesc(HSD_FogDesc *fogdesc);
 void Fog_Set(HSD_Fog *fog);
 void Fog_Release(HSD_Fog *fog);

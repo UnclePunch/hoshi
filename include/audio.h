@@ -138,6 +138,7 @@ typedef enum AudioEmitterKind
     AUDIOEMITTER_ENEMY,
     AUDIOEMITTER_ITEM,
     AUDIOEMITTER_MAP,
+    AUDIOEMITTER_NUM,
 } AudioEmitterKind;
 
 typedef enum AudioTrackOwner
@@ -149,6 +150,7 @@ typedef enum AudioTrackOwner
     AUDIOTRACKOWNER_ENEMY,
     AUDIOTRACKOWNER_ITEM,
     AUDIOTRACKOWNER_MAP,
+    AUDIOTRACKOWNER_NUM,
 } AudioTrackOwner;
 
 typedef s32 AudioEmitter;

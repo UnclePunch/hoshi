@@ -3,6 +3,7 @@
 #include "hsd.h"
 #include "preload.h"
 #include "game.h"
+#include "hud.h"
 #include "scene.h"
 #include "memcard.h"
 #include "inline.h"
@@ -109,6 +110,8 @@ CODEPATCH_HOOKCREATE(0x80014448, "", Hook_3DLoadStart, "", 0)
 // runs after instantiating the 3d scene
 void Hook_3DLoadEnd()
 {
+    *g_hud_is_hidden = 0;
+
     // loop through installed mods, run their function
     for (int i = 0; i < stc_modloader_data->mod_num; i++)
     {
@@ -221,6 +224,42 @@ void Hook_OnFrameEnd()
 };
 CODEPATCH_HOOKCREATE(0x80006a30, "", Hook_OnFrameEnd, "", 0)
 
+// runs when the game sets the main HUD to visible
+void Hook_OnShowHUD()
+{
+    *g_hud_is_hidden = 0;
+
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->desc->OnShowHUD)
+            this_mod->desc->OnShowHUD();
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x801126d8, "", Hook_OnShowHUD, "", 0)
+
+// runs when the game hides the main hud
+void Hook_OnHideHUD()
+{
+    *g_hud_is_hidden = 1;
+
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->desc->OnHideHUD)
+            this_mod->desc->OnHideHUD();
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x80112968, "", Hook_OnHideHUD, "", 0)
+
 ////////////////////////////////////////////
 //                                        //
 //       Main program entrypoint.         //
@@ -301,6 +340,10 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80015274);
     CODEPATCH_HOOKAPPLY(0x80006844);
     CODEPATCH_HOOKAPPLY(0x80006a30);
+    CODEPATCH_HOOKAPPLY(0x801126d8);
+    CODEPATCH_HOOKAPPLY(0x80112968);
+
+    
     
     Settings_Init(stc_modloader_data);
     MainMenu_ApplyPatches();

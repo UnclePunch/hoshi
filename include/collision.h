@@ -22,28 +22,13 @@ typedef struct CollData
     int x38;                       // 0x38
     int x3c;                       // 0x3c
     int x40;                       // 0x40
-    int x44;                       // 0x44
-    int x48;                       // 0x48
-    int x4c;                       // 0x4c
-    int x50;                       // 0x50
-    int x54;                       // 0x54
-    int x58;                       // 0x58
-    int x5c;                       // 0x5c
-    int x60;                       // 0x60
-    int x64;                       // 0x64
-    int x68;                       // 0x68
-    int x6c;                       // 0x6c
-    int x70;                       // 0x70
-    int x74;                       // 0x74
-    int x78;                       // 0x78
-    int x7c;                       // 0x7c
-    int x80;                       // 0x80
-    int x84;                       // 0x84
-    int x88;                       // 0x88
-    int x8c;                       // 0x8c
-    int x90;                       // 0x90
-    int x94;                       // 0x94
-    int x98;                       // 0x98
+    struct
+    {
+        // these are the zones we are currently engulfed in
+        void *x0;                  // 0x00
+        int zone_idx[20];          // 0x04
+        int zone_num;              // 0x54
+    } result;                      // 0x44
     int x9c;                       // 0x9c
     int xa0;                       // 0xa0
     int xa4;                       // 0xa4
@@ -205,13 +190,13 @@ typedef struct CollData
     int x314;                      // 0x314
     int x318;                      // 0x318
     int x31c;                      // 0x31c
-    int x320;                      // 0x320
-    int x324;                      // 0x324
-    int x328;                      // 0x328
-    int x32c;                      // 0x32c
-    int x330;                      // 0x330
+    int rail_idx;                  // 0x320
+    float x324;                    // 0x324
+    float x328;                    // 0x328, rail related
+    int x32c;                      // 0x32c, rail related
+    float x330;                    // 0x330, rail related
     int x334;                      // 0x334
-    int x338;                      // 0x338
+    u8 req_yaku_break_effect : 1;  // 0x338, 0x80
     CollShapeKind coll_shape_kind; // 0x33c
     struct CollShapeData           // 0x340
     {

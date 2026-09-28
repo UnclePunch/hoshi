@@ -123,6 +123,7 @@ typedef struct HUDElementData // created by 80114e24
 } HUDElementData;
 
 static HSD_Archive **stc_if_all_archive = (HSD_Archive **)(0x805dd0e0 + 0x690);
+static u8 *g_hud_is_hidden = (u8 *)0x8048b5d9;  // this is a hoshi variable, placing it here for convenience
 
 void CityHUD_CreateStatChart(int ply, int ply2);
 void CityHUD_CreateStatBar(int ply, int ply2, int stat_kind);

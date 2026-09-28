@@ -50,6 +50,8 @@ typedef struct CamInterest
     Vec3 pos_high;      // 0x14, this position is a little higher than the previous lol, its referenced when adjusting the camera position based on the c stick zoom value
     u8 x20[0x86];       // 0x20
     u16 ply;            // 0xa6
+    u8 xa8_c0 : 2;      // 0xa8
+    u8 is_airborne : 1; // 0xa8, 0x20
 } CamInterest;
 
 typedef struct CamData

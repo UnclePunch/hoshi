@@ -34,6 +34,106 @@ typedef enum RiderPri
     RDPRI_15 = 15,
 } RiderPri;
 
+typedef enum RiderStatus
+{
+    // RDSTATE_WAIT,
+    // RDSTATE_BOARD,
+    // RDSTATE_BOARDEND,
+    // RDSTATE_SLEEPSTART,
+    // RDSTATE_SLEEP,
+    // RDSTATE_SLEEPEND,
+    // RDSTATE_DAMAGE,
+    // RDSTATE_DAMAGEFIRE,
+    // RDSTATE_DAMAGECUTUP,
+    // RDSTATE_DAMAGESPIN,
+    // RDSTATE_DAMAGEELEC,
+    // RDSTATE_DAMAGENUMB,
+    // RDSTATE_DAMAGEICE,
+    // RDSTATE_GETOFF_DAMAGE,
+    // RDSTATE_GETOFF_DAMAGEFIRE,
+    // RDSTATE_GETOFF_DAMAGECUTUP,
+    // RDSTATE_GETOFF_DAMAGESPIN,
+    // RDSTATE_GETOFF_DAMAGEELEC,
+    // RDSTATE_GETOFF_DAMAGENUMB,
+    // RDSTATE_GETOFF_DAMAGEICE,
+    // RDSTATE_GETOFF_DAMAGEFALL,
+    // RDSTATE_GETOFF_DOWNBOUND,
+    // RDSTATE_GETOFF_DOWNWAIT,
+    // RDSTATE_GETOFF_DOWNMOVE,
+    // RDSTATE_GETOFF_FALLDEATH,
+    // RDSTATE_GETOFF_FALLDEATHWAIT,
+    // RDSTATE_FREEMOVE,
+    // RDSTATE_SELECT,
+    // RDSTATE_DEATHRETURN,
+    // RDSTATE_NUM,
+    RDSTATE_READY,
+    RDSTATE_READYPUSHSTART,
+    RDSTATE_READYPUSH,
+    RDSTATE_READYPUSHEND,
+    RDSTATE_RUN,
+    RDSTATE_RUN2,
+    RDSTATE_FLY,
+    RDSTATE_ACCELN,
+    RDSTATE_ACCELNEND,
+    RDSTATE_ACCELF,
+    RDSTATE_ACCELFEND,
+    RDSTATE_PUSHSTART,
+    RDSTATE_PUSH,
+    RDSTATE_PUSHEND,
+    RDSTATE_PUSHFORWARD,
+    RDSTATE_QUICKSPINTURN,
+    RDSTATE_SPINTURN,
+    RDSTATE_SPINTURNEND,
+    RDSTATE_DRAWSTART,
+    RDSTATE_DRAW,
+    RDSTATE_DRAWEND,
+    RDSTATE_HOLD,
+    RDSTATE_SPIT,
+    RDSTATE_SWALLOW,
+    RDSTATE_SLEEPGET,
+    RDSTATE_CP_SLEEPSTART,
+    RDSTATE_CP_SLEEP,
+    RDSTATE_CP_SLEEPEND,
+    RDSTATE_FIREGET,
+    RDSTATE_SWORDGET,
+    RDSTATE_BOMBGET,
+    RDSTATE_PLASMAGET,
+    RDSTATE_NEEDLEGET,
+    RDSTATE_MIKEGET,
+    RDSTATE_FREEZEGET,
+    RDSTATE_TORNADOGET,
+    RDSTATE_WHEELGET,
+    RDSTATE_WINGGET,
+    RDSTATE_CRACKERGET,
+    RDSTATE_CRACKERRUN,
+    RDSTATE_CRACKERPUSHSTART,
+    RDSTATE_CRACKERPUSH,
+    RDSTATE_CRACKERPUSHEND,
+    RDSTATE_TIMEBOMBGET,
+    RDSTATE_TIMEBOMBRUN,
+    RDSTATE_TIMEBOMBPUSHSTART,
+    RDSTATE_TIMEBOMBPUSH,
+    RDSTATE_GORDOGET,
+    RDSTATE_GORDORUN,
+    RDSTATE_GORDOPUSHSTART,
+    RDSTATE_GORDOPUSH,
+    RDSTATE_MININADOSTART,
+    RDSTATE_MININADOLOOP,
+    RDSTATE_MININADOEND,
+    RDSTATE_NUM = 101,
+} RiderStatus;
+
+typedef enum RiderMotionStatus
+{
+    RD_MSTATUS_PUSHSTART,
+    RD_MSTATUS_PUSH,
+    RD_MSTATUS_PUSHTURNL,
+    RD_MSTATUS_PUSHTURNR,
+    RD_MSTATUS_PUSHEND,
+    RD_MSTATUS_PUSHFORWARD,
+    RD_MSTATUS_NUM = 101,
+} RiderMotionStatus;
+
 typedef enum CopyKind
 {
     COPYKIND_NONE = -1,
@@ -84,7 +184,7 @@ typedef struct rdDataKirby
 
 typedef struct RiderData
 {
-    int x0;                               // 0x0
+    GOBJ *gobj;                           // 0x0
     RiderKind kind;                       // 0x4
     u8 ply;                               // 0x8
     u8 x9;                                // 0x9
@@ -94,10 +194,10 @@ typedef struct RiderData
     int x10;                              // 0x10
     int x14;                              // 0x14
     rdDataKirby *rdDataKirby;             // 0x18
-    int state_idx;                        // 0x1c
+    RiderStatus status;                   // 0x1c, state index
     int x20;                              // 0x20
     int state_frame;                      // 0x24
-    int x28;                              // 0x28
+    RiderMotionStatus mstatus;            // 0x28, motion state
     int x2c;                              // 0x2c
     int x30;                              // 0x30
     int x34;                              // 0x34
@@ -266,7 +366,7 @@ typedef struct RiderData
     DOBJ *dobj_lookup_arr;                // 0x2c0
     int x2c4;                             // 0x2c4
     int x2c8;                             // 0x2c8
-    int x2cc;                             // 0x2cc
+    int is_airborne;                      // 0x2cc
     int x2d0;                             // 0x2d0
     int x2d4;                             // 0x2d4
     int x2d8;                             // 0x2d8
@@ -481,7 +581,7 @@ typedef struct RiderData
     int x634;                  // 0x634
     int x638;                  // 0x638
     int x63c;                  // 0x63c
-    int x640;                  // 0x640
+    int cur_ground_tri;        // 0x640
     int x644;                  // 0x644
     int x648;                  // 0x648
     int x64c;                  // 0x64c
@@ -535,14 +635,7 @@ typedef struct RiderData
     int x788;                  // 0x788
     int x78c;                  // 0x78c
     int x790;                  // 0x790
-    int x794;                  // 0x794
-    int x798;                  // 0x798
-    int x79c;                  // 0x79c
-    int x7a0;                  // 0x7a0
-    int x7a4;                  // 0x7a4
-    int x7a8;                  // 0x7a8
-    int x7ac;                  // 0x7ac
-    int x7b0;                  // 0x7b0
+    DmgLog dmg_log;            // 0x794
     struct                     //
     {                          //
         void (*anim)(GOBJ *);  // 0x7b4
@@ -577,7 +670,9 @@ typedef struct RiderData
     u8 x821;                            // 0x821
     u8 x822;                            // 0x822
     u8 x823;                            // 0x823
-    u8 x824;                            // 0x824
+    u8 x824_80 : 1;                     // 0x824, 0x80
+    u8 x824_20 : 1;                     // 0x824, 0x40
+    u8 is_walk_after_dismount : 1;      // 0x824, 0x20
     u8 x825;                            // 0x825
     u8 x826_80 : 1;                     // 0x826
     u8 x826_40 : 1;                     // 0x826
@@ -699,7 +794,7 @@ typedef struct RiderData
     u8 x9cf;                            // 0x9cf
     int x9d0;                           // 0x9d0
     int x9d4;                           // 0x9d4
-    int x9d8;                           // 0x9d8
+    int jumps_remaining;                // 0x9d8
     int x9dc;                           // 0x9dc
     int x9e0;                           // 0x9e0
     int x9e4;                           // 0x9e4
@@ -728,7 +823,12 @@ typedef struct RiderData
     int xa34;                           // 0xa34
     int xa38;                           // 0xa38
     int xa3c;                           // 0xa3c
-    int xa40;                           // 0xa40
+    u8 is_jump : 1;                     // 0xa40, 0x80
+    u8 is_grounded : 1;                 // 0xa40, 0x40
+    u8 is_fall : 1;                     // 0xa40, 0x20 flipped when you walk off a ledge
+    u8 is_fly : 1;                      // 0xa40, 0x10
+    u8 is_fly2 : 1;                     // 0xa40, 0x08
+    u8 is_swim : 1;                     // 0xa40, 0x04
     int xa44;                           // 0xa44
     int xa48;                           // 0xa48
     int xa4c;                           // 0xa4c
@@ -743,8 +843,8 @@ typedef struct RiderData
     int xa70;                           // 0xa70
     int xa74;                           // 0xa74
     int xa78;                           // 0xa78
-    int xa7c;                           // 0xa7c
-    int xa80;                           // 0xa80
+    void (*WaterEnter)(RiderData *);    // 0xa7c
+    void (*WaterExit)(RiderData *);     // 0xa80
     int xa84;                           // 0xa84
     int xa88;                           // 0xa88
     int xa8c;                           // 0xa8c
@@ -774,7 +874,8 @@ void Rider_LoseAbilityState_Enter(RiderData *);
 void Rider_GiveIntangibility(RiderData *, int time);
 void Rider_GiveInvincibility(RiderData *, int time);
 int Rider_IsOnMachine(RiderData *);
-int Rider_IsMachineDead(RiderData *);       // can only be called between the RDPRI_HITCOLL and RDPRI_DMGAPPLY priority.
+int Rider_IsMachineAirborne(RiderData *);
+int Rider_IsMachineDead(RiderData *);       // can only be called between the RDSTATE_HITCOLL and RDSTATE_DMGAPPLY priority.
 
 AudioEmitter Rider_AllocAudioEmitter(int index);
 

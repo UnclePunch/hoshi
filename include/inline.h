@@ -157,10 +157,10 @@ static void AOBJ_CheckEnded(AOBJ *a, int *is_done)
     if (a->flags != AOBJ_NO_ANIM)
         *is_done = 0;
 }
-static inline int JObj_CheckAnimEnded(JOBJ *j)
+static inline int JObj_CheckJointAnimEnded(JOBJ *j)
 {
     int is_anim_done = 1;
-    JObj_ForEachAnim(j, 6, 0xffff, AOBJ_CheckEnded, 2, &is_anim_done);
+    JObj_ForEachAnim(j, FOREACHANIM_OBJ_JOBJ, FOREACHANIM_FLAG_JOBJ, AOBJ_CheckEnded, 2, &is_anim_done);
 
     return is_anim_done;
 }
@@ -766,6 +766,35 @@ static void JObj_ForEachJoint(JOBJ* root, void (*cb)(JOBJ *j, void *arg), void *
     return;
 }
 
+static int RandomInRange(int min, int max)
+{
+    return min + HSD_Randi(max - min + 1);
+}
+
+static int RandomBitInField(u32 bitfield)
+{
+    int count = 0;
+
+    for (u32 b = bitfield; b; b &= b - 1)
+        count++;
+
+    if (count == 0)
+        return -1;
+
+    int target = HSD_Randi(count);
+
+    while (target--)
+        bitfield &= bitfield - 1;
+
+    for (int i = 0; i < 32; i++)
+    {
+        if (bitfield & (1u << i))
+            return i;
+    }
+
+    return -1;
+}
+
 
 // static float Math_Vec2Distance(Vec2 *a, Vec2 *b)
 // {
@@ -831,6 +860,129 @@ static void GX_DrawRect(Vec3 *bl, Vec3 *tr, GXColor *color)
     GXColor4u8(color->r, color->g, color->b, color->a);
 
     GXPosition3f32(bl->X, tr->Y, bl->Z);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    HSD_StateInvalidate(-1);
+}
+
+static void GX_DrawBox(Vec3 *center, Vec3 *size, GXColor *color)
+{
+    f32 hx = size->X * 0.5f;
+    f32 hy = size->Y * 0.5f;
+    f32 hz = size->Z * 0.5f;
+
+    f32 x0 = center->X - hx;
+    f32 x1 = center->X + hx;
+    f32 y0 = center->Y - hy;
+    f32 y1 = center->Y + hy;
+    f32 z0 = center->Z - hz;
+    f32 z1 = center->Z + hz;
+
+    HSD_StateInitDirect(GX_VTXFMT0, 24);
+
+    GXSetColorUpdate(GX_ENABLE);
+    GXSetAlphaUpdate(GX_DISABLE);
+
+    GXSetBlendMode(
+        GX_BM_BLEND,
+        GX_BL_SRCALPHA,
+        GX_BL_INVSRCALPHA,
+        GX_LO_NOOP
+    );
+
+    GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_GREATER, 0);
+
+    GXSetZMode(GX_ENABLE, GX_LEQUAL, GX_DISABLE);
+    GXSetZCompLoc(GX_DISABLE);
+    
+    GXSetNumTexGens(0);
+
+    GXSetNumTevStages(1);
+    GXSetTevOrder(
+        GX_TEVSTAGE0,
+        GX_TEXCOORD_NULL,
+        GX_TEXMAP_NULL,
+        GX_COLOR0A0
+    );
+    GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+    GXSetChanMatColor(GX_COLOR0A0, color);
+    GXSetChanAmbColor(GX_COLOR0A0, color);
+    GXSetChanCtrl(
+        GX_COLOR0A0,
+        GX_ENABLE,
+        Register,
+        Register,
+        GX_LIGHT_NULL,
+        GX_DF_CLAMP,
+        GX_AF_NONE
+    );
+    GXSetNumChans(1);
+
+    GXSetCullMode(GX_CULL_NONE);
+
+    GXLoadPosMtxImm(&COBJ_GetCurrent()->view_mtx, GX_PNMTX0);
+
+    GXBegin(GX_QUADS, GX_VTXFMT0, 24);
+
+    // front
+    GXPosition3f32(x0, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    // back
+    GXPosition3f32(x0, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y1, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    // left
+    GXPosition3f32(x0, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y1, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    // right
+    GXPosition3f32(x1, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    // bottom
+    GXPosition3f32(x0, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y0, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y0, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+
+    // top
+    GXPosition3f32(x0, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z0);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x1, y1, z1);
+    GXColor4u8(color->r, color->g, color->b, color->a);
+    GXPosition3f32(x0, y1, z1);
     GXColor4u8(color->r, color->g, color->b, color->a);
 
     HSD_StateInvalidate(-1);

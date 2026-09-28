@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 9
+#define HOSHI_VERSION 10
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -18,7 +18,8 @@
    7 - (03-14-26) write audio heap whereabouts to game memory
    8 - (05-10-26) move OnFrameEnd() to execute before engine frame increments
    9 - (06-18-26) add a bool to the ModDesc that indicates if the mod impacts gameplay
-*/
+  10 - (09-27-26) add OnShowHUD, OnHideHUD, and g_hud_is_hidden
+   */
 
 typedef struct MenuDesc MenuDesc;
 typedef struct MenuSave MenuSave;

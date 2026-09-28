@@ -40,6 +40,40 @@ CODEPATCH_HOOKCREATE(0x8045038c, "mr 3, 25\n\t"
                                  "mr 4, 12\n\t",
                      Text_SetTextAlign, "mr 7, 3\n\t", 0x804503d4)
 
+// Text Background Alignment
+void Text_AlignBackground(Text *t, float *x_start, float *x_end)
+{
+    static float mult_lookup[] = {-0.5, -1};
+
+    int align = t->align;
+
+    if (align == TEXTALIGN_LEFT)
+        return;
+
+    float width = *x_end - *x_start;
+    float offset = mult_lookup[align-1] * width;
+
+    *x_start += offset;
+    *x_end += offset;
+
+    return;
+}
+CODEPATCH_HOOKCREATE(0x80451aa8, "stwu	1, -40 (1)\n\t"
+                                            "mflr 0\n\t"
+                                            "stw 0, 44 (1)\n\t"
+                                            "mr 3, 27\n\t"
+                                            "stfs 30, 8 (1)\n\t"
+                                            "stfs 29, 12 (1)\n\t"
+                                            "addi 4, 1, 8\n\t"
+                                            "addi 5, 1, 12\n\t",
+                                            Text_AlignBackground, 
+                                            "lfs 30, 8 (1)\n\t"
+                                            "lfs 29, 12 (1)\n\t"
+                                            "lwz 0, 44 (1)\n\t"
+                                            "mtlr 0\n\t"
+                                            "addi 1, 1, 40\n\t",
+                                            0)
+
 // Text Commands in ASCII
 int Text_CommandCheck(u8 *in, int *in_cur, u8 *out, int *out_cur)
 {
@@ -194,6 +228,9 @@ void Patches_Apply()
     CODEPATCH_HOOKAPPLY(0x8045038c);
     CODEPATCH_REPLACEFUNC(0x80450774, Text_SetScale);
 
+    // text background alignment
+    CODEPATCH_HOOKAPPLY(0x80451aa8);
+    
     // text ascii commands
     CODEPATCH_HOOKAPPLY(0x8044fb54);
 

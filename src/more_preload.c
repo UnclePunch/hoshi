@@ -90,25 +90,23 @@ void Preload_IncreasePersistentHeapSize()
     PreloadHeapDesc *heap_descs = stc_preload_heap_descs;
     while (heap_descs->kind != 10)
     {
-        if (heap_descs->kind == PRELOADHEAPKIND_STAY)
+        int newfiles_total_size = 0;
+        for (int i = 0; i < stc_custom_game_files.num; i++)
         {
-            int newfiles_total_size = 0;
+            if (stc_custom_game_files.file[i].heap_kind == heap_descs->kind)
+                newfiles_total_size += File_GetSize(stc_custom_game_files.file[i].name);
+        }
 
-            for (int i = 0; i < stc_custom_game_files.num; i++)
-            {
-                if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY)
-                    newfiles_total_size += File_GetSize(stc_custom_game_files.file[i].name);
-            }
+        newfiles_total_size = OSRoundUp32B(newfiles_total_size);
 
-            newfiles_total_size = OSRoundUp32B(newfiles_total_size);
-
-            LOG_INFO("Persistent heap size: %.2fkb -> %.2fkb",
-                     BytesToKB(heap_descs->size),
-                     BytesToKB((heap_descs->size + newfiles_total_size)));
+        if (newfiles_total_size > 0)
+        {
+            LOG_INFO("Persistent heap %d size: %.2fkb -> %.2fkb",
+                        heap_descs->kind,
+                        BytesToKB(heap_descs->size),
+                        BytesToKB((heap_descs->size + newfiles_total_size)));
 
             heap_descs->size += newfiles_total_size;
-
-            break;
         }
 
         heap_descs++;

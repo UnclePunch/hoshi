@@ -423,7 +423,7 @@ SECTIONS
   CityTrial_DecideStadium = 0x8003F808;
   HUD_PauseCreate = 0x801285DC;
   HUD_PauseDestroy = 0x80128A68;
-  HUD_CreateElement = 0x80114BA4;
+  HUD_CreatePlyElement = 0x80114BA4;
   HUD_GXLink = 0x80114F1C;
   HUD_AddElementData = 0x80114E24;
   HUD_UpdateElement = 0x8011503C;

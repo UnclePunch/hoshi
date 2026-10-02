@@ -263,14 +263,14 @@ typedef struct MachineData
     GOBJ *rider_unk1;                     // 0x8
     GOBJ *rider_unk2;                     // 0xc
     int is_bike;                          // 0x10
-    int x14;                              // 0x14
+    int exist_num;                        // 0x14
     int x18;                              // 0x18
     int x1c;                              // 0x1c
     int x20;                              // 0x20
     MachineKind kind : 8;                 // 0x24
     int x28;                              // 0x28
     vcData *vcData;                       // 0x2c
-    MachineStatus status;                  // 0x30
+    MachineStatus status;                 // 0x30
     int x34;                              // 0x34
     int x38;                              // 0x38
     MachineMotionStatus mstatus;          // 0x3c

@@ -1462,7 +1462,7 @@ typedef struct Game3dData
     int x620;                                     // 0x620
     int x624;                                     // 0x624
     int x628;                                     // 0x628
-    int x62c;                                     // 0x62c
+    GOBJ *cityui_pause_gobj;                      // 0x62c
     int x630;                                     // 0x630
     int x634;                                     // 0x634
     int x638;                                     // 0x638

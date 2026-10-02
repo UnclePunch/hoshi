@@ -129,6 +129,10 @@ typedef struct TeamStandings TeamStandings;
 typedef struct PlayerStandings PlayerStandings;
 typedef struct ExclamData ExclamData;
 
+// Camera
+typedef struct CamData CamData;
+typedef struct PlayerCamData PlayerCamData;
+
 // Text
 typedef struct SISData SISData;
 typedef struct TextHeapCell TextHeapCell;

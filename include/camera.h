@@ -23,7 +23,11 @@ typedef struct CameraParam
 
 typedef struct cmMainParamCommon
 {
-    u8 x0[0x88];                // 
+    u8 x0[0x14];                // 
+    float aspect_mult_1p;       // 0x14
+    float aspect_mult_2p;       // 0x18
+    float aspect_mult_4p;       // 0x1c
+    u8 x20[0x68];               // 0x20
     float fov_1p;               // 0x88
     float fov_2p;               // 0x8c
     float fov_4p;               // 0x90
@@ -56,32 +60,33 @@ typedef struct CamInterest
 
 typedef struct CamData
 {
-    int kind;               // 0x0, 1 = normal, 9 = rail
-    int x4;                 // 0x4
-    int x8;                 // 0x8
-    int xc;                 // 0xc
-    int x10;                // 0x10
-    CameraParam x14;        // 0x14  (copied from x138)
-    u8 x3c[0x38];           // 0x3c
-    u8 x74[0x10];           // 0x74
-    u8 x84_80 : 1;          // 0x84
-    float rotation_amt;     // 0x88
-    float zoom_amt;         // 0x8c, max is 8.4
-    float x90;              // 0x90
-    CamInterest *target;    // 0x94, camera target. is 0x450 of riderdata?
-    u8 x98[0x28];           // 0x98
-    CameraParam xc0;        // 0xc0. bp this one to find what game code affects the camera! fov is set @ 800c2000 
-    CameraParam xe8;        // 0xe8, gets copied directly from the cobj eye position @ 800b783c
-    CameraParam x110;       // 0x110, final set of values? not sure
-    CameraParam x138;       // 0x138, 
-    Vec3 x160;              // 0x160, position referenced when updating audio sources
-    u8 x16c[0x14];          // 0x16c
-    Vec3 eye_pos;           // 0x180
-    Vec3 interest_pos;      // 0x18c
-    u8 x198[0x28];          // 0x198
-    float x1c0;             // 0x1c0, rotation at least for when on foot
-    u8 x1c4[0x104];         // 0x1c4
-    float x2c8;             // 0x2c8,
+    int kind;                           // 0x0, 1 = normal, 9 = rail
+    int x4;                             // 0x4
+    int x8;                             // 0x8
+    int xc;                             // 0xc
+    int x10;                            // 0x10
+    CameraParam x14;                    // 0x14  (copied from x138)
+    u8 x3c[0x38];                       // 0x3c
+    u8 x74[0x10];                       // 0x74
+    u8 x84_80 : 1;                      // 0x84
+    float rotation_amt;                 // 0x88
+    float zoom_amt;                     // 0x8c, max is 8.4
+    float x90;                          // 0x90
+    CamInterest *target;                // 0x94, camera target. is 0x450 of riderdata?
+    u8 x98[0x28];                       // 0x98
+    CameraParam xc0;                    // 0xc0. bp this one to find what game code affects the camera! fov is set @ 800c2000 
+    CameraParam xe8;                    // 0xe8, gets copied directly from the cobj eye position @ 800b783c
+    CameraParam x110;                   // 0x110, final set of values? not sure
+    CameraParam x138;                   // 0x138, 
+    Vec3 x160;                          // 0x160, position referenced when updating audio sources
+    u8 x16c[0x10];                      // 0x16c
+    PlayerCamData *player_cam_data;     // 0x17c
+    Vec3 eye_pos;                       // 0x180
+    Vec3 interest_pos;                  // 0x18c
+    u8 x198[0x28];                      // 0x198
+    float x1c0;                         // 0x1c0, rotation at least for when on foot
+    u8 x1c4[0x104];                     // 0x1c4
+    float x2c8;                         // 0x2c8,
 } CamData;
 
 typedef struct PlayerCamData

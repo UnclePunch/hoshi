@@ -125,21 +125,38 @@ void Hook_3DLoadEnd()
 };
 CODEPATCH_HOOKCREATE(0x80014d3c, "", Hook_3DLoadEnd, "", 0)
 
-// runs upon pausing 3d scene
-void Hook_3DPause(int pause_ply)
+// runs before pausing 3d scene
+void Hook_3DPauseStart(int pause_ply)
 {
     // loop through installed mods, run their function
     for (int i = 0; i < stc_modloader_data->mod_num; i++)
     {
         GlobalMod *this_mod = &stc_modloader_data->mods[i];
 
-        if (this_mod->desc->On3DPause)
-            this_mod->desc->On3DPause(pause_ply);
+        if (this_mod->desc->On3DPauseStart)
+            this_mod->desc->On3DPauseStart(pause_ply);
     }
 
     return;
 };
-CODEPATCH_HOOKCREATE(0x80041160, "lbz 3,0x0830 (29)\n\t", Hook_3DPause, "", 0)
+CODEPATCH_HOOKCREATE(0x80041160, "lbz 3,0x0830 (29)\n\t", Hook_3DPauseStart, "", 0)
+
+// runs after pausing 3d scene
+void Hook_3DPauseEnd(int pause_ply)
+{
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->desc->On3DPauseEnd)
+            this_mod->desc->On3DPauseEnd(pause_ply);
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x80041174, "lbz 3,0x0830 (29)\n\t", Hook_3DPauseEnd, "", 0)
+
 
 // runs upon unpausing 3d scene
 void Hook_3DUnPause(int pause_ply)
@@ -336,6 +353,7 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x8003b48c);
     CODEPATCH_HOOKAPPLY(0x8003c6e8);
     CODEPATCH_HOOKAPPLY(0x80041160);
+    CODEPATCH_HOOKAPPLY(0x80041174);
     CODEPATCH_HOOKAPPLY(0x80113a30);
     CODEPATCH_HOOKAPPLY(0x80015274);
     CODEPATCH_HOOKAPPLY(0x80006844);
@@ -461,7 +479,10 @@ void *Mods_LoadFile(int entrynum)
 
         OSClearReports();
 
-        OSReport("Mod update required!\n%s targets hoshi v%d.\nCurrently installed: hoshi v%d.\n", 
+        char *needs_updating = (file_buffer->version > HOSHI_VERSION) ? "hoshi" : "Mod";
+        OSReport("%s update required!\n", needs_updating);
+
+        OSReport("%s targets hoshi v%d.\nCurrently installed: hoshi v%d.\n", 
                     FST_GetFilenameFromEntrynum(entrynum),
                     file_buffer->version, 
                     HOSHI_VERSION);

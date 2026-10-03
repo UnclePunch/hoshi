@@ -9,7 +9,7 @@ import argparse
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
-VERSION = 11
+VERSION = 12
 
 # Version History:
 #  1 - (07-01-25) introductory version
@@ -23,6 +23,7 @@ VERSION = 11
 #  9 - (06-18-26) add a bool to the ModDesc that indicates if the mod impacts gameplay
 # 10 - (09-27-26) add OnShowHUD, OnHideHUD, and g_hud_is_hidden
 # 11 - (10-02-26) add OnPauseStart, OnPauseEnd
+# 12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
 
 build_dir = "_build"
 

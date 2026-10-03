@@ -28,14 +28,19 @@ typedef struct OptionDesc
     char *description;
     OptionKind kind : 16;
     MenuPriority pri : 16;
+    int *val;
+    int min;
+    union
+    {
+        int max;
+        int value_num;
+    };
+    void (*on_change)(int val);
     union
     {
         struct
         {
-            int *val;
-            int value_num;
             char **value_names;
-            void (*on_change)(int val);
         };
         struct
         {

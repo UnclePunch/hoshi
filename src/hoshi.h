@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 11
+#define HOSHI_VERSION 12
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -20,6 +20,7 @@
    9 - (06-18-26) add a bool to the ModDesc that indicates if the mod impacts gameplay
   10 - (09-27-26) add OnShowHUD, OnHideHUD, and g_hud_is_hidden
   11 - (10-02-26) add On3DPauseStart, On3DPauseEnd
+  12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
    */
 
 typedef struct MenuDesc MenuDesc;

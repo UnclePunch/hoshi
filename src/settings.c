@@ -222,55 +222,50 @@ void Settings_Think()
     OptionDesc *opt_desc = desc->options[desc->cursor + desc->scroll];
 
     // left and right
-    if (opt_desc->kind == OPTKIND_VALUE)
+    if (opt_desc->kind == OPTKIND_VALUE || opt_desc->kind == OPTKIND_NUM)
     {
+        // get values for this option kind
+        int *val = opt_desc->val;
+        int min = (opt_desc->kind == OPTKIND_NUM) ? opt_desc->min : 0;
+        int max = (opt_desc->kind == OPTKIND_NUM) ? opt_desc->max : opt_desc->value_num - 1;
+        void (*on_change)(int val) = opt_desc->on_change;
+
+        // update value based on inputs
+        int is_moved = 0;
         if (rapid & (PAD_BUTTON_LEFT | PAD_BUTTON_DPAD_LEFT))
         {
-            int is_moved = 0;
-
-            if ((*opt_desc->val) > 0)
+            if ((*val) > min)
             {
-                (*opt_desc->val)--;
+                (*val)--;
                 is_moved = 1;
             }
             else
             {
-                (*opt_desc->val) = opt_desc->value_num - 1;
+                (*val) = max;
                 is_moved = 1;
-            }
-
-            if (is_moved)
-            {
-                if (opt_desc->on_change)
-                    opt_desc->on_change(*opt_desc->val);
-
-                SFX_Play(FGMMENU_CS_MV);
-                Settings_UpdateCurrentMenu();
             }
         }
         else if (rapid & (PAD_BUTTON_RIGHT | PAD_BUTTON_DPAD_RIGHT))
         {
-            int is_moved = 0;
-
-            if ((*opt_desc->val) < opt_desc->value_num - 1)
+            if ((*val) < max)
             {
-                (*opt_desc->val)++;
+                (*val)++;
                 is_moved = 1;
             }
             else
             {
-                (*opt_desc->val) = 0;
+                (*val) = min;
                 is_moved = 1;
             }
+        }
+        
+        if (is_moved)
+        {
+            if (on_change)
+                on_change(*val);
 
-            if (is_moved)
-            {
-                if (opt_desc->on_change)
-                    opt_desc->on_change(*opt_desc->val);
-
-                SFX_Play(FGMMENU_CS_MV);
-                Settings_UpdateCurrentMenu();
-            }
+            SFX_Play(FGMMENU_CS_MV);
+            Settings_UpdateCurrentMenu();
         }
     }
 
@@ -559,6 +554,7 @@ void Menu_CreateOptions(GOBJ *m)
         switch (this_opt_desc->kind)
         {
         case (OPTKIND_VALUE):
+        case (OPTKIND_NUM):
         {
             JObj_AddSetAnim(oj, 0, this_opt_data->assets, (opt_idx == desc->cursor), 0);
             break;
@@ -627,12 +623,18 @@ void Menu_Think(GOBJ *m)
 
 JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
 {
-
     JOBJSet *set;
-    if (desc->kind == OPTKIND_VALUE)
-        set = stc_settings_data.ScMenSelruleFrame_scene_models[0];
-    else if (desc->kind == OPTKIND_MENU || desc->kind == OPTKIND_SCENE)
-        set = stc_settings_data.ScMenSelruleFrame2_scene_models[0];
+    switch (desc->kind)
+    {
+        case (OPTKIND_VALUE):
+        case (OPTKIND_NUM):
+            set = stc_settings_data.ScMenSelruleFrame_scene_models[0];
+            break;
+        case (OPTKIND_MENU):
+        case (OPTKIND_SCENE):
+            set = stc_settings_data.ScMenSelruleFrame2_scene_models[0];
+            break;
+    }
 
     JOBJ *oj = JObj_LoadJoint(set->jobj);
 
@@ -641,7 +643,8 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
 
     JObj_AddSetAnim(oj, 0, set, 0, 0);
 
-    if (desc->kind == OPTKIND_VALUE)
+    // create option text
+    if (desc->kind == OPTKIND_VALUE || desc->kind == OPTKIND_NUM)
     {
         // create values
         for (int val_idx = 0; val_idx < GetElementsIn(op->value); val_idx++)
@@ -660,7 +663,12 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
             text->aspect = (Vec2){230, 32};
             text->gobj->gx_cb = OptionText_GX;
             text->is_depth_compare = 1;
-            Text_AddSubtext(text, 0, -15, desc->value_names[*desc->val]);
+
+            if (desc->kind == OPTKIND_VALUE)
+                Text_AddSubtext(text, 0, -15, desc->value_names[*desc->val]);
+            else if (desc->kind == OPTKIND_NUM)
+                Text_AddSubtext(text, 0, -15, "%d", *desc->val);
+
             op->value[val_idx].text = text;
             op->value[val_idx].j = JObj_GetIndex(val_j, 2);
         }
@@ -672,6 +680,7 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
     switch (desc->kind)
     {
     case (OPTKIND_VALUE):
+    case (OPTKIND_NUM):
     {
         name_joint_idx = 6;
         break;
@@ -767,7 +776,7 @@ void Cursor_Think(GOBJ *g)
     // move cursor
     JOBJ *cursor_j = g->hsd_object;
     OptionData *sel_op = &mp->option_data[mp->desc->cursor];
-    if (sel_op->kind == OPTKIND_VALUE)
+    if (sel_op->kind == OPTKIND_VALUE || sel_op->kind == OPTKIND_NUM)
     {
         JOBJ *oj = sel_op->value[0].j;
         JObj_SetupMtxSub(oj);
@@ -863,9 +872,13 @@ void Menu_ExecOptionChange(MenuDesc *desc)
         switch (desc->options[opt_idx]->kind)
         {
         case (OPTKIND_VALUE):
+        case (OPTKIND_NUM):
         {
             if (desc->options[opt_idx]->on_change)
+            {
+                LOG_DEBUG("executing on_change() for %s", desc->options[opt_idx]->name);
                 desc->options[opt_idx]->on_change(*desc->options[opt_idx]->val);
+            }
             break;
         }
         case (OPTKIND_MENU):

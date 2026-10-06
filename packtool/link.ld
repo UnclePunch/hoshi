@@ -312,6 +312,7 @@ SECTIONS
   SFX_Play = 0x800615F0;
   SFX_PlayMenuSFX = 0x80061620;
   SFX_PlayRaw = 0x80442A10;
+  FGM_PauseAll = 0x80061acc;
   FGM_PauseKind = 0x80444CC4;
   FGM_ResumeKind = 0x80444FE0;
   FGM_LoadInGameBanks = 0x8005A348;
@@ -427,6 +428,8 @@ SECTIONS
   HUD_GXLink = 0x80114F1C;
   HUD_AddElementData = 0x80114E24;
   HUD_UpdateElement = 0x8011503C;
+  HUD_CreateTimeUp = 0x80114178;
+  HUD_CreateFinish = 0x801142fc;
   CityHUD_CreateStatChart = 0x80128BB8;
   CityHUD_CreateStatBar = 0x80129154;
   Character_GetDesc = 0x8000B9DC;

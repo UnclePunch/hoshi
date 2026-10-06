@@ -1248,9 +1248,9 @@ typedef struct Game3dData
     int x2d0;                                     // 0x2d0
     int x2d4;                                     // 0x2d4
     int x2d8;                                     // 0x2d8
-    int x2dc;                                     // 0x2dc
-    int x2e0;                                     // 0x2e0
-    int x2e4;                                     // 0x2e4
+    JOBJSet **ScInfReadyGo_scene_models;          // 0x2dc
+    JOBJSet **ScInfTimeUp_scene_models;           // 0x2e0
+    JOBJSet **ScInfFinish_scene_models;           // 0x2e4
     int x2e8;                                     // 0x2e8
     int x2ec;                                     // 0x2ec
     int x2f0;                                     // 0x2f0

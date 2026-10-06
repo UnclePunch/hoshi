@@ -712,6 +712,7 @@ int FGM_SetVolume(u32 sfxid, u8 volume);
 int FGM_SetPanning(u32 sfxid, u8 panning);
 void FGM_ResumeKind(int kind); //
 void FGM_PauseKind(int kind);  // pausing in-game pauses kinds 5,6,7,8
+void FGM_PauseAll();
 void FGM_LoadInGameBanks();
 
 AudioEmitter AudioEmitter_Alloc(AudioEmitterKind kind, int idx); // 

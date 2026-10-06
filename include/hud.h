@@ -158,6 +158,8 @@ void HUD_PauseCreate();
 void HUD_PauseDestroy();
 GOBJ *HUD_CreatePlyElement(int ply, JOBJDesc *j);
 GOBJ *HUD_CreateMiscElement(JOBJ *desc, int p_link, int gx_link, int gx_pri);
+GOBJ *HUD_CreateTimeUp(int ply);
+GOBJ *HUD_CreateFinish(int ply);
 
 void HUD_GXLink(GOBJ *g, int pass);
 void HUD_AddElementData(GOBJ *g, HUDKind kind, int ply, int ply2);

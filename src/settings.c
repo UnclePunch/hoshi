@@ -693,13 +693,15 @@ JOBJ *Option_Create(OptionDesc *desc, OptionData *op)
     }
     }
 
+    float aspect_width = (desc->kind == OPTKIND_MENU || desc->kind == OPTKIND_SCENE) ? 255 : 190;
+    
     // create option name text
     Text *text = Text_CreateText(0, stc_text_canvas_idx);
     text->kerning = 1;
     text->align = 1;
     text->use_aspect = 1;
     text->color = (GXColor){0, 0, 0, 255};
-    text->aspect = (Vec2){190, 32};
+    text->aspect = (Vec2){aspect_width, 32};
     text->gobj->gx_cb = OptionText_GX;
     text->is_depth_compare = 1;
     Text_AddSubtext(text, 0, -15, opt_name);

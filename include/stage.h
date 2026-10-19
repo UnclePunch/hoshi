@@ -2,6 +2,7 @@
 #define KAR_H_STAGE
 
 #include "datatypes.h"
+#include "audio.h"
 #include "obj.h"
 #include "hurt.h"
 #include "collision.h"
@@ -141,7 +142,16 @@ typedef struct GrObj
     GroundKind gr_kind; // 0x4
     GrData *gr_data;    // 0x8
 } GrObj;
+typedef struct StageDesc
+{
+    char *data_file;             // 0x0
+    int x4;                     // 0x4
+    char *model_file;           // 0x8
+    int xc;                     // 0xc
+    int x10;                    // 0x10
+} StageDesc;
 
+static StageDesc *stc_stagedesc = (StageDesc *)(0x804a2ffc);
 static GrData **stc_grdatalookup = (GrData **)(0x80557638); // indexed by gr_kind
 static GrObj **stc_grobj = (GrObj **)(0x805dd0e0 + 0x5ec);
 

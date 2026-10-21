@@ -157,7 +157,6 @@ void Hook_3DPauseEnd(int pause_ply)
 };
 CODEPATCH_HOOKCREATE(0x80041174, "lbz 3,0x0830 (29)\n\t", Hook_3DPauseEnd, "", 0)
 
-
 // runs upon unpausing 3d scene
 void Hook_3DUnPause(int pause_ply)
 {
@@ -277,6 +276,22 @@ void Hook_OnHideHUD()
 };
 CODEPATCH_HOOKCREATE(0x80112968, "", Hook_OnHideHUD, "", 0)
 
+// runs when the game resets
+void Hook_OnReset()
+{
+    // loop through installed mods, run their function
+    for (int i = 0; i < stc_modloader_data->mod_num; i++)
+    {
+        GlobalMod *this_mod = &stc_modloader_data->mods[i];
+
+        if (this_mod->desc->OnReset)
+            this_mod->desc->OnReset();
+    }
+
+    return;
+};
+CODEPATCH_HOOKCREATE(0x800063bc, "", Hook_OnReset, "", 0)
+
 ////////////////////////////////////////////
 //                                        //
 //       Main program entrypoint.         //
@@ -360,8 +375,7 @@ void OnFileLoad(ModHeader *file)
     CODEPATCH_HOOKAPPLY(0x80006a30);
     CODEPATCH_HOOKAPPLY(0x801126d8);
     CODEPATCH_HOOKAPPLY(0x80112968);
-
-    
+    CODEPATCH_HOOKAPPLY(0x800063bc);    
     
     Settings_Init(stc_modloader_data);
     MainMenu_ApplyPatches();
@@ -521,7 +535,7 @@ void Mods_LoadGlobal(int entrynum)
     this_mod->mod_header = file;
 
     LOG_INFO("~~~~~~~~~~~~~~~~~~~~~");
-    LOG_INFO("   Installing global mod...");
+    LOG_INFO("   Installing mod...");
     LOG_INFO("   Name:\t\t%s", this_mod->desc->name);
     LOG_INFO("   Author:\t\t%s", this_mod->desc->author);
     LOG_INFO("   Version:\t\t%d.%d", this_mod->desc->version.major, this_mod->desc->version.minor);

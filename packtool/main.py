@@ -9,7 +9,7 @@ import argparse
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
-VERSION = 12
+VERSION = 13
 
 # Version History:
 #  1 - (07-01-25) introductory version
@@ -24,6 +24,7 @@ VERSION = 12
 # 10 - (09-27-26) add OnShowHUD, OnHideHUD, and g_hud_is_hidden
 # 11 - (10-02-26) add OnPauseStart, OnPauseEnd
 # 12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
+# 13 - (10-21-26) add OnReset()
 
 build_dir = "_build"
 

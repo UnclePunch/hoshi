@@ -32,6 +32,7 @@ typedef struct ModDesc
     void (*OnFrameEnd)();
     void (*OnShowHUD)();
     void (*OnHideHUD)();
+    void (*OnReset)();
 } ModDesc;
 
 

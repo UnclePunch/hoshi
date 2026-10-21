@@ -452,8 +452,8 @@ typedef struct GameData // 805359d8
         int x398 : 8;                // 0x398,
         CityMode mode : 8;           // 0x399, which mode was selected from the menu
         int x39a : 8;                // 0x39a,
-        int scene : 8;               // 0x39b, 3 = player select screen, 4 = in game, 5 = properties graph, 6 = stadium splash, 7 = stadium, 8 = results screen
-        int x39c;                    // 0x39c
+        CitySceneKind scene : 8;     // 0x39b
+        CitySceneKind scene_prev : 8;// 0x39c
         float ply_stats[5][9];       // 0x3a0, copied from playerblock @ 80040024
         u8 is_bike[5];               // 0x454
         u8 machine_kind[5];          // 0x459

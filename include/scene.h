@@ -69,6 +69,19 @@ typedef enum MajorKind
     MJRKIND_NUM,         //
 } MajorKind;
 
+typedef enum CitySceneKind
+{
+    CITYSCENE_0,
+    CITYSCENE_SETTINGS,
+    CITYSCENE_2,
+    CITYSCENE_PLYSELECT,
+    CITYSCENE_CITY,
+    CITYSCENE_RADAR,
+    CITYSCENE_SPLASH,
+    CITYSCENE_STADIUM,
+    CITYSCENE_RESULTS,
+} CitySceneKind;
+
 struct MajorSceneDesc
 {
     MajorKind major_id : 8;         // 0x0
@@ -832,6 +845,10 @@ void Scene_ExitMinor();                 // run this to cause a minor scene chang
 void Scene_SetDirection(int direction); // usually the button used to change scene
 int Scene_GetDirection();               // usually the button used to change scene
 void Scene_InitHeaps();                 //
+
 ScMenuCommon *Gm_GetMenuData();         // 0x80558788
 void MainMenu_InitAllVariables();
+void CitySelect_EnableLoadingAnim();
+void CitySelect_DisableLoadingAnim();
+
 #endif

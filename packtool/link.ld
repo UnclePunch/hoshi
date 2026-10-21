@@ -386,6 +386,8 @@ SECTIONS
   SOPoll = 0x8047db90;
 
   MainMenu_InitAllVariables = 0x80007808;
+  CitySelect_EnableLoadingAnim = 0x80038d1c;
+  CitySelect_DisableLoadingAnim = 0x80038d44;
   SelIcon_GetCKind = 0x8000b9bc;
   Gm_GetMenuData = 0x801311E0;
   Gm_GetGameData = 0x80006C14;

@@ -89,6 +89,22 @@ typedef struct YakumonoData
     int x7c;              // 0x7c
 } YakumonoData;
 
+typedef struct GrFogData
+{
+    u8 x0[0x1c];    // 0x0
+    int fog_kind;   // 0x1c
+} GrFogData;
+
+typedef struct GrFogDesc
+{
+    int transition_frames;  // 0x0
+    GXColor fog_color;      // 0x4
+    float fog_near;         // 0x8
+    float fog_far;          // 0xc
+    GXColor map_color;      // 0x10
+    GXColor sky_color;      // 0x14
+} GrFogDesc;
+
 typedef struct GrModelMotionAnim
 {
     AnimJointDesc *anim_joint;
@@ -126,9 +142,20 @@ typedef struct GrData // exists in the stage file
     int x28;               // 0x1c
     int x2c;               // 0x1c
     int x30;               // 0x1c
-    int x34;               // 0x1c
-    int x38;               // 0x1c
-    int x3c;               // 0x1c
+    struct
+    {
+        struct
+        {
+            HSD_FogDesc *desc;           // 0x0
+        } *data;
+        struct
+        {
+            GrFogDesc *desc_arr; 
+            int num;                // 0x4
+        } *colors;              // 0x4
+    } *fog;                // 0x34
+    int x38;               // 0x38
+    int x3c;               // 0x3c
     struct
     {
         YakumonoParam *data;
@@ -141,6 +168,8 @@ typedef struct GrObj
     GOBJ *gobj;         // 0x0
     GroundKind gr_kind; // 0x4
     GrData *gr_data;    // 0x8
+    u8 xc[0x15c];       // 0xc
+    GOBJ *fog_gobj;     // 0x168
 } GrObj;
 typedef struct StageDesc
 {

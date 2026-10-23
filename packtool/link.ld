@@ -147,6 +147,7 @@ SECTIONS
   GXSetChanCtrl = 0x803cd4e4;
   GXSetNumChans = 0x803cd4a0;
   GXSetNumTevStages = 0x803cf30c;
+  GXSetNumIndStages = 0x803ce9f4;
   GXSetNumTexGens = 0x803CBA08;
   GXSetCullMode = 0x803CC518;
   GXSetAlphaCompare = 0x803CF05C;
@@ -159,7 +160,17 @@ SECTIONS
   GXSetTevKColor = 0x803CEE20;
   GXLoadPosMtxImm = 0x803D073C;
   GXSetCurrentMtx = 0x803D07DC;
+  GXInitTexObj = 0x803cd7d4;
+  GXInitTexObjLOD = 0x803cda90;
+  GXLoadTexObj = 0x803cdde4;
+  GXSetTexCoordGen2 = 0x803cb738;
+  GXSetCopyClear = 0x8033d8a0;
+  GXCopyDisp = 0x803ccc78;
+  GXCopyTex = 0x8033dcbc;
+  GXSetTexCopySrc = 0x8033d4c8;
+  GXSetTexCopyDst = 0x8033d5cc;
   GXSetScissor = 0x803d0a28;
+  GXSetViewport = 0x803d09cc;
   GXInvalidateVtxCache = 0x803cb728;
   GXInvalidateTexAll = 0x803ce084;
   HSD_Free = 0x8041CEB4;

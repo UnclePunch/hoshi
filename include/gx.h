@@ -52,7 +52,9 @@ struct GXPipe
 typedef enum GXBool
 {
     GX_DISABLE,
-    GX_ENABLE
+    GX_ENABLE,
+    GX_FALSE = 0,
+    GX_TRUE,
 } GXBool;
 
 typedef enum GXCullMode
@@ -413,6 +415,16 @@ typedef enum GXTexMtxType
     GX_MTX2x4,
 } GXTexMtxType;
 
+typedef enum GXTexFilter
+{
+    GX_NEAR,
+    GX_LINEAR,
+    GX_NEAR_MIP_NEAR,
+    GX_LIN_MIP_NEAR,
+    GX_NEAR_MIP_LIN,
+    GX_LIN_MIP_LIN,
+} GXTexFilter;
+
 typedef enum GXColorSrc
 {
     Register,
@@ -553,6 +565,14 @@ typedef enum GXTevRegID
     GX_MAX_TEVREG
 } GXTevRegID;
 
+typedef enum GXAnisotropy
+{
+    GX_ANISO_1,
+    GX_ANISO_2,
+    GX_ANISO_4,
+    GX_MAX_ANISOTROPY,
+} GXAnisotropy;
+
 struct VIUnknown
 {
     u8 x0[0x1400];
@@ -581,6 +601,7 @@ void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts);
 void GXEnd();
 void GXPixModeSync();
 void GXInitTexObj(GXTexObj *obj, void *image_ptr, u16 width, u16 height, GXTexFmt format, GXTexWrapMode wrap_s, GXTexWrapMode wrap_t, GXBool mipmap);
+void GXInitTexObjLOD(GXTexObj* obj, GXTexFilter min_filt, GXTexFilter mag_filt, f32 min_lod, f32 max_lod, f32 lod_bias, GXBool bias_clamp, GXBool do_edge_lod, GXAnisotropy max_aniso);
 void GXLoadTexObj(GXTexObj *obj, GXTexMapID id);
 void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc src_param, u32 mtx, GXBool normalize, u32 postmtx);
 void GXInvalidateTexAll();
@@ -601,6 +622,7 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor *amb_color);
 void GXSetNumTexGens(u8 nTexGens);
 void GX_blr(int, int);
 void GXSetNumTevStages(u8 stages);
+void GXSetNumIndStages(u8 stages);
 void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXChannelID color);
 void GXSetTevColor(GXTevRegID id, GXColor *color);
 void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c, GXTevColorArg d);
@@ -623,6 +645,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
 void GXSetViewport(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 void GXSetDispCopyGamma(GXGamma gamma);
 void GXSetCopyClear(GXColor clear_clr, u32 clear_z);               // 8033d8a0
+void GXCopyDisp(void* dest, GXBool clear);                         // 803ccc78
 void GXCopyTex(void *dest, GXBool clear);                          // 8033dcbc
 void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht);           // 8033d4c8
 void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap); // 8033d5cc

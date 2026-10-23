@@ -222,14 +222,29 @@ MinorKind Scenes_InstallMinorScene(MinorSceneDesc *scene_desc)
     return scene_desc->idx;
 }
 
+int Hoshi_StubFunc()
+{
+    return 0;
+}
+
 // Functions
 void Scenes_CopyVanilla()
 {
     memcpy(&major_scene_descs, stc_major_scene_desc, sizeof(MajorSceneDesc) * MJRKIND_NUM); // copy all vanilla scenes to our relocated struct
-    memset(stc_major_scene_desc, -1, sizeof(MajorSceneDesc) * MJRKIND_NUM);                 // zero it all out to ensure no reads are occuring
-
     memcpy(&minor_scene_descs, stc_minor_scene_desc, sizeof(MinorSceneDesc) * MNRKIND_NUM); // copy all vanilla scenes to our relocated struct
-    memset(stc_minor_scene_desc, -1, sizeof(MinorSceneDesc) * MNRKIND_NUM);                 // zero it all out to ensure no reads are occuring
+
+    // memset(stc_major_scene_desc, -1, sizeof(MajorSceneDesc) * MJRKIND_NUM);                 // zero it all out to ensure no reads are occuring
+    // memset(stc_minor_scene_desc, -1, sizeof(MinorSceneDesc) * MNRKIND_NUM);                 // zero it all out to ensure no reads are occuring
+
+    // we use the memory previously occupied by stc_major_scene_desc to hold pointers to functions within hoshi so mods can call them
+    // begin by stubbing all of these pointers in case a mod calls one that isn't present
+    int *instr_ptr;
+    instr_ptr = (int *)stc_major_scene_desc;
+    for (int i = 0; i < MJRKIND_NUM; i++)
+        instr_ptr[i] = 0x48000000 | ((int)Hoshi_StubFunc - ((int)&instr_ptr[i]) & 0x3FFFFFC);
+    instr_ptr = (int *)stc_minor_scene_desc;
+    for (int i = 0; i < MNRKIND_NUM; i++)
+        instr_ptr[i] = 0x48000000 | ((int)Hoshi_StubFunc - ((int)&instr_ptr[i]) & 0x3FFFFFC);
 }
 void Scenes_ApplyPatches()
 {

@@ -9,6 +9,8 @@ u8 Hoshi_InstallMajorScene(MajorSceneDesc *);
 MinorSceneDesc *Hoshi_GetMinorScenes();
 u8 Hoshi_InstallMinorScene(MinorSceneDesc *);
 
+void Hoshi_SetBootScene(MajorKind kind, u8 pri);
+
 int Hoshi_WriteSave();
 
 int Hoshi_AddPreloadMenuFile(char *file_name);

@@ -516,4 +516,6 @@ SECTIONS
   Hoshi_GetBackupSize = 0x80495184;
   Hoshi_BackupModSave = 0x80495188;
   Hoshi_RestoreModSave = 0x8049518c;
+  Hoshi_SetBootScene = 0x80495190;
+  /* 804951f4 is the last free ptr in this array! can use 0x80495058 -> 0x804950a4 after */
 }

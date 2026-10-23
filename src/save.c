@@ -18,6 +18,7 @@
 #include "hash.h"
 #include "hoshi.h"
 #include "settings.h"
+#include "boot_scene.h"
 
 #include "hoshi/func.h"
 #include "hoshi/log.h"
@@ -83,6 +84,9 @@ void KARPlusSave_OnSaveCreateOrLoad()
 
     // run on load callbacks
     Mods_OnLoadSaveData();
+
+    // set boot scene (ideally this wouldnt be called from save.c but i cant define 2 hooks on the same dol address due to symbol name collision. i should really include function name in the symbol)
+    BootScene_Apply();
 
     LOG_INFO("Finished initializing save.");
     LOG_INFO("---------------------\n");

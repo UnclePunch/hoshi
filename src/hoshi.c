@@ -24,6 +24,7 @@
 
 // Hoshi
 #include "export.h"
+#include "boot_scene.h"
 #include "screen_cam.h"
 #include "hoshi/func.h"
 #include "hoshi/log.h"
@@ -321,6 +322,7 @@ void OnFileLoad(ModHeader *file)
     Export_Init();      // init mod export/import 
     ScreenCam_Init();   // init screen camera
     KARPlusSave_Init(); // Init save data
+    BootScene_Init();   // Init boot scene
 
     CODEPATCH_REPLACEFUNC(hash_32, _hash_32);         // install our hash function
     CODEPATCH_REPLACEFUNC(hash_32_str, _hash_32_str); // install our string hash function

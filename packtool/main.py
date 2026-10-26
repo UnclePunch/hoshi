@@ -254,7 +254,7 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
                 target_section_offset = target_addend
             # while everything else uses the section value from the target symbol
             else:
-                target_section_offset = target_symbol_section_value
+                target_section_offset = target_symbol_section_value + target_addend
 
             if 0:
                 print(f"[Reloc #{i}]")
@@ -282,7 +282,7 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
             if is_embedded_func:
                 patch_data = reloc_symbol_section.bytes_offset + target_section_offset
             else:
-                patch_data = target_symbol_section_value
+                patch_data = target_symbol_section_value + target_addend
 
             if patch_offset > 0xFFFFFF:
                 raise ValueError(f"Instruction offset too large: 0x{patch_offset:X}")
@@ -359,6 +359,7 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
         f.write(encoded_relocs)  
 
         print(f"Relocs size: {len(encoded_relocs) / 1024:.2f}kb")
+        print(f"Debug symbols size: {(len(func_lookup_data) + len(func_name_data)) / 1024:.2f}kb")
         print(f"Wrote {f.tell() / 1024:.2f} kilobytes of data to {output_path}")
         
 

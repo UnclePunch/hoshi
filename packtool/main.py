@@ -209,7 +209,7 @@ def write_modbin(output_path, all_sections: list[Section], reloc_sections : list
     func_num = 0
     for symbol in func_symbols:
         symbol_name_offset = len(func_name_data)
-        symbol_size = all_sections[symbol.section_index].size
+        symbol_size = symbol.section_size
         func_file_offset = all_sections[symbol.section_index].bytes_offset + symbol.section_value
         func_lookup_data += struct.pack(">I I I", symbol_name_offset, func_file_offset, symbol_size)
         func_name_data += symbol.name.encode('ascii') + b'\x00'

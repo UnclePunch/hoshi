@@ -42,11 +42,12 @@ class RelocSection:
         return f"<RelocSection {self.name} target_section_index=0x{self.target_section_index} reloc_data={self.reloc_data}>"
 
 class Symbol:
-    def __init__(self, name, type, section_index, section_value):
+    def __init__(self, name, type, section_index, section_value, section_size):
         self.name = name                        # Symbol name
         self.type = type                        # 
         self.section_index = section_index      # the section index this symbol exists in OR SHN_ABS if the symbol is absolute
         self.section_value = section_value      # offset in section OR memory address if the symbol is absolute
+        self.section_size = section_size        # size of the symbol
 
     def __repr__(self):
         section_index_string = "Absolute" if self.section_index == 'SHN_ABS' else f"{self.section_index}"
@@ -72,6 +73,7 @@ def extract(elf_path) -> tuple[list[Section], list[Symbol], list[RelocSection]]:
                 type=symbol.entry['st_info']['type'],
                 section_index=symbol['st_shndx'],
                 section_value=symbol['st_value'],
+                section_size=symbol['st_size'],
             )
             #print(f"{this}")
             symbols.append(this)

@@ -148,6 +148,14 @@ typedef struct HUDElementCommonData
     int x10;           //
 } HUDElementCommonData;
 
+typedef enum HUDScreenEdgeKind
+{
+    SCREENEDGE_TOP,
+    SCREENEDGE_BOTTOM,
+    SCREENEDGE_LEFT,
+    SCREENEDGE_RIGHT,
+} HUDScreenEdgeKind;
+
 static HSD_Archive **stc_if_all_archive = (HSD_Archive **)(0x805dd0e0 + 0x690);
 static u8 *g_hud_is_hidden = (u8 *)0x8048b5d9;  // this is a hoshi variable, placing it here for convenience
 
@@ -164,6 +172,9 @@ GOBJ *HUD_CreateFinish(int ply);
 void HUD_GXLink(GOBJ *g, int pass);
 void HUD_AddElementData(GOBJ *g, HUDKind kind, int ply, int ply2);
 void HUD_UpdateElement(JOBJ *j, int frame);
+
+// this function handles scaling the plicon and rotating it based on the edge its on
+HUDScreenEdgeKind HUD_AdjustPliconEdge(GOBJ *g, Vec3 *self_pos, Vec3 *opponent_pos, Vec3 *out_screen_pos, Vec3 *eye_pos);
 
 HSD_Archive **Gm_GetIfAllCityArchive();   // IfAll1c, contains common city trial specific graphics (timer, ready, pause, etc)
 HSD_Archive **Gm_GetIfAllScreenArchive(); // IfAll1Xs, contains player related HUD that needs to be scaled down based on screen number

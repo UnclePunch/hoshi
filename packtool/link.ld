@@ -129,6 +129,8 @@ SECTIONS
   JObj_GX = 0x8042A258;
   LObj_GX = 0x8042A22C;
   GXPixModeSync = 0x803CBE9C;
+  GXProject = 0x803d03f4;
+  GXSetProjection = 0x803d0568;
   GXSetDrawDone = 0x803cbdb8;
   GXWaitDrawDone = 0x803CBE50;
   GXSetColorUpdate = 0x803cf874;
@@ -440,6 +442,7 @@ SECTIONS
   HUD_CreatePlyElement = 0x80114BA4;
   HUD_GXLink = 0x80114F1C;
   HUD_AddElementData = 0x80114E24;
+  HUD_AdjustPliconEdge = 0x80120360;
   HUD_UpdateElement = 0x8011503C;
   HUD_CreateTimeUp = 0x80114178;
   HUD_CreateFinish = 0x801142fc;

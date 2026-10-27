@@ -569,6 +569,8 @@ struct COBJ
     Mtx view_mtx;       // 0x54
     AOBJ *aobj;         // 0x84
     Mtx *proj_mtx;      // 0x88
+    Vec3 eye_vector;    // 0x8C
+    u32 unk_98;         // 0x98
 };
 
 struct _HSD_ImageDesc
@@ -847,7 +849,7 @@ int CObj_SetCurrent(COBJ *cobj);
 void CObj_SetEraseColor(int r, int g, int b, int a);
 void CObj_EraseScreen(COBJ *cobj, GXBool color_update_enable, GXBool alpha_update_enable, GXBool depth_update_enable);
 void CObj_UpdateAll();
-void CObj_RenderGXLinks(GOBJ *gobj, int render_mode);
+void CObj_RenderGXLinks(GOBJ *cam_gobj, int render_mode);
 void CObj_EndCurrent();
 void CObj_SetOrtho(COBJ *cobj, float top, float bottom, float left, float right);
 void CObj_SetViewport(COBJ *cobj, float left, float right, float top, float bottom);

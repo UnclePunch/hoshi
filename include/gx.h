@@ -594,6 +594,8 @@ struct VIUnknown
 static volatile GXPipe *gx_pipe = (GXPipe *)0xCC008000;
 static VIUnknown *_p = (VIUnknown *)0x804c0980;
 
+void GXProject(float mx, float my, float mz, Mtx *mtx, float* p, float* vp,  float* sx, float* sy, float* sz);
+void GXSetProjection(Mtx44 *mtx, GXProjectionType type);
 void GXSetColor(GXColor *color);
 void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable);
 void GXSetLineWidth(u8 width, int tex_offsets);

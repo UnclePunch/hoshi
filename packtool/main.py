@@ -5,6 +5,7 @@ import shutil
 import os
 import struct
 import argparse
+import tempfile
 
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
@@ -26,7 +27,8 @@ VERSION = 13
 # 12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
 # 13 - (10-21-26) add OnReset()
 
-build_dir = "_build"
+# unique temp directory so parallel builds work
+build_dir = tempfile.mkdtemp(prefix="pack_")
 
 parser = argparse.ArgumentParser(description="Compile and pack C/ASM files into GC format.")
 parser.add_argument("linked_obj", help="Linked object file")

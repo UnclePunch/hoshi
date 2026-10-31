@@ -29,9 +29,11 @@ RIIV_OUT   = $(OUT_DIR)/Riivolution
 PREPROCESS_SCRIPT	:= dol_inject/preprocess.py
 INJECT_SCRIPT 		:= dol_inject/dol_inject.py
 
-SRC_C 		:= $(shell find $(SRC_DIR) -type f -name '*.c')
-SRC_S 		:= $(shell find $(SRC_DIR) -type f -name '*.S')
-SRC_S_TMP 	:= $(shell find $(SRC_DIR) -type f -name '*.S.tmp')
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+
+SRC_C     := $(call rwildcard,$(SRC_DIR)/,*.c)
+SRC_S     := $(call rwildcard,$(SRC_DIR)/,*.S)
+SRC_S_TMP := $(call rwildcard,$(SRC_DIR)/,*.S.tmp)
 
 # object paths in build/
 OBJ_C := $(patsubst $(SRC_DIR)/%.c,$(BUILD)/%.o,$(SRC_C))

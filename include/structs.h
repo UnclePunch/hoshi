@@ -155,7 +155,7 @@ typedef struct GeneratorAppSRT GeneratorAppSRT;
 
 // Color
 typedef struct ColAnimDesc ColAnimDesc;
-typedef struct ColorOverlay ColorOverlay;
+typedef struct ColorAnim ColorAnim;
 
 // Item
 typedef struct ItemModelDesc ItemModelDesc;

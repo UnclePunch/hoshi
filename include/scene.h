@@ -632,7 +632,7 @@ struct ScMenuCommon
     GOBJ *ScMenTitleBg_gobj;     // 0xeb0
     int xeb4;                    // 0xeb4
     GOBJ *ScMenTitleFg_gobj;     // 0xeb8
-    int xebc;                    // 0xebc
+    GOBJ *ScMenTitle3DCam_gobj;  // 0xebc
     int xec0;                    // 0xec0
     int xec4;                    // 0xec4
     int xec8;                    // 0xec8
@@ -778,19 +778,18 @@ typedef struct CitySelectMenuData
 } CitySelectMenuData;
 typedef struct CitySelectCursor0Data
 {
-    int x0;           // 0x0
-    int x4;           // 0x4
-    int x8;           // 0x8
-    JOBJ *outer_jobj; // 0xc
-    int x10;          // 0x10
-    u8 x14;           // 0x14
-    u8 ply;           // 0x15
-    u8 x16;           // 0x16
-    u8 color;         // 0x17
-    int x18;          // 0x18
-    u8 x1c;           // 0x1c
-    u8 x1d;           // 0x1d
-
+    int x0;             // 0x0
+    int x4;             // 0x4
+    int x8;             // 0x8
+    JOBJ *outer_jobj;   // 0xc
+    int x10;            // 0x10
+    u8 x14;             // 0x14
+    u8 ply;             // 0x15
+    u8 selected_state;  // 0x16, 0 = self ready, 1 = adjusting cpu/handicap, 2 = other player ready, 3 = unk, 4 = inactive
+    u8 color;           // 0x17
+    int x18;            // 0x18
+    u8 x1c;             // 0x1c
+    u8 x1d;             // 0x1d
 } CitySelectCursor0Data;
 typedef struct CitySelectCursor1Data
 {

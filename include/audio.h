@@ -721,6 +721,7 @@ void AudioEmitter_SetPosition(AudioEmitter source, Vec3 *pos, float unk); //
 void AudioEmitter_Init(AudioEmitter source); // is called before playing. inits distance value
 int AudioEmitter_CheckUnk(AudioEmitter source);
 void AudioEmitter_Play(int sfx, int audio_track, AudioEmitter source); // you can play multiple sounds per track and prox?
+void AudioTrack_Init();
 int AudioTrack_Alloc(); // 
 void AudioTrack_Free(int audio_track); // 
 int Audio_GetFGMNumUsingSoundGenerator(int sg);

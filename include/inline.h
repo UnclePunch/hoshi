@@ -205,19 +205,17 @@ static inline GOBJ *GOBJ_EZCreator(int entity_class, int p_link, int flags, int 
         else if (obj_kind == HSD_OBJKIND_FOG)
             obj = Fog_LoadDesc(obj_desc);
         else if (obj_kind == HSD_OBJKIND_LOBJ)
-            obj = LObj_LoadDesc(obj_desc);
+            obj = HSD_LightGroupLoad(obj_desc);
         else if (obj_kind == HSD_OBJKIND_COBJ)
             obj = COBJ_LoadDescSetAspect(obj_desc);
 
         GObj_AddObject(g, obj_kind, obj);
-
-        if (obj_kind == HSD_OBJKIND_COBJ)
-        {
-            GOBJ_InitCamera(g, gx_cb, gx_pri);
-            g->cobj_links = gx_link;
-        }
-        else if (obj_kind == HSD_OBJKIND_JOBJ)
-            GObj_AddGXLink(g, gx_cb, gx_link, gx_pri);
+    }
+    
+    if (obj_kind == HSD_OBJKIND_COBJ)
+    {
+        GOBJ_InitCamera(g, gx_cb, gx_pri);
+        g->cobj_links = gx_link;
     }
     else if (gx_cb)
         GObj_AddGXLink(g, gx_cb, gx_link, gx_pri);

@@ -13,7 +13,7 @@ struct ColAnimDesc // in PlCo
     u8 priority;  // 0x4
     u8 x5;        // 0x5, forget what this does
 };
-struct ColorOverlay
+struct ColorAnim
 {
     int timer;                      // 0x0
     int pri;                        // 0x4  this colanims priority, lower = will persist
@@ -54,9 +54,11 @@ struct ColorOverlay
     unsigned char flag6 : 1;        // 0x7c, 0x04
     unsigned char flag7 : 1;        // 0x7c, 0x02
     unsigned char flag8 : 1;        // 0x7c, 0x01
+    u8 unk[0x2f];                   // 0x7d
+                                    // 0xac
 };
 
-void ColAnim_Apply(ColorOverlay *col, void *colanim_data, int colanim_index, int r6);
-void ColAnim_Disable(ColorOverlay *col);
+void ColAnim_Apply(ColorAnim *col, void *colanim_data, int colanim_index, int r6);
+void ColAnim_Disable(ColorAnim *col);
 
 #endif

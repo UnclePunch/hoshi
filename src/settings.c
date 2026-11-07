@@ -578,7 +578,7 @@ void Menu_CreateOptions(GOBJ *m)
     if (sel_option->description)
         Text_Sanitize(sel_option->description, buf, sizeof(buf));
     else
-        Text_Sanitize("No description.", buf, sizeof(buf));
+        Text_Sanitize("", buf, sizeof(buf));
 
     Text_SetText(stc_settings_data.description_text, 0, buf);
 }

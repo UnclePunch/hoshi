@@ -674,8 +674,8 @@ struct LObjDesc
     u16 flags;                      // 0x08
     u16 attnflags;                  // 0x0A
     GXColor color;                  // 0x0C
-    struct _HSD_WObjDesc *position; // 0x10
-    struct _HSD_WObjDesc *interest; // 0x14
+    WOBJDesc *position;             // 0x10
+    WOBJDesc *interest;             // 0x14
     union
     {
         void *p;
@@ -892,8 +892,9 @@ void JObj_GX(GOBJ *gobj, int pass);
 int GX_LookupRenderPass(int pass);
 void LObj_GX(GOBJ *gobj, int pass);
 void Fog_GX(GOBJ *gobj, int pass);
+void LObj_SetupInit();
 LOBJ *LObj_LoadDesc(void *lobjdesc);
-LOBJ *LObj_CreateAll(void **lobjdesc);
+LOBJ *HSD_LightGroupLoad(LightGroup *);
 int LObj_GetPosition(LOBJ *lobj, Vec3 *pos);
 void LObj_SetPosition(LOBJ *lobj, Vec3 *pos);
 int LObj_GetInterest(LOBJ *lobj, Vec3 *pos);

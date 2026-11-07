@@ -18,6 +18,7 @@ SECTIONS
   AudioEmitter_Init = 0x80061168;
   AudioEmitter_Play = 0x8005f528;
   AudioEmitter_CheckUnk = 0x800623ec;
+  AudioTrack_Init = 0x8005a7ac;
   AudioTrack_Alloc = 0x8005d2b4;
   AudioTrack_Free = 0x8005d64c;
   Audio_GetFGMNumUsingSoundGenerator = 0x80443d8c;
@@ -197,6 +198,7 @@ SECTIONS
   HSD_UpdateAllCObjs = 0x8042a1a8;
   HSD_VICopyXFBASync = 0x804112b4;
   HSD_LObjGetLightMaskDiffuse = 0x803fdb14;
+  HSD_LightGroupLoad = 0x80057468;
   JObj_Alloc = 0x8040C774;
   JObj_AddAnim = 0x80409340;
   JObj_AddAnimAll = 0x80409480;
@@ -233,6 +235,7 @@ SECTIONS
   JObj_AddSetAnim = 0x80138B10;
   JObj_RemoveAnimByFlags = 0x80408b54;
   JObj_RemoveAnimAllByFlags = 0x80408bd0;
+  LObj_SetupInit = 0x803fe4b8;
   LObj_LoadDesc = 0x80400238;
   LObj_GetPosition = 0x803FFCEC;
   LObj_SetPosition = 0x803FFC64;
@@ -462,6 +465,7 @@ SECTIONS
   Ply_GetMachineGObj = 0x8022d230;
   Ply_GetColor = 0x800095C0;
   Ply_GetControllerIndex = 0x8022c6ac;
+  Ply_SetPosition = 0x8022c594;
   Ply_CheckIfCPU = 0x8000948C;
   Ply_IsViewOn = 0x800098c0;
   Ply_GetViewIndex = 0x80009908;
@@ -487,7 +491,11 @@ SECTIONS
   Ply_SetHP = 0x8022ca38;
   Ply_GetAllUpCollected = 0x8022d024;
   Ply_SetAllUpCollected = 0x8022d03c;
+  Rider_Create = 0x8018e21c;
+  Rider_StateChange = 0x8018e580;
+  Rider_IsAnimEnded = 0x80198b00;
   Rider_RespawnEnter = 0x801A1D70;
+  Rider_WaitEnter = 0x801babd4;
   Rider_GiveAbility = 0x801a81a4;
   Rider_CheckUnableAbility = 0x80191798;
   Rider_AbilityRemoveModel = 0x80191554;

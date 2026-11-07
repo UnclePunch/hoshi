@@ -61,11 +61,14 @@ typedef enum GamePLink
 
 typedef enum GameGXLink
 {
+    GAMEGX_LIGHT = 0,
     GAMEGX_MAP = 1,
     GAMEGX_MACHINE = 5,
     GAMEGX_RIDER = 6,
     GAMEGX_ENEMY = 10,
-    GAMEGX_ITEM = 10,
+    GAMEGX_ITEM = 11,
+    GAMEGX_PTCL1 = 12,
+    GAMEGX_PTCL2 = 13,
     GAMEGX_HUDORTHO = 18,
     GAMEGX_HUDMAP,
     GAMEGX_HUDMAPDOTS,
@@ -1147,26 +1150,7 @@ typedef struct Game3dData
     JOBJSet **ScInfPliconKirby_scene_models;      // 0x13c
     JOBJSet **ScInfPliconDedede_scene_models;     // 0x140
     JOBJSet **ScInfPliconMetaKnight_scene_models; // 0x144
-    int x148;                                     // 0x148
-    int x14c;                                     // 0x14c
-    int x150;                                     // 0x150
-    int x154;                                     // 0x154
-    int x158;                                     // 0x158
-    int x15c;                                     // 0x15c
-    int x160;                                     // 0x160
-    int x164;                                     // 0x164
-    int x168;                                     // 0x168
-    int x16c;                                     // 0x16c
-    int x170;                                     // 0x170
-    int x174;                                     // 0x174
-    int x178;                                     // 0x178
-    int x17c;                                     // 0x17c
-    int x180;                                     // 0x180
-    int x184;                                     // 0x184
-    int x188;                                     // 0x188
-    int x18c;                                     // 0x18c
-    int x190;                                     // 0x190
-    int x194;                                     // 0x194
+    GOBJ *plicon_gobj[4][5];                      // 0x148
     int x198;                                     // 0x198
     int x19c;                                     // 0x19c
     int x1a0;                                     // 0x1a0
@@ -1234,10 +1218,7 @@ typedef struct Game3dData
     int x298;                                     // 0x298
     int x29c;                                     // 0x29c
     int x2a0;                                     // 0x2a0
-    int x2a4;                                     // 0x2a4
-    int x2a8;                                     // 0x2a8
-    int x2ac;                                     // 0x2ac
-    int x2b0;                                     // 0x2b0
+    GOBJ *ply_hp_gobj[4];                         // 0x2a4
     int x2b4;                                     // 0x2b4
     int x2b8;                                     // 0x2b8
     int x2bc;                                     // 0x2bc
@@ -1262,10 +1243,7 @@ typedef struct Game3dData
     int x308;                                     // 0x308
     int x30c;                                     // 0x30c
     int x310;                                     // 0x310
-    int x314;                                     // 0x314
-    int x318;                                     // 0x318
-    int x31c;                                     // 0x31c
-    int x320;                                     // 0x320
+    GOBJ *mapply_gobj[4];                         // 0x314
     int x324;                                     // 0x324
     int x328;                                     // 0x328
     int x32c;                                     // 0x32c
@@ -1455,10 +1433,7 @@ typedef struct Game3dData
     int x604;                                     // 0x604
     int x608;                                     // 0x608
     int x60c;                                     // 0x60c
-    int x610;                                     // 0x610
-    int x614;                                     // 0x614
-    int x618;                                     // 0x618
-    int x61c;                                     // 0x61c
+    GOBJ *ply_walk_gobj[4];                         // 0x610
     int x620;                                     // 0x620
     int x624;                                     // 0x624
     int x628;                                     // 0x628
@@ -1744,7 +1719,7 @@ typedef struct Game3dData
     int xb18;                                     // 0xb18
     int xb1c;                                     // 0xb1c
     int xb20;                                     // 0xb20
-    GOBJ *plynm_gobj[4];                          // 0xb24, these are the player indicators in the bottom left of splitscreen matches
+    GOBJ *plynm2_gobj[4];                          // 0xb24, these are the player indicators in the bottom left of splitscreen matches
     int xb34;                                     // 0xb34
     int xb38;                                     // 0xb38
     int xb3c;                                     // 0xb3c
@@ -1896,7 +1871,10 @@ typedef struct gmDataAll
 
 typedef struct PlayerData
 {
-    u8 x0[0x90c];
+    u8 x0[0x3c];                // 
+    GOBJ *rider_gobj;           // 0x3c
+    u8 x40[0x8CC];              // 
+    // total length is 0x90c
 } PlayerData;
 
 typedef struct PlayerStats
@@ -2327,6 +2305,7 @@ int Ply_GetViewIndex(int ply);
 RiderKind Ply_GetRiderKind2(int ply);
 PKind Ply_GetPKind(int ply);
 RiderKind Ply_GetRiderKind(int ply);
+void Ply_SetPosition(int ply, Vec3 *pos);
 void Ply_SetRiderKind(RiderKind kind);
 void Ply_SetMachineKind(int ply, MachineKind kind);
 int Ply_GetMachineKind(int ply);

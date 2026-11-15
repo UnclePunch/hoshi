@@ -21,6 +21,7 @@
 #define CREDIT_FINAL_SPACING (TEXTGLYPH_SIZE * 3)
 
 #define SCROLL_SPEED (0.6)
+#define SCROLL_SPEED_MULT (5)
 
 typedef enum CreditTextKind
 {

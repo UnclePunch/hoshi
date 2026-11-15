@@ -15,6 +15,7 @@
 extern ModloaderData *stc_modloader_data;
 extern char *g_iso_name; // dependent on the stack module loading the iso name
 
+static float stc_scroll_speed;
 static int is_mod_credits_done;
 static int is_final_credit_done;
 static int stc_canvas_idx;
@@ -202,12 +203,18 @@ void CreditsMinor_Think()
             }
         }
     }
-    
+
+    // increase scroll speed while holding A
+    if (Pad_GetHeld(20) & (PAD_BUTTON_A | PAD_TRIGGER_L | PAD_TRIGGER_R))
+        stc_scroll_speed = SCROLL_SPEED * SCROLL_SPEED_MULT;
+    else
+        stc_scroll_speed = SCROLL_SPEED;
+
     // check to exit via inputs
-    if (Pad_GetDown(20) & (PAD_BUTTON_A | PAD_BUTTON_B | PAD_BUTTON_START))
+    if (Pad_GetDown(20) & (PAD_BUTTON_B | PAD_BUTTON_START))
     {
         BGM_Stop();
-        SFX_Play(FGMMENU_CS_KETTEI);
+        SFX_Play(FGMMENU_CS_CANCEL);
         Scene_SetDirection(PAD_BUTTON_B);
         Scene_ExitMinor();
         return;
@@ -289,7 +296,7 @@ void CreditsText_Think(GOBJ *g)
         {
             case (CREDITSTATE_NORMAL):
             {
-                gp->pos.Y -= SCROLL_SPEED;
+                gp->pos.Y -= stc_scroll_speed;
 
                 // check to destroy
                 if (gp->pos.Y + gp->text_cursor.Y <= -stc_cobj_desc.projection_param.ortho.top)
@@ -303,7 +310,7 @@ void CreditsText_Think(GOBJ *g)
 
                 // scroll logic
                 if (y_center > 0)
-                    gp->pos.Y -= SCROLL_SPEED;
+                    gp->pos.Y -= stc_scroll_speed;
                 else
                 {
                     // wait for last credit to be destroyed before fading out

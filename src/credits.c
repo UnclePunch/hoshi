@@ -130,7 +130,7 @@ void CreditsMinor_Enter()
     gp = g->userdata;
     gp->t[CREDITTEXT_MOD]->aspect = (Vec2){500, 32};
     CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){187, 187, 187, 255}, 0.6f, 0, 0, "hoshi");
-    CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){187, 187, 187, 255}, 0.8f, 0, 10, "Programmed and Directed by");
+    CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){187, 187, 187, 255}, 0.8f, 0, 10, "Created and Programmed by");
     CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){255, 255, 255, 255}, 0.8f, 0, 10, "UnclePunch");
     gp->text_cursor.Y += CREDIT_MOD_END_SPACING;
     gp->pos.Y = -stc_cobj_desc.projection_param.ortho.bottom;

@@ -17,6 +17,12 @@ typedef enum RiderKind
     RDKIND_NUM,
 } RiderKind;
 
+typedef enum RiderMotionFileKind
+{
+    RDMOTIONFILE_MAIN,
+    RDMOTIONFILE_DEMO,
+} RiderMotionFileKind;
+
 typedef enum RiderPri
 {
     RDPRI_0,
@@ -120,7 +126,9 @@ typedef enum RiderStatus
     RDSTATE_MININADOSTART,
     RDSTATE_MININADOLOOP,
     RDSTATE_MININADOEND,
-    RDSTATE_NUM = 101,
+    // walk states
+    RDSTATE_WK_WAIT = 113,
+    RDSTATE_NUM,
 } RiderStatus;
 
 typedef enum RiderMotionStatus
@@ -131,7 +139,33 @@ typedef enum RiderMotionStatus
     RD_MSTATUS_PUSHTURNR,
     RD_MSTATUS_PUSHEND,
     RD_MSTATUS_PUSHFORWARD,
-    RD_MSTATUS_NUM = 101,
+    // walk anims
+    RD_MSTATUS_WK_WAIT1 = 488,
+    RD_MSTATUS_WK_WAIT2,
+    RD_MSTATUS_WK_SLOW,
+    RD_MSTATUS_WK_MIDDLE,
+    RD_MSTATUS_WK_RUN,
+    RD_MSTATUS_WK_RUNTURNL,
+    RD_MSTATUS_WK_RUNTURNR,
+    RD_MSTATUS_WK_DASH,
+    RD_MSTATUS_WK_496,
+    RD_MSTATUS_WK_497,
+    RD_MSTATUS_WK_RUNBRAKE,
+    RD_MSTATUS_WK_RUNTURN,
+    RD_MSTATUS_WK_SQUAT,
+    RD_MSTATUS_WK_JUMP,
+    RD_MSTATUS_WK_FALL,
+    RD_MSTATUS_WK_LANDING,
+    RD_MSTATUS_WK_GETON = 532,
+    RD_MSTATUS_WK_WATERWAIT = 535,
+    RD_MSTATUS_WK_SWIM,
+    RD_MSTATUS_WK_SWIMDASH,
+    RD_MSTATUS_WK_AERIALFLY1,
+    RD_MSTATUS_WK_AERIALFLY2,
+    RD_MSTATUS_WK_AERIALFLY3,
+    RD_MSTATUS_WK_AERIALFLY4,
+    RD_MSTATUS_WK_AERIALFLY5,
+    RD_MSTATUS_NUM,
 } RiderMotionStatus;
 
 typedef enum CopyKind
@@ -151,6 +185,12 @@ typedef enum CopyKind
     COPYKIND_NUM,
 } CopyKind;
 
+typedef struct rdAnimFile
+{
+    int anim_num;       // number of anims in this file
+    void *rdMotion;     // motion data array pointer
+} rdAnimFile;
+
 typedef struct rdDataKirby
 {
     void *attr; // 0x0
@@ -164,7 +204,7 @@ typedef struct rdDataKirby
         void *texture_table;
     } *model;  // 0x4
     void *x8;  // 0x8
-    void *xc;  // 0xc
+    rdAnimFile *anim;   // 0xc
     void *x10; // 0x10
     struct
     {
@@ -181,6 +221,12 @@ typedef struct rdDataKirby
         Vec3 offset;  // 0xC
     } *jostle;        // 0x18, sphere that detects walking nudge collision
 } rdDataKirby;
+
+typedef struct RiderFunc
+{
+    void (*on_state_change)(RiderData *);                               // 0x28
+    int (*get_adjusted_state_index)(RiderData *, int unk_anim_idx);     // 0x3c
+} RiderFunc;
 
 typedef struct RiderDesc
 {
@@ -209,16 +255,16 @@ typedef struct RiderData
     int x14;                              // 0x14
     rdDataKirby *rdDataKirby;             // 0x18
     RiderStatus status;                   // 0x1c, state index
-    int x20;                              // 0x20
+    int unk_state_num;                    // 0x20, is 29 for all riders? 8018de54
     int state_frame;                      // 0x24
     RiderMotionStatus mstatus;            // 0x28, motion state
-    int x2c;                              // 0x2c
-    int x30;                              // 0x30
-    int x34;                              // 0x34
-    int x38;                              // 0x38
+    void *x2c;                            // 0x2c
+    void *x30;                            // 0x30
+    void *cur_rd_motion_ptr;              // 0x34
+    float script_cur_frame;               // 0x38
     int x3c;                              // 0x3c
-    int x40;                              // 0x40
-    int x44;                              // 0x44
+    void *script_ptr;                     // 0x40
+    int script_x44;                       // 0x44
     int x48;                              // 0x48
     int x4c;                              // 0x4c
     int x50;                              // 0x50
@@ -328,9 +374,9 @@ typedef struct RiderData
     u8 x429;                   // 0x429
     struct                     // 0x42a
     {                          //
-        u8 x0;                 //
-        u8 cur_mat_index;      // material index currently being used for this model part (changes if wing kirby or fire)
-        u8 original_mat_index; // material index that describes the original color
+        s8 req_mat_index;      //
+        s8 cur_mat_index;      // material index currently being used for this model part (changes if wing kirby or fire)
+        s8 original_mat_index; // material index that describes the original color
     } model_part[3];           // probably more of these
     u8 x433;                   // 0x433
     int x434;                  // 0x434
@@ -767,13 +813,16 @@ typedef struct RiderData
     int xac0;                           // 0xac0
 } RiderData;
 
+static RiderFunc **stc_rider_func = (RiderFunc **)0x804adbd8;       // array based on rider kind
 static rdDataKirby **stc_rdDataKirby = (rdDataKirby **)0x80559fa8;
 
+void Rider_LoadModelAndMotion(RiderKind rider_kind, RiderMotionFileKind motion_file, int is_load_walk_anims);
 GOBJ *Rider_Create(RiderDesc *);
-void Rider_StateChange(RiderData *rd, RiderStatus status, int r4, int r5, int r6, float start_frame, float rate, float blend);
+void Rider_StateChange(RiderData *rd, RiderStatus status, RiderMotionStatus mstatus_override, int r6, float start_frame, float rate, float blend); // mstatus_override = -1 to use anim associated with the state
 int Rider_IsAnimEnded(RiderData *rd);
 void Rider_RespawnEnter(RiderData *);
 void Rider_WaitEnter(RiderData *);
+void Rider_InactiveEnter(RiderData *);
 void Rider_GiveAbility(RiderData *, CopyKind);
 int Rider_CheckUnableAbility(RiderData *); // checks if the rider can receive an ability?
 void Rider_AbilityRemoveModel(RiderData *);

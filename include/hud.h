@@ -156,6 +156,8 @@ typedef enum HUDScreenEdgeKind
     SCREENEDGE_RIGHT,
 } HUDScreenEdgeKind;
 
+
+static HSD_Archive **stc_if_all_s_archive = (HSD_Archive **)(0x805dd0e0 + 0x68c);
 static HSD_Archive **stc_if_all_archive = (HSD_Archive **)(0x805dd0e0 + 0x690);
 static u8 *g_hud_is_hidden = (u8 *)0x8048b5d9;  // this is a hoshi variable, placing it here for convenience
 

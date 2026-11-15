@@ -318,7 +318,7 @@ typedef struct GameData // 805359d8
     int x1cc; // 0x1cc
     struct
     {
-        u8 x1d0;                        // 0x1d0
+        u8 is_enter_from_settings;      // 0x1d0
         u8 x1d1[3];                     // 0x1d1
         u8 x1d4;                        // 0x1d4
         u8 is_all_ready;                // 0x1d5, checks for start inputs when this is 1
@@ -2327,6 +2327,8 @@ int ClearChecker_CheckUnlocked(GameMode gm, int clear_kind);
 u8 ClearChecker_GetClearData(GameMode gm, int clear_kind);
 int Gm_IsGrKindCity(GroundKind gr_kind);
 int Gm_IsDestructionDerby();
+void CitySelect_GetPlyElementPosition(int ply, int joint_kind, Vec3 *out);
+void CitySelect_UpdatePlayerBoard(int ply, PKind p_kind, int color_idx);
 void CitySelect_Cursor6Update(int ply, int color_idx);
 void AirRideSelect_Cursor6Update(int ply, int color_idx);
 int Gm_CheckPauseKind(PauseKind pause_kind);

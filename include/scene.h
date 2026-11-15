@@ -754,7 +754,7 @@ typedef struct AirRideSelectCursor6Data
 } AirRideSelectCursor6Data;
 
 // City Trial Menu
-typedef struct CitySelectMenuData
+typedef struct CitySelectBoardData
 {
     struct
     {
@@ -775,7 +775,7 @@ typedef struct CitySelectMenuData
         int x30;                // 0x30
         int x34;                // 0x34
     } ply[4];
-} CitySelectMenuData;
+} CitySelectBoardData;
 typedef struct CitySelectCursor0Data
 {
     int x0;             // 0x0
@@ -783,8 +783,8 @@ typedef struct CitySelectCursor0Data
     int x8;             // 0x8
     JOBJ *outer_jobj;   // 0xc
     int x10;            // 0x10
-    u8 x14;             // 0x14
-    u8 ply;             // 0x15
+    u8 ply;             // 0x14
+    u8 ply_sel;         // 0x15
     u8 selected_state;  // 0x16, 0 = self ready, 1 = adjusting cpu/handicap, 2 = other player ready, 3 = unk, 4 = inactive
     u8 color;           // 0x17
     int x18;            // 0x18
@@ -816,7 +816,7 @@ typedef struct CitySelectCursor6Data
     u8 ply;                      // 0x18
     u8 x19;                      // 0x19
     u8 x1a;                      // 0x1a
-    u8 color_idx;                // 0x1b
+    u8 color;                    // 0x1b
     u8 x1c;                      // 0x1c
     u8 timer;                    // 0x1d
 } CitySelectCursor6Data;

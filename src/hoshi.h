@@ -6,7 +6,7 @@
 #include "hoshi/settings.h"
 #include "code_patch/code_patch.h" //
 
-#define HOSHI_VERSION 13
+#define HOSHI_VERSION 14
 /*
   Mod File Version History:
    1 - (07-01-25) introductory version
@@ -22,6 +22,7 @@
   11 - (10-02-26) add On3DPauseStart, On3DPauseEnd
   12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
   13 - (10-21-26) add OnReset()
+  14 - (11-14-26) add ModCredits
    */
 
 typedef struct MenuDesc MenuDesc;

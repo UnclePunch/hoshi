@@ -496,6 +496,7 @@ SECTIONS
   Rider_IsAnimEnded = 0x80198b00;
   Rider_RespawnEnter = 0x801A1D70;
   Rider_WaitEnter = 0x801babd4;
+  Rider_InactiveEnter = 0x8019f41c;
   Rider_GiveAbility = 0x801a81a4;
   Rider_CheckUnableAbility = 0x80191798;
   Rider_AbilityRemoveModel = 0x80191554;
@@ -507,6 +508,7 @@ SECTIONS
   Rider_IsMachineAirborne = 0x80194120;
   Rider_IsMachineDead = 0x801943e4;
   Rider_AllocAudioEmitter = 0x8005dbc8;
+  Rider_LoadModelAndMotion = 0x801a5a8c;
   HurtData_Create = 0x8018c1c8;
   HurtData_GiveIntangibility = 0x8018cb5c;
   Gm_Get3dData = 0x80112044;
@@ -519,6 +521,8 @@ SECTIONS
   Memcard_SetSaveStatus = 0x80078E40;
   Gm_Minor = 0x80008AD4;
   Gm_GetItemGroup = 0x802540F0;
+  CitySelect_GetPlyElementPosition = 0x8015aa5c;
+  CitySelect_UpdatePlayerBoard = 0x80159f00;
   CitySelect_Cursor6Update = 0x8015F440;
   AirRideSelect_Cursor6Update = 0x80154874;
   JObj_SetAllMObjAnimFrameAndRate = 0x80115174;

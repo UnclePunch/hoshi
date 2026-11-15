@@ -18,16 +18,15 @@
 #include "code_patch/code_patch.h"
 #include "text_joint/text_joint.h"
 
+extern OptionDesc g_credits_optiondesc;
+
 static int stc_text_canvas_idx = -1;
 static SettingsData stc_settings_data;
 static HSD_Archive *MnSettings_archive = 0;
 static MatAnimJointDesc *stc_option_matanimjointdesc = 0;
 static MatAnimJointDesc *stc_preview_matanimjointdesc = 0;
 
-static int deflicker_enabled = 0;
-static int resolution_kind = 0;
-
-MenuDesc *main_menu = 0;
+MenuDesc *g_main_menu = 0;
 
 //////////////
 // Settings //
@@ -52,24 +51,27 @@ void Settings_Init(ModloaderData *mod_data)
 
     if (mod_settings_num > 0)
     {
+    
         // alloc option array
-        int main_menu_size = (sizeof(*main_menu) + (sizeof(OptionDesc) * mod_settings_num));
-        main_menu = HSD_MemAlloc(main_menu_size); //
-        memset(main_menu, 0, main_menu_size);
+        int main_menu_size = (sizeof(*g_main_menu) +                    // root main menu
+                            sizeof(OptionDesc) * mod_settings_num +     // mod options
+                            sizeof(OptionDesc) * 1);                    // built in hoshi options
+        g_main_menu = HSD_MemAlloc(main_menu_size);
+        memset(g_main_menu, 0, main_menu_size);
 
         // copy over mod options
         for (int mod_idx = 0; mod_idx < mod_data->mod_num; mod_idx++)
         {
             OptionDesc *mod_option = mod_data->mods[mod_idx].desc->option_desc;
             if (mod_option)
-            {
-                main_menu->options[main_menu->option_num] = mod_option;
-                main_menu->option_num++;
-            }
+                g_main_menu->options[g_main_menu->option_num++] = mod_option;
         }
 
+        // copy over built in hoshi options
+        g_main_menu->options[g_main_menu->option_num++] = &g_credits_optiondesc;
+
         // sort optiondesc arr
-        qsort((u8 *)&main_menu->options, main_menu->option_num, sizeof(OptionDesc *), Settings_SortCallback);
+        qsort((u8 *)&g_main_menu->options, g_main_menu->option_num, sizeof(OptionDesc *), Settings_SortCallback);
     }
 
     LOG_INFO("Done.\n");
@@ -81,15 +83,15 @@ int Settings_SortCallback(const void *a, const void *b)
     OptionDesc *oa = *(OptionDesc **)a;
     OptionDesc *ob = *(OptionDesc **)b;
 
-    // 1. Compare pri ascending
+    // compare pri ascending
     if (oa->pri != ob->pri)
         return oa->pri - ob->pri;
 
-    // 2. Compare OptionKind descending
+    // compare OptionKind descending
     if (oa->kind != ob->kind)
         return (int)oa->kind - (int)ob->kind;
 
-    // 3. Compare name alphabetically
+    // compare name alphabetically
     return strcmp(oa->name, ob->name);
 }
 
@@ -119,7 +121,7 @@ void Settings_Create()
     JObj_AddSetAnim(cj, 0, stc_settings_data.ScMenSelruleCursor_scene_models[0], 0, 1);
     stc_settings_data.cursor_gobj = c;
 
-    MenuDesc *desc = main_menu;
+    MenuDesc *desc = g_main_menu;
     desc->prev = 0;
     desc->cursor = 0;
     desc->scroll = 0;
@@ -862,10 +864,10 @@ void Option_GetSaveSize(OptionDesc *desc, int *size)
 
 void Menu_ExecAllOptionChange()
 {
-    if (!main_menu)
+    if (!g_main_menu)
         return;
 
-    Menu_ExecOptionChange(main_menu);
+    Menu_ExecOptionChange(g_main_menu);
 }
 void Menu_ExecOptionChange(MenuDesc *desc)
 {
@@ -1147,7 +1149,7 @@ void MainMenu_ApplyPatches()
     // inject @ 80149118 and replace the matanim with a custom one,
     // insert new texture on frame 44 (option idx 4 for menu 4)
 
-    if (!main_menu)
+    if (!g_main_menu)
         return;
 
     stc_menu_select->menu_desc[3].option_num = 5;

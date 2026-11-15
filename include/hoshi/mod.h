@@ -2,6 +2,7 @@
 #define HOSHIMOD_H
 
 #include "settings.h"
+#include "credits.h"
 
 typedef struct ModDesc
 {
@@ -16,25 +17,25 @@ typedef struct ModDesc
     int save_size;
     int affects_gameplay;                   // bool indicating whether or not any aspects of this mod impact game state
     OptionDesc *option_desc;
-    void (*OnBoot)();
-    void (*OnSceneChange)();
-    void (*OnSaveInit)();
-    void (*OnSaveLoaded)();
+    ModCredit **credits;                    // null terminated ModCredit pointer array
+    void (*OnBoot)();                       // executes when the mod is loaded into memory. calling HSD_MemAlloc here will allocate persistent memory throughout the runtime of the program
+    void (*OnSceneChange)();                // executes every scene change, after the heap is setup but before the scene is initialized
+    void (*OnSaveInit)();                   // use this to initialize the default values for any save data your mod contains (can no longer allocate persistent memory).
+    void (*OnSaveLoaded)();                 // executes after all mods have been loaded into memory (can no longer allocate persistent memory)
     void (*On3DLoadStart)();                // executes before the game is initialized
     void (*On3DLoadEnd)();                  // executes after the game is initialized (riders, machines, stage, etc are all instantiated)
-    void (*On3DPauseStart)(int pause_ply);
-    void (*On3DPauseEnd)(int pause_ply);
-    void (*On3DUnpause)(int pause_ply);
-    void (*On3DExit)();
-    void (*OnMainMenuLoad)();
-    void (*OnPlayerSelectLoad)();
-    void (*OnFrameStart)();
-    void (*OnFrameEnd)();
-    void (*OnShowHUD)();
-    void (*OnHideHUD)();
-    void (*OnReset)();
+    void (*On3DPauseStart)(int pause_ply);  // executes before pausing the game (before hud is created)
+    void (*On3DPauseEnd)(int pause_ply);    // executes after pausing the game (after hud is created)
+    void (*On3DUnpause)(int pause_ply);     // executes before unpausing the game
+    void (*On3DExit)();                     // executes upon leaving the 3D scene (any)
+    void (*OnMainMenuLoad)();               // executes after the main menu is initialized and created
+    void (*OnPlayerSelectLoad)();           // executes after the air ride/city trial player select scene is loaded and created
+    void (*OnFrameStart)();                 // executes at the top of a frame (all scenes)
+    void (*OnFrameEnd)();                   // executes at the bottom of a frame (all scenes)
+    void (*OnShowHUD)();                    // executes when the HUD is displayed
+    void (*OnHideHUD)();                    // executes when the HUD is hidden
+    void (*OnReset)();                      // executes when the game is reset via the physical reset button
 } ModDesc;
-
 
 #pragma pack(push, 1)
 typedef struct ModSaveBackup

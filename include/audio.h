@@ -28,6 +28,7 @@
 
 typedef enum BGMKind
 {
+    BGM_FLOATISLANDS = 17,
     BGM_LEGENDARYAIRRIDEMACHINE = 42,
     BGM_MENU = 60,
     BGM_NUM = 69,

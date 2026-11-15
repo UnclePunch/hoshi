@@ -7,6 +7,8 @@
 #include "obj.h"
 #include "gx.h"
 
+#define TEXTGLYPH_SIZE 32
+
 /*** Structs ***/
 
 typedef enum TextCmdOpcode

@@ -17,15 +17,15 @@
 
 static StackLog stc_stack_log = {.num = 0};
 static MEXDebug *stc_dol_debug = 0;
-static char *iso_name;
+char *g_iso_name;
 
 void Stack_Init()
 {
     Stack_ApplyPatches();
 
     // load iso name from opening.bnr
-    iso_name = HSD_MemAlloc(0x20);
-    File_Read(DVDConvertPathToEntrynum("opening.bnr"), 0x1860, iso_name, 0x20, 0x21, 1, 0, 0);
+    g_iso_name = HSD_MemAlloc(0x20);
+    File_Read(DVDConvertPathToEntrynum("opening.bnr"), 0x1860, g_iso_name, 0x20, 0x21, 1, 0, 0);
 }
 
 // Functions
@@ -45,7 +45,7 @@ void Stack_Print()
             stc_dol_debug = Archive_GetPublicAddress(debug_archive, "mexDebug");
     }
 
-    OSReport("%s\n", iso_name);
+    OSReport("%s\n", g_iso_name);
     OSReport("hoshi v" STR(HOSHI_VERSION)"\n");
     OSReport((char *)0x80507bd4); // STACK text
     OSReport(" LR Save:   Symbol\n");

@@ -31,28 +31,6 @@ ModCredit *hoshi_credits[] = {
     NULL,
 };
 
-static COBJDesc stc_cobj_desc = (COBJDesc){
-    .class_name = 0,
-    .flags = 0,
-    .projection_type = PROJ_ORTHO,
-    .viewport_left = 0,
-    .viewport_right = 640,
-    .viewport_top = 0,
-    .viewport_bottom = 480,
-    .scissor_lr = 640,
-    .scissor_tb = 480,
-    .eye_desc = &(WOBJDesc){.pos = (Vec3){0, 0, 300}},
-    .interest_desc = &(WOBJDesc){.pos = (Vec3){0, 0, 0}},
-    .roll = 0,
-    .vector = 0,
-    .near = 0.1,
-    .far = 1000,
-    .projection_param.ortho.bottom = -240,
-    .projection_param.ortho.top = 240,
-    .projection_param.ortho.left = -320,
-    .projection_param.ortho.right = 320,
-};
-
 MajorSceneDesc major_desc = {
     .major_id = -1,
     .next_major_id = 0,
@@ -97,15 +75,8 @@ void CreditsMajor_Exit()
 
 void CreditsMinor_Enter()
 {
-    GOBJ *cam_g = GOBJ_EZCreator(0, 0, 0, 
-                                0, 0, 
-                                HSD_OBJKIND_COBJ, &stc_cobj_desc,
-                                0, 0,
-                                CObjThink_Common, 0, 0);
-    cam_g->cobj_links = (1 << TEXT_GXLINK);
-
     // init text
-    stc_canvas_idx = Text_CreateCanvas(0, -1, 0, 0, 0, TEXT_GXLINK, 0, -1);
+    stc_canvas_idx = Text_CreateCanvas(0, 0, 0, 0, 0, TEXT_GXLINK, 0, 0);
     stc_last_credit = 0;
     is_mod_credits_done = 0;
     is_final_credit_done = 0;
@@ -122,7 +93,8 @@ void CreditsMinor_Enter()
     CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){255, 255, 255, 255}, 0.8f, 0, 10, g_iso_name);
 
     // move text to the center of the screen
-    gp->pos.Y = -gp->text_cursor.Y / 2;
+    gp->pos.X = TEXTCAM_CENTER_X;
+    gp->pos.Y = TEXTCAM_CENTER_Y;
 
     stc_pause_timer = (1 * 60);  // 3.75 seconds to sync with legendary theme
 
@@ -134,7 +106,7 @@ void CreditsMinor_Enter()
     CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){187, 187, 187, 255}, 0.8f, 0, 10, "Created and Programmed by");
     CreditsText_AddString(g, CREDITTEXT_MOD, (GXColor){255, 255, 255, 255}, 0.8f, 0, 10, "UnclePunch");
     gp->text_cursor.Y += CREDIT_MOD_END_SPACING;
-    gp->pos.Y = -stc_cobj_desc.projection_param.ortho.bottom;
+    gp->pos = (Vec2){TEXTCAM_CENTER_X, TEXTCAM_BOT};
 
     // hoshi_credits
 
@@ -169,8 +141,8 @@ void CreditsMinor_Think()
         CreditTextData *gp = stc_last_credit->userdata;
 
         // check if bottom of last credit is X units from the bottom of the screen
-        float bottom_y = -(gp->t[CREDITTEXT_MOD]->trans.Y + gp->text_cursor.Y);
-        if (bottom_y >= stc_cobj_desc.projection_param.ortho.bottom + CREDIT_SPACING)
+        float bottom_y = (gp->pos.Y + gp->text_cursor.Y);
+        if (bottom_y <= TEXTCAM_BOT - CREDIT_SPACING)
         {
             // get next mod with credits
             ModDesc *desc = 0;
@@ -187,7 +159,7 @@ void CreditsMinor_Think()
             else
             {
                 // check if bottom of last credit is X units from the bottom of the screen
-                if (bottom_y >= stc_cobj_desc.projection_param.ortho.bottom + CREDIT_FINAL_SPACING)
+                if (bottom_y <= TEXTCAM_BOT - CREDIT_FINAL_SPACING)
                 {
                     is_mod_credits_done = 1;
 
@@ -196,7 +168,7 @@ void CreditsMinor_Think()
                     CreditTextData *final_gp = final_g->userdata;
                     final_gp->t[CREDITTEXT_MOD]->aspect = (Vec2){500, 32};
                     CreditsText_AddString(final_g, CREDITTEXT_MOD, (GXColor){255,255,255, 255}, 0.8f, 0, 10, "Thanks for playing\x81\x49");
-                    final_gp->pos.Y = -stc_cobj_desc.projection_param.ortho.bottom;
+                    final_gp->pos = (Vec2){TEXTCAM_CENTER_X, TEXTCAM_BOT};
                     final_gp->state = CREDITSTATE_FINALSTART;
                 }
 
@@ -248,6 +220,7 @@ GOBJ *CreditsText_Create()
         t->kerning = 1;
         t->use_aspect = 1;
         gp->t[i] = t;
+        gp->offset[i] = (Vec2){0, 0};
     }
 
     // init text objects
@@ -262,16 +235,15 @@ GOBJ *CreditsText_Create()
     t->aspect = (Vec2){230, 32};
     t->scale = (Vec2){CREDIT_NAME_SCALE, CREDIT_NAME_SCALE};
     t->color = (GXColor){187, 187, 187, 255};
-    t->trans.X = -TEXTGLYPH_SIZE / 2;
+    gp->offset[CREDITTEXT_ROLE].X = -TEXTGLYPH_SIZE / 2;
 
     t = gp->t[CREDITTEXT_NAME];
     t->align = TEXTALIGN_LEFT;
     t->aspect = (Vec2){230, 32};
     t->scale = (Vec2){CREDIT_NAME_SCALE, CREDIT_NAME_SCALE};
     t->color = (GXColor){255, 255, 255, 255};
-    t->trans.X = TEXTGLYPH_SIZE / 2;
+    gp->offset[CREDITTEXT_NAME].X = TEXTGLYPH_SIZE / 2;
     
-    gp->pos = (Vec2){0, 0};
     gp->state = CREDITSTATE_NORMAL;
     
     stc_last_credit = g;
@@ -299,7 +271,7 @@ void CreditsText_Think(GOBJ *g)
                 gp->pos.Y -= stc_scroll_speed;
 
                 // check to destroy
-                if (gp->pos.Y + gp->text_cursor.Y <= -stc_cobj_desc.projection_param.ortho.top)
+                if (gp->pos.Y + gp->text_cursor.Y <= TEXTCAM_TOP)
                     GObj_Destroy(g);
                 
                 break;
@@ -309,7 +281,7 @@ void CreditsText_Think(GOBJ *g)
                 float y_center = (gp->pos.Y + (gp->text_cursor.Y / 2));
 
                 // scroll logic
-                if (y_center > 0)
+                if (y_center > TEXTCAM_CENTER_Y)
                     gp->pos.Y -= stc_scroll_speed;
                 else
                 {
@@ -359,7 +331,11 @@ void CreditsText_Think(GOBJ *g)
     
     // update position
     for (int i = 0; i < CREDITTEXT_NUM; i++)
-        gp->t[i]->trans.Y = gp->pos.Y;
+    {
+        Text *t = gp->t[i];
+        t->trans.X = gp->pos.X + gp->offset[i].X * t->scale.X;
+        t->trans.Y = gp->pos.Y + gp->offset[i].Y * t->scale.Y;
+    }
 
     return;
 }
@@ -378,7 +354,7 @@ void CreditsText_AddModCredits(GOBJ *g, ModDesc *mod_desc)
     gp->text_cursor.Y += CREDIT_MOD_END_SPACING;
 
     // move it to the bottom of the screen
-    gp->pos.Y = -stc_cobj_desc.projection_param.ortho.bottom;
+    gp->pos = (Vec2){TEXTCAM_CENTER_X, TEXTCAM_BOT};
 }
 void CreditsText_AddModName(GOBJ *g, char *s)
 {

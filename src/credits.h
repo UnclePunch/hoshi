@@ -42,7 +42,8 @@ typedef enum CreditTextState
 typedef struct CreditTextData
 {
     Text *t[CREDITTEXT_NUM];
-    Vec2 pos;
+    Vec2 offset[CREDITTEXT_NUM];        // offsets of each text object from the below postion
+    Vec2 pos;                           // base position of all text objects
     Vec2 text_cursor;
     CreditTextState state;
     int timer;

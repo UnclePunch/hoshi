@@ -7,7 +7,18 @@
 #include "obj.h"
 #include "gx.h"
 
+// size of a full character width
 #define TEXTGLYPH_SIZE 32
+
+// ortho values for text cam
+#define TEXTCAM_TOP 0
+#define TEXTCAM_BOT 480
+#define TEXTCAM_LEFT 0
+#define TEXTCAM_RIGHT 640
+
+// derived for convenience from above
+#define TEXTCAM_CENTER_X ((TEXTCAM_RIGHT + TEXTCAM_LEFT) / 2)
+#define TEXTCAM_CENTER_Y ((TEXTCAM_BOT + TEXTCAM_TOP) / 2)
 
 /*** Structs ***/
 

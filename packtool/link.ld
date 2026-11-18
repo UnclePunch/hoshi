@@ -246,8 +246,11 @@ SECTIONS
   LObj_DeleteCurrentAll = 0x803FF318;
   LObj_RemoveAll = 0x803FFA40;
   Map_AllocAudioEmitter = 0x8005ded0;
+  MenuElement_CreateDefineGX = 0x80138934;
   MenuElement_Create = 0x801388a8;
   MenuElement_AddData = 0x80138a00;
+  MenuElement_Show = 0x80138ab0;
+  MenuElement_Hide = 0x80138ac8;
   Memcard_GetState = 0x80452790;
   Memcard_RequestCheckExist = 0x80452790;
   memcmp = 0x803B4670;
@@ -404,6 +407,9 @@ SECTIONS
   MainMenu_InitAllVariables = 0x80007808;
   CitySelect_EnableLoadingAnim = 0x80038d1c;
   CitySelect_DisableLoadingAnim = 0x80038d44;
+  StadiumSelect_CreateKicon = 0x80164280;
+  StadiumSelect_UpdateKicon = 0x8016411c;
+  StadiumSelect_DestroyKicon = 0x80164318;
   SelIcon_GetCKind = 0x8000b9bc;
   Gm_GetMenuData = 0x801311E0;
   Gm_GetGameData = 0x80006C14;

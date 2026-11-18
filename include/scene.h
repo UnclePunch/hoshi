@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include "datatypes.h"
+#include "rider.h"
 
 // Scene Enums
 enum SCENE_HEAP_KIND
@@ -300,8 +301,8 @@ struct ScMenuCommon
     struct                                               //
     {                                                    //
         JOBJSet **Kicon_jobjset;                         // 0x9a4
+        GOBJ *Kicon_gobj;                                // 0x9a8
     } stadium;                                           //
-    int x9a8;                                            // 0x9a8
     int x9ac;                                            // 0x9ac
     int x9b0;                                            // 0x9b0
     int x9b4;                                            // 0x9b4
@@ -849,5 +850,9 @@ ScMenuCommon *Gm_GetMenuData();         // 0x80558788
 void MainMenu_InitAllVariables();
 void CitySelect_EnableLoadingAnim();
 void CitySelect_DisableLoadingAnim();
+
+void StadiumSelect_CreateKicon();
+void StadiumSelect_UpdateKicon(RiderKind kind, int color_idx);
+void StadiumSelect_DestroyKicon();
 
 #endif

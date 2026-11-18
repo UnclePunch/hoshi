@@ -127,8 +127,11 @@ typedef struct SoundTestDesc
 static HSD_Archive **stc_MnSelplyAll_archive = (HSD_Archive **)(0x805dd0e0 + 0x6dc);
 static SoundTestDesc *stc_soundtest_desc = (SoundTestDesc *)0x80496458; // 62 of these
 
+GOBJ *MenuElement_CreateDefineGX(JOBJDesc *jobjdesc, int gx_link, int gx_pri);
 GOBJ *MenuElement_Create(JOBJDesc *jobjdesc);
-MenuElementData *MenuElement_AddData(GOBJ *menu_element_gobj, int element_kind);
+MenuElementData *MenuElement_AddData(GOBJ *g, int element_kind);
+void MenuElement_Show(GOBJ *g);
+void MenuElement_Hide(GOBJ *g);
 
 CharacterKind SelIcon_GetCKind(int row_idx, int col_idx);
 CharacterDesc *Character_GetDesc(CharacterKind ckind);

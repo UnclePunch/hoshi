@@ -209,15 +209,16 @@ void Patches_Apply()
         text_colors[i].a = 255;
 
     // more....
-    static GXColor *text_colors2 = (GXColor *)0x805e03ac;
+    static GXColor *text_colors2 = (GXColor *)0x805e02a8;
     static u16 misc_colors_offsets[] = {
-        (0x805e03ac - 0x805e03ac) / 4,
-        (0x805e0420 - 0x805e03ac) / 4,
-        (0x805e0460 - 0x805e03ac) / 4,
-        (0x805e0480 - 0x805e03ac) / 4,
-        (0x805e0490 - 0x805e03ac) / 4,
-        (0x805e049c - 0x805e03ac) / 4,
-        (0x805e04a8 - 0x805e03ac) / 4,
+        (0x805e02a8 - 0x805e02a8) / 4,
+        (0x805e03ac - 0x805e02a8) / 4,
+        (0x805e0420 - 0x805e02a8) / 4,
+        (0x805e0460 - 0x805e02a8) / 4,
+        (0x805e0480 - 0x805e02a8) / 4,
+        (0x805e0490 - 0x805e02a8) / 4,
+        (0x805e049c - 0x805e02a8) / 4,
+        (0x805e04a8 - 0x805e02a8) / 4,
     };
     for (int i = 0; i < GetElementsIn(misc_colors_offsets); i++)
         text_colors2[misc_colors_offsets[i]].a = 255;

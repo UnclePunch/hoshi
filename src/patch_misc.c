@@ -147,7 +147,7 @@ CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, "stwu	1, -40 (1)\n\t"
                                             "lwz 0, 44 (1)\n\t"
                                             "mtlr 0\n\t"
                                             "addi 1, 1, 40\n\t",
-                                            0, 0x8044fea4)
+                                            0, "", 0x8044fea4)
 
 // MemAlloc Assert
 void *MemAlloc_Error(void *addr, int size)

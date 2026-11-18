@@ -85,33 +85,43 @@ void _CodePatch_Apply(PatchDesc *patch_desc)
     }
 }
 
+// helper funcs
+int *_CodePatch_ResolveBranchPointer(int *branch_instr_ptr)
+{
+    return &branch_instr_ptr[((*branch_instr_ptr & 0x03ffffff) / 4)];
+}
+
 // asm patch
 void _CodePatch_HookApply(int *dol_addr, void *hook_func)
 {
     HookKind hook_kind = ((int *)hook_func)[0];
-    int *hook_exit_ptr = &((int *)hook_func)[((((int *)hook_func)[1] & 0x03ffffff) / 4) + 1];
-    int *hook_exec_start_ptr = &((int *)hook_func)[2]; // header is 2 lines, begin executing on the third instruction
-
-    int *instr_orig_ptr;
-    int *instr_return_ptr;
-    int *instr_alt_return_ptr;
+    
+    int *hook_exec_start_ptr = 0; 
+    int *instr_orig_ptr = 0;
+    int *instr_return_ptr = 0;
+    int *instr_alt_return_ptr = 0;
 
     switch (hook_kind)
     {
     case (HOOKKIND_NORMAL):
     {
-        instr_orig_ptr = &hook_exit_ptr[0];
-        instr_return_ptr = &hook_exit_ptr[1];
-        instr_alt_return_ptr = 0;
+        hook_exec_start_ptr = &((int *)hook_func)[3]; // header is 3 lines, begin executing on the fourth instruction
+
+        instr_orig_ptr = _CodePatch_ResolveBranchPointer(&((int *)hook_func)[1]);
+        instr_return_ptr = _CodePatch_ResolveBranchPointer(&((int *)hook_func)[2]);
         break;
     }
     case (HOOKKIND_CONDITIONAL):
     {
-        instr_orig_ptr = &hook_exit_ptr[1];
-        instr_return_ptr = &hook_exit_ptr[2];
-        instr_alt_return_ptr = &hook_exit_ptr[3];
+        hook_exec_start_ptr = &((int *)hook_func)[4]; // header is 4 lines, begin executing on the fifth instruction
+
+        instr_orig_ptr = _CodePatch_ResolveBranchPointer(&((int *)hook_func)[1]);
+        instr_return_ptr = _CodePatch_ResolveBranchPointer(&((int *)hook_func)[2]);
+        instr_alt_return_ptr = _CodePatch_ResolveBranchPointer(&((int *)hook_func)[3]);
         break;
     }
+    default:
+        return;
     }
 
     // skip if already applied
@@ -121,23 +131,24 @@ void _CodePatch_HookApply(int *dol_addr, void *hook_func)
     // get orig instruction
     int orig_instr = *dol_addr;
 
-    // modify the original instruction if it is a branch
+    // if the original instruction is a branch, modify its offset so it can be executed from within the injection
     if ((_SHIFTR(orig_instr, 26, 6)) == 0x12) // adjust if its a branch instruction
     {
         int dest_addr = (int)dol_addr + (orig_instr & ~(0xfc000001));                                   // get branch's destination addr
         orig_instr = (orig_instr & (0xfc000001)) | ((dest_addr - (int)instr_orig_ptr) & ~(0xfc000000)); // adjust branch instruction to be offset from asm hook
     }
 
-    *instr_orig_ptr = orig_instr;                                                                       // copy original store instruction to asm hook
-    *dol_addr = BRANCH_CREATE(dol_addr, hook_exec_start_ptr, 0);                                        // place branch in dol to asm hook
-    (*instr_return_ptr = 0x48000000 | (((*instr_return_ptr - (int)instr_return_ptr))) & ~(0xfc000000)); // create an instruction to branch back to hook site
+    *instr_orig_ptr = orig_instr;                                                  // copy original instruction to asm hook
+    *dol_addr = BRANCH_CREATE(dol_addr, hook_exec_start_ptr, 0);                   // place branch in dol to asm hook
+    *instr_return_ptr = BRANCH_CREATE(instr_return_ptr, *instr_return_ptr, 0);     // create an instruction to branch back to hook site
 
-    // conditional specific stuff
-    if (hook_kind == HOOKKIND_CONDITIONAL)                                                                              // copy duplicate original instruction to asm hook for alt return branch
-        (*instr_alt_return_ptr = 0x48000000 | (((*instr_alt_return_ptr - (int)instr_alt_return_ptr))) & ~(0xfc000000)); // create an instruction to branch to alt return site
+    if (instr_alt_return_ptr)
+        *instr_alt_return_ptr = BRANCH_CREATE(instr_alt_return_ptr, *instr_alt_return_ptr, 0);             // create an instruction to branch to alt return site
 
-    TRK_FlushCache(dol_addr, 4);   // flush cache
-    TRK_FlushCache(hook_func, 32); // flush cache
+    // flush cache on modified instructions
+    int hook_size = instr_alt_return_ptr ? ((int)instr_alt_return_ptr - (int)hook_func + 4) : ((int)instr_return_ptr - (int)hook_func + 4);        
+    TRK_FlushCache(dol_addr, 4);
+    TRK_FlushCache(hook_func, hook_size);
 }
 
 void _CodePatch_OverwriteApply(int *dol_addr, int instr)

@@ -75,7 +75,7 @@ int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind)
 
     // add
     stc_custom_game_files.file[stc_custom_game_files.num].name = file_name;
-    stc_custom_game_files.file[stc_custom_game_files.num].file_kind = 2;
+    stc_custom_game_files.file[stc_custom_game_files.num].file_kind = PRELOADFILEKIND_DEFAULT;
     stc_custom_game_files.file[stc_custom_game_files.num].preload_kind = 4;
     stc_custom_game_files.file[stc_custom_game_files.num].heap_kind = heap_kind;
     stc_custom_game_files.num++;
@@ -154,7 +154,7 @@ void Preload_LoadCustomGameFile()
                                 0,
                                 1,
                                 2,     // 5
-                                0x40); // 0x20
+                                PRELOADFLAG_PERSIST); // 0x20
         }
 
         else if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM &&

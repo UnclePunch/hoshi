@@ -5,14 +5,14 @@
 #include "datatypes.h"
 #include "game.h"
 
-#define PRELOADFLAG_FTCOSTUME (1 << 0) // 0x01, fighter costume files
-#define PRELOADFLAG_FTDAT (1 << 1)     // 0x02, main fighter PlX dat files
-#define PRELOADFLAG_EFFECT (1 << 2)    // 0x04, effect files
-#define PRELOADFLAG_FTANIM (1 << 3)    // 0x08, fighter animations
-#define PRELOADFLAG_ALLOC (1 << 4)     // 0x10, special allocs like fod reflection
-#define PRELOADFLAG_x20 (1 << 5)       // 0x20, unk
-#define PRELOADFLAG_PERSIST (1 << 6)   // 0x40, IfAll / EfMnData / EfCoData / ItCo
-#define PRELOADFLAG_x80 (1 << 7)       // 0x80, LbRb
+#define PRELOADFLAG_FTCOSTUME (1 << 0)  // 0x01, fighter costume files
+#define PRELOADFLAG_MACHINE (1 << 1)    // 0x02, 
+#define PRELOADFLAG_EFFECT (1 << 2)     // 0x04, effect files
+#define PRELOADFLAG_ENEMY (1 << 3)      // 0x08,
+#define PRELOADFLAG_STAGE (1 << 4)      // 0x10, special allocs like fod reflection
+#define PRELOADFLAG_RIDER (1 << 5)      // 0x20, includes RdKirby RdKirbyMotion, RdKirbyAbility
+#define PRELOADFLAG_PERSIST (1 << 6)    // 0x40, IfAll / EfMnData / EfCoData / ItCo
+#define PRELOADFLAG_x80 (1 << 7)        // 0x80, persistent files? like LbRb, LbMcGame, MnMemIconAll
 
 typedef enum PreloadEntryLoadState // 0x0 of PreloadEntry
 {

@@ -311,6 +311,7 @@ SECTIONS
   Preload_CreateEntry = 0x80072C90;
   Preload_CreateEntryByEntrynum = 0x80072AD8;
   Preload_CreateAllMEntry = 0x8019065c;
+  Preload_Wait = 0x80075360;
   Preload_GetArchiveByFilename = 0x80073ba0;
   Preload_Update = 0x80073FBC;
   Preload_Invalidate = 0x80073FA4;

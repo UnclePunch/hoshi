@@ -206,24 +206,24 @@ struct HSD_Obj
 
 struct GOBJ
 {
-    short entity_class;                          // 0x0
-    char p_link;                                 // 0x2, used to classify similar gobjs together.
-    char gx_link;                                // 0x3. 0-63 are gx. 64+ are reserved for camera objects
-    char p_priority;                             // 0x4
-    char gx_pri;                                 // 0x5
-    char obj_kind;                               // 0x6
-    char data_kind;                              // 0x7
-    GOBJ *next;                                  // 0x8
-    GOBJ *previous;                              // 0xC
-    GOBJ *nextOrdered;                           // 0x10
-    GOBJ *previousOrdered;                       // 0x14
-    GOBJProc *proc;                              // 0x18
-    void (*gx_cb)(GOBJ *g, int pass);            // 0x1C
-    u64 cobj_links;                              // 0x20. this is used to know which gobjs to render
-    void *hsd_object;                            // 0x28
-    void *userdata;                              // 0x2C
-    void (*destructor_function)(void *userdata); // 0x30
-    int unk_linked_list;                         // 0x34
+    short entity_class;                             // 0x0
+    char p_link;                                    // 0x2, used to classify similar gobjs together.
+    char gx_link;                                   // 0x3. 0-63 are gx. 64+ are reserved for camera objects
+    char p_priority;                                // 0x4
+    char gx_pri;                                    // 0x5
+    char obj_kind;                                  // 0x6
+    char data_kind;                                 // 0x7
+    GOBJ *next;                                     // 0x8
+    GOBJ *prev;                                     // 0xC
+    GOBJ *next_gx;                                  // 0x10
+    GOBJ *prev_gx;                                  // 0x14
+    GOBJProc *proc;                                 // 0x18
+    void (*gx_cb)(GOBJ *g, int pass);               // 0x1C
+    u64 cobj_links;                                 // 0x20. this is used to know which gobjs to render
+    void *hsd_object;                               // 0x28
+    void *userdata;                                 // 0x2C
+    void (*user_data_remove_func)(void *userdata);  // 0x30
+    int unk_linked_list;                            // 0x34
 };
 
 struct GOBJProc
@@ -769,7 +769,9 @@ typedef struct HSD_GObjInitData {
 } HSD_GObjInitData;
 
 /*** Static Variables ***/
-static GOBJ ***stc_gobj_lookup = (GOBJ ***)(0x805de334);                        //
+static GOBJ ***stc_gobj_lookup = (GOBJ ***)0x805de334;                          //
+static GOBJ ***stc_gobj_plink_head = (GOBJ ***)0x805de334;                      //
+static GOBJ ***stc_gobj_gxlink_head = (GOBJ ***)0x805de32c;                     // 
 static u8 *stc_gobj_proc_num = (u8 *)0x8058c190;                                // number of elements in the below array
 static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x805de348;              // array of gobj procs ptrs
 static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x0;                          // current gobj proc being processed

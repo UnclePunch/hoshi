@@ -149,7 +149,7 @@ void Settings_Create()
     stc_settings_data.menu.prev_gobj = 0;
 
     // replace background's destroy function to destroy our stuff as well
-    Gm_GetMenuData()->main.ScMenOpdelpanel_gobj->destructor_function = Settings_Destroy;
+    Gm_GetMenuData()->main.ScMenOpdelpanel_gobj->user_data_remove_func = Settings_Destroy;
 
     // Settings_UpdateCurrentMenu();
 }

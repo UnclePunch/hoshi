@@ -10,7 +10,7 @@ import tempfile
 import elf_utils
 from elf_utils import Section, RelocSection, Symbol, Reloc 
 
-VERSION = 14
+VERSION = 15
 
 # Version History:
 #  1 - (07-01-25) introductory version
@@ -27,6 +27,7 @@ VERSION = 14
 # 12 - (10-03-26) add OPTKIND_NUM support in hoshi settings
 # 13 - (10-21-26) add OnReset()
 # 14 - (10-21-26) add ModCredits
+# 15 - (11-24-26) update Hoshi_AddPreloadGameFile args to include priority
 
 # unique temp directory so parallel builds work
 build_dir = tempfile.mkdtemp(prefix="pack_")

@@ -45,7 +45,7 @@ int Preload_AddCustomMenuFile(char *file_name)
 
     return 0;
 }
-int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind)
+int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind, int pri)
 {
     // exit if at max
     if (stc_custom_game_files.num > GetElementsIn(stc_custom_game_files.file))
@@ -75,9 +75,10 @@ int Preload_AddCustomGameFile(char *file_name, PreloadHeapKind heap_kind)
 
     // add
     stc_custom_game_files.file[stc_custom_game_files.num].name = file_name;
-    stc_custom_game_files.file[stc_custom_game_files.num].file_kind = PRELOADFILEKIND_DEFAULT;
-    stc_custom_game_files.file[stc_custom_game_files.num].preload_kind = 4;
     stc_custom_game_files.file[stc_custom_game_files.num].heap_kind = heap_kind;
+    stc_custom_game_files.file[stc_custom_game_files.num].file_kind = PRELOADFILEKIND_DEFAULT;
+    stc_custom_game_files.file[stc_custom_game_files.num].pri = pri;
+    stc_custom_game_files.file[stc_custom_game_files.num].preload_kind = 4;
     stc_custom_game_files.num++;
 
     LOG_INFO("Preload: added game file %s to heap %d", file_name, heap_kind);
@@ -120,10 +121,10 @@ void Preload_LoadCustomMenuFile()
     {
         if (stc_custom_menu_files[i])
         {
-            Preload_CreateEntry(5,
+            Preload_CreateEntry(PRELOADFILEKIND_NUM,
                                 stc_custom_menu_files[i],
-                                6,
-                                6,
+                                PRELOADHEAPKIND_ALLA,
+                                PRELOADHEAPKIND_ALLA,
                                 0,
                                 1,
                                 100,
@@ -143,25 +144,18 @@ void Preload_LoadCustomGameFile()
     {
         int is_requested = 0;
 
-        if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY &&
-            p->updated.is_cache_game_files) // game has raised flag to begin preloading common game files
+        if ((stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY && p->updated.is_cache_game_files) ||      // game has raised flag to begin preloading common game files
+            (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM && p->updated.gr_kind != 59))              // copied from 800748ec
         {
             is_requested = 1;
             Preload_CreateEntry(stc_custom_game_files.file[i].file_kind,
                                 stc_custom_game_files.file[i].name,
-                                PRELOADHEAPKIND_STAY, // 4
-                                PRELOADHEAPKIND_STAY, // 4
+                                stc_custom_game_files.file[i].heap_kind, // 4
+                                stc_custom_game_files.file[i].heap_kind, // 4
                                 0,
                                 1,
-                                2,     // 5
+                                stc_custom_game_files.file[i].pri,
                                 PRELOADFLAG_PERSIST); // 0x20
-        }
-
-        else if (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM &&
-                 p->updated.gr_kind != 59) // copied from 800748ec
-        {
-            is_requested = 1;
-            PreloadEntry *pe = Preload_CreateAllMEntry(stc_custom_game_files.file[i].name);
         }
 
         if (is_requested)

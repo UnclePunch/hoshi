@@ -45,7 +45,11 @@ static void OSClearReports()
 
 static int Preload_GetEntryIndexFromEntrynum(int entry_num)
 {
-    Preload *preload = Preload_GetTable();
+    int level = OSDisableInterrupts();
+
+    Preload *preload = stc_preload_table;
+    int preload_idx = -1;
+    
     for (int i = 0; i < GetElementsIn(preload->entry); i++)
     {
         PreloadEntry *this_entry = &preload->entry[i];
@@ -54,18 +58,21 @@ static int Preload_GetEntryIndexFromEntrynum(int entry_num)
         if (this_entry->load_state > 0 &&
             this_entry->file_entry_num == entry_num)
         {
-            return i;
+            preload_idx = i;
+            break;
         }
     }
 
-    return -1;
+    OSRestoreInterrupts(level);
+
+    return preload_idx;
 }
 static PreloadEntry *Preload_GetEntryFromEntrynum(int entry_num)
 {
     int preload_idx = Preload_GetEntryIndexFromEntrynum(entry_num);
 
     if (preload_idx != -1)
-        return &Preload_GetTable()->entry[preload_idx];
+        return &stc_preload_table->entry[preload_idx];
 
     return 0;
 }
@@ -796,7 +803,6 @@ static int RandomBitInField(u32 bitfield)
 
     return -1;
 }
-
 
 // static float Math_Vec2Distance(Vec2 *a, Vec2 *b)
 // {

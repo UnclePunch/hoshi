@@ -822,6 +822,15 @@ typedef struct CitySelectCursor6Data
     u8 timer;                    // 0x1d
 } CitySelectCursor6Data;
 
+typedef struct MnRadarCtIconData
+{
+    int x0;                      // 0x0
+    int x4;                      // 0x4
+    int x8;                      // 0x8
+    int ply;                     // 0xc
+    int ply2;                    // 0x10
+} MnRadarCtIconData;
+
 /*** Static Variables ***/
 static ScMenuCommon *stc_scene_menu_common = (ScMenuCommon *)0x80558788;
 static MajorSceneDesc *stc_major_scene_desc = (MajorSceneDesc *)0x80495058;
@@ -854,5 +863,7 @@ void CitySelect_DisableLoadingAnim();
 void StadiumSelect_CreateKicon();
 void StadiumSelect_UpdateKicon(RiderKind kind, int color_idx);
 void StadiumSelect_DestroyKicon();
+
+void MnRadar_GetPlyViewOffset(int ply, Vec3 *out, int unk);
 
 #endif

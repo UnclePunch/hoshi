@@ -112,6 +112,8 @@ SECTIONS
   Archive_Free = 0x80059628;
   Archive_GetPublicAddress = 0x8041E390;
   Archive_AppendExtension = 0x80058e84;
+  Archive_GetExtern = 0x8041e434;
+  Archive_LocateExtern = 0x8041e46c;
   lbLoadArchive = 0x80059a20;
   File_GetPreloadedFile = 0x80073BA0;
   File_LoadSync = 0x80059364;
@@ -311,7 +313,8 @@ SECTIONS
   Preload_CreateEntry = 0x80072C90;
   Preload_CreateEntryByEntrynum = 0x80072AD8;
   Preload_CreateAllMEntry = 0x8019065c;
-  Preload_Wait = 0x80075360;
+  Preload_SyncWait = 0x80075360;
+  Preload_GetStatusByFlags = 0x8007514c;
   Preload_GetArchiveByFilename = 0x80073ba0;
   Preload_Update = 0x80073FBC;
   Preload_Invalidate = 0x80073FA4;
@@ -411,6 +414,7 @@ SECTIONS
   StadiumSelect_CreateKicon = 0x80164280;
   StadiumSelect_UpdateKicon = 0x8016411c;
   StadiumSelect_DestroyKicon = 0x80164318;
+  MnRadar_GetPlyViewOffset = 0x801602f0;
   SelIcon_GetCKind = 0x8000b9bc;
   Gm_GetMenuData = 0x801311E0;
   Gm_GetGameData = 0x80006C14;

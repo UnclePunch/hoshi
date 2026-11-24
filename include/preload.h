@@ -13,7 +13,7 @@
 #define PRELOADFLAG_RIDER (1 << 5)      // 0x20, includes RdKirby RdKirbyMotion, RdKirbyAbility
 #define PRELOADFLAG_PERSIST (1 << 6)    // 0x40, IfAll / EfMnData / EfCoData / ItCo
 #define PRELOADFLAG_x80 (1 << 7)        // 0x80, persistent files? like LbRb, LbMcGame, MnMemIconAll
-
+#define PRELOADFLAG_ALL (0xFF)
 typedef enum PreloadEntryLoadState // 0x0 of PreloadEntry
 {
     PRELOADENTRYSTATE_NONE,
@@ -145,7 +145,7 @@ struct PreloadEntry // scene changes wait for asyncronous disc reads to finish i
     PreloadEntryInitKind init_kind : 8;   // 0x3, 0, do not init archive, 1 = init archive when accessed with Preload_GetArchive/Preload_GetArchiveByEntrynum. 0 = fighter anims/special allocs (dont initialize), 1 = fighter files/itco/ifall/efco/efmn (queued for initialization), 2 = lbrb/ifall/stage (initialized)
     u8 flags;                             // 0x4, indicates the purpose of the file. referenced when waiting for files using Preload_CheckIfFilesAreLoading. costume files are 0x1, plX files are 0x2, effect files are 0x4, anim files are 0x8, stage files and allocs are 0x10, IfAll/EfMnData/EfCoData/ItCo are 0x40, LbRb is 0x80
     u16 file_entry_num;                   // 0x6, if this is greater than 2000 its a special allocation (like fountain reflection (2001) or pokemon stadium transformation (200?))
-    s16 status;                           // 0x8, is -9999 when marked for unload, 9999 when needed
+    s16 pri;                              // 0x8, is -9999 when marked for unload, 9999 when needed. high values loaded sooner
     int file_size;                        // 0xc
     PreloadAllocData *file_data;          // 0x10, this gets allocated @ 80017c00
     PreloadAllocData *header_data;        // 0x14
@@ -157,18 +157,18 @@ struct PreloadEntry // scene changes wait for asyncronous disc reads to finish i
 
 struct PreloadTable
 {
-    int x0;                  // 0x0
-    int is_cache_game_files; // 0x4
-    int is_cache_A2_files;   // 0x8, not sure what these are for, not regular dat files...
-    int is_cache_menus;      // 0xc, checked @ 80074908 and will cache game menus flagged in the stc_preload_menu_files array
-    int x10;                 // 0x10
-    int update_num;          // 0x14, used to know how up to date the cache is. incremented when Preload::heap_kind != MinorSceneDesc::heap_kind OR when calling Preload_Invalidate
-    GroundKind gr_kind;      // 0x18, checked @ 800748ec
-    int x1c;                 // 0x1c, checked @ 800748e0
-    int x20;                 // 0x20, -1 to disable entirely? 800748d8
-    int is_cache_alloc1;     // 0x24, alloc id 2001, not sure what uses this
-    int is_cache_alloc2;     // 0x28, alloc id 2002, not sure what uses this
-    u8 x30[0x80 - 0x2c];     //
+    int x0;                     // 0x0
+    int is_cache_game_files;    // 0x4, PlData, Enemy, LbBgFlash, DbCommon, CmCommon, RdCommon, ItCommon, GrCommon, YkCommon, WnCommon, VcCommon, 
+    int is_cache_A2_files;      // 0x8, not sure what these are for, not regular dat files...
+    int is_cache_menus;         // 0xc, checked @ 80074908 and will cache game menus flagged in the stc_preload_menu_files array
+    int x10;                    // 0x10
+    int update_num;             // 0x14, used to know how up to date the cache is. incremented when Preload::heap_kind != MinorSceneDesc::heap_kind OR when calling Preload_Invalidate
+    GroundKind gr_kind;         // 0x18, checked @ 800748ec. some files are gated behind this, e.g. rider files are loaded when this is not set to 59 (800748f4)
+    int x1c;                    // 0x1c, checked @ 800748e0
+    int x20;                    // 0x20, -1 to disable entirely? 800748d8
+    int is_cache_alloc1;        // 0x24, alloc id 2001, not sure what uses this
+    int is_cache_alloc2;        // 0x28, alloc id 2002, not sure what uses this
+    u8 x30[0x80 - 0x2c];        // 0x2c,
 };
 
 struct Preload
@@ -188,8 +188,7 @@ static PreloadHeapDesc *stc_preload_heap_descs = (PreloadHeapDesc *)0x80497ed0; 
 /*** Functions ***/
 void Preload_Update();                                                                                                                                                                               // checks for new files to preload and begins loading them synchronously
 void Preload_Invalidate();                                                                                                                                                                           // invalidates cache, this is usually used from scene prep on CSS's
-Preload *Preload_GetTable();                                                                                                                                                                         // gets preload table
-PreloadEntry *Preload_CreateEntry(PreloadFileKind file_kind, char *filename, PreloadHeapKind r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int r9, int flags);                  // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
+PreloadEntry *Preload_CreateEntry(PreloadFileKind file_kind, char *filename, PreloadHeapKind r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int pri, int flags);                  // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
 PreloadEntry *Preload_CreateEntryByEntrynum(PreloadFileKind file_kind, int entrynum, PreloadHeapKind r5, PreloadHeapKind heap_kind, int file_size, int is_init_archive, int r9, int flags, int r11); // creates a preload entry for any given file/ (file_kind is 0 for stuff like fod reflection, r5 = 4, r9 = 7) 80017740
 PreloadEntry *Preload_CreateAllMEntry(char *file_name);                                                                                                                                              // must be called during Preload_Update
 void Preload_RequestLoadEntry(int preload_entry_index);                                                                                                                                              //
@@ -198,7 +197,8 @@ HSD_Archive *Preload_GetArchiveByFilename(char *file_name);                     
 int Preload_CheckFileStatus(int entrynum);                                                                                                                                                           // 0 = not loading, 1 = loading, 2 = loaded
 int Preload_CheckIfFilesAreLoading(int preload_flags);                                                                                                                                               // use PRELOADFLAG_ definitions
 void Preload_FreeUnneededInitializedArchivesInHeap(PreloadHeapKind heap_kind);                                                                                                                       // arg is heap_kind in PreloadEntry
-void Preload_Wait(int preload_flags);
+void Preload_SyncWait(int preload_flags);
+int Preload_GetStatusByFlags(int preload_flags);        // returns 1 when loading, 2 when acessible?
 void *Preload_AllocFromHeap(PreloadHeapKind heap_kind, int size);
 void Preload_FreeToHeap(void *ptr, int size);
 void Preload_SetGrKind(GroundKind);

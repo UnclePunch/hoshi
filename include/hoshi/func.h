@@ -14,5 +14,5 @@ void Hoshi_SetBootScene(MajorKind kind, u8 pri);
 int Hoshi_WriteSave();
 
 int Hoshi_AddPreloadMenuFile(char *file_name);
-int Hoshi_AddPreloadGameFile(char *file_name, PreloadHeapKind heap_kind);
+int Hoshi_AddPreloadGameFile(char *file_name, PreloadHeapKind heap_kind, int pri);
 #endif

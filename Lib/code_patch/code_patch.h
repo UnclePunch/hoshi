@@ -6,7 +6,39 @@ void _CodePatch_OverwriteApply(int *dol_addr, int instr);
 void _CodePatch_ReplaceCall(int *dol_addr, void *func_addr);
 void _CodePatch_ReplaceFunc(int *dol_addr, void *func_addr);
 
-#define BRANCH_CREATE(src, dst, is_link) (0x48000000 | (is_link ? 1 : 0) | (((int)dst - (int)src) & ~(0xfc000000)));
+#define BRANCH_CREATE(src, dst, is_link) (0x48000000 | (is_link ? 1 : 0) | (((int)dst - (int)src) & ~(0xfc000000)))
+
+#define STACKFRAME_CREATE   "stwu	1, -40 (1)\n\t"     \
+                            "mflr 0\n\t"                \
+                            "stw 0, 44 (1)\n\t"         \
+
+#define STACKFRAME_DESTROY  "lwz 0, 44 (1)\n\t"         \
+                            "mtlr 0\n\t"                \
+                            "addi	1, 1, 40 \n\t"      \
+
+#define STACKFRAME_BACKUPVOLATILE   "stwu	1, -40 (1)\n\t"     \
+                                    "mflr 0\n\t"                \
+                                    "stw 0, 44 (1)\n\t"         \
+                                    "stw 3, 8 (1)\n\t"          \
+                                    "stw 4, 12 (1)\n\t"         \
+                                    "stw 5, 16 (1)\n\t"         \
+                                    "stw 6, 20 (1)\n\t"         \
+                                    "stw 7, 24 (1)\n\t"         \
+                                    "stw 8, 28 (1)\n\t"         \
+                                    "stw 9, 32 (1)\n\t"         \
+                                    "stw 10, 36 (1)\n\t"        \
+
+#define STACKFRAME_RESTOREVOLATILE  "lwz 3, 8 (1)\n\t"          \
+                                    "lwz 4, 12 (1)\n\t"         \
+                                    "lwz 5, 16 (1)\n\t"         \
+                                    "lwz 6, 20 (1)\n\t"         \
+                                    "lwz 7, 24 (1)\n\t"         \
+                                    "lwz 8, 28 (1)\n\t"         \
+                                    "lwz 9, 32 (1)\n\t"         \
+                                    "lwz 10, 36 (1)\n\t"        \
+                                    "lwz 0, 44 (1)\n\t"         \
+                                    "mtlr 0\n\t"                \
+                                    "addi	1, 1, 40 \n\t"      \
 
 typedef enum HookKind
 {

@@ -120,33 +120,13 @@ int Text_CommandCheck(u8 *in, int *in_cur, u8 *out, int *out_cur)
 
     return 0;
 }
-CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, "stwu	1, -40 (1)\n\t"
-                                            "mflr 0\n\t"
-                                            "stw 0, 44 (1)\n\t"
-                                            "stw 3, 8 (1)\n\t"
-                                            "stw 4, 12 (1)\n\t"
-                                            "stw 5, 16 (1)\n\t"
-                                            "stw 6, 20 (1)\n\t"
-                                            "stw 7, 24 (1)\n\t"
-                                            "stw 8, 28 (1)\n\t"
-                                            "stw 9, 32 (1)\n\t"
-                                            "stw 10, 36 (1)\n\t"
+CODEPATCH_HOOKCONDITIONALCREATE(0x8044fb54, STACKFRAME_BACKUPVOLATILE
                                             "lwz 3, 12 (1)\n\t"    // in
                                             "addi 4, 1, 16\n\t"   // in cur
                                             "lwz 5, 8 (1)\n\t"    // out
                                             "addi 6, 1, 20\n\t",   // out_cur
                                             Text_CommandCheck, 
-                                            "lwz 3, 8 (1)\n\t"
-                                            "lwz 4, 12 (1)\n\t"
-                                            "lwz 5, 16 (1)\n\t"
-                                            "lwz 6, 20 (1)\n\t"
-                                            "lwz 7, 24 (1)\n\t"
-                                            "lwz 8, 28 (1)\n\t"
-                                            "lwz 9, 32 (1)\n\t"
-                                            "lwz 10, 36 (1)\n\t"
-                                            "lwz 0, 44 (1)\n\t"
-                                            "mtlr 0\n\t"
-                                            "addi 1, 1, 40\n\t",
+                                            STACKFRAME_RESTOREVOLATILE,
                                             0, "", 0x8044fea4)
 
 // MemAlloc Assert

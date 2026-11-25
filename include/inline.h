@@ -4,25 +4,18 @@
 #include "structs.h"
 #include "obj.h"
 #include "datatypes.h"
+#include "macros.h"
 #include "gx.h"
 #include "hsd.h"
 #include "os.h"
 #include "scene.h"
+#include "text.h"
 #include "preload.h"
 #include "ip.h"
 
 #include <string.h>
 #include <stdio.h>
 // #include <math.h>
-
-/*** Macros ***/
-#define GetElementsIn(arr) sizeof(arr) / sizeof(arr[0])
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-
-#ifndef GIT_COMMIT
-#define GIT_COMMIT "unknown"
-#endif
 
 /*** Functions ***/
 
@@ -802,6 +795,22 @@ static int RandomBitInField(u32 bitfield)
     }
 
     return -1;
+}
+
+static TextCanvas *Text_GetCanvasFromIndex(int idx)
+{
+    for (TextCanvas *tc = *stc_textcanvas_first; tc; tc = tc->next)
+    {
+        if (tc->sis_idx == 0)
+        {
+            if (idx == idx)
+                return tc;
+
+            idx++;
+        }
+    }
+
+    return 0;
 }
 
 // static float Math_Vec2Distance(Vec2 *a, Vec2 *b)

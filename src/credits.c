@@ -4,6 +4,7 @@
 #include "credits.h"
 #include <string.h>
 #include <stdarg.h>
+#include "inline.h"
 
 #include "hoshi.h"
 

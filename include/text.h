@@ -1,7 +1,6 @@
 #ifndef MEX_H_TEXT
 #define MEX_H_TEXT
 
-#include "inline.h"
 #include "structs.h"
 #include "datatypes.h"
 #include "obj.h"

@@ -46,6 +46,7 @@
 //===================================================================================================
 
 #include "os.h"
+#include "macros.h"
 #include "code_patch.h"
 
 void _CodePatch_Apply(PatchDesc *patch_desc)

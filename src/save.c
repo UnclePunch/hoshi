@@ -132,11 +132,11 @@ void KARPlusSave_OnNoSave()
         // set as no save to skip prompt
         Memcard_SetSaveStatus(CARDSAVE_IGNORE);
 
-        // boot to main menu
-        Scene_SetNextMajor(MJRKIND_MENU);
-
         // run on load callbacks
         Mods_OnLoadSaveData();
+
+        // set boot scene (ideally this wouldnt be called from save.c but i cant define 2 hooks on the same dol address due to symbol name collision. i should really include function name in the symbol)
+        BootScene_Apply();
 
         // skip all tutorial vids
         GameData *gd = Gm_GetGameData();

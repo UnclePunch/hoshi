@@ -145,7 +145,7 @@ void Preload_LoadCustomGameFile()
         int is_requested = 0;
 
         if ((stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_STAY && p->updated.is_cache_game_files) ||      // game has raised flag to begin preloading common game files
-            (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM && p->updated.gr_kind != 59))              // copied from 800748ec
+            (stc_custom_game_files.file[i].heap_kind == PRELOADHEAPKIND_ALLM && p->updated.st_kind != STAGEKIND_NUM))              // copied from 800748ec
         {
             is_requested = 1;
             Preload_CreateEntry(stc_custom_game_files.file[i].file_kind,

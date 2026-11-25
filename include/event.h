@@ -41,9 +41,9 @@ typedef struct EventCheckData
             int x20;                                 // 0x20
             int x24;                                 // 0x24
             int x28;                                 // 0x28
-            struct                                   // 0x2c, contains a weight for every event for every type of stadium
-            {                                        //
-                int arr[STGROUP_NUM][EVKIND_NUM]; //
+            struct                                      // 0x2c, contains a weight for every event for every type of stadium
+            {                                           //
+                int arr[STADIUMGROUP_NUM][EVKIND_NUM];  //
             } *weights;                        //
             struct                                   // 0x2c, contains a weight for every event for every type of stadium
             {                                        //

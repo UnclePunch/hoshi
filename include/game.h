@@ -256,36 +256,37 @@ typedef struct GameData // 805359d8
     int x104;                          // 0x104
     struct
     {
-        u8 x108;      // 0x108
-        u8 x109;      // 0x109
-        u8 x10a;      // 0x10a
-        u8 x10b;      // 0x10b
-        int x10c;     // 0x10c
-        int x110;     // 0x110
-        int x114;     // 0x114
-        int x118;     // 0x118
-        int x11c;     // 0x11c
-        int x120;     // 0x120
-        int x124;     // 0x124
-        int x128;     // 0x128
-        int x12c;     // 0x12c
-        u8 x130;      // 0x134
-        u8 x131;      // 0x134
-        u8 x132;      // 0x134
-        u8 p_kind[4]; // 0x133
-        u8 icon[4];   // 0x137
-        u8 x13b;      // 0x13b
-        int x13c;     // 0x13c
-        int x140;     // 0x140
-        int x144;     // 0x144
-        int x148;     // 0x148
-        int x14c;     // 0x14c
-        int x150;     // 0x150
-        int x154;     // 0x154
-        u8 x158;      // 0x158
-        u8 x159;      // 0x159
-        u8 x15a;      // 0x15a
-        u8 color[4];  // 0x15b
+        u8 x108;                           // 0x108
+        u8 x109;                           // 0x109
+        u8 x10a;                        // 0x10a
+        u8 x10b;                        // 0x10b
+        u8 x10c;                        // 0x10c
+        u8 is_enter_from_settings;      // 0x10d
+        int x110;                       // 0x110
+        int x114;                       // 0x114
+        int x118;                       // 0x118
+        int x11c;                       // 0x11c
+        int x120;                       // 0x120
+        int x124;                       // 0x124
+        int x128;                       // 0x128
+        int x12c;                       // 0x12c
+        u8 x130;                        // 0x134
+        u8 x131;                        // 0x134
+        u8 x132;                        // 0x134
+        u8 p_kind[4];                   // 0x133
+        u8 icon[4];                     // 0x137
+        u8 x13b;                        // 0x13b
+        int x13c;                       // 0x13c
+        int x140;                       // 0x140
+        int x144;                       // 0x144
+        int x148;                       // 0x148
+        int x14c;                       // 0x14c
+        int x150;                       // 0x150
+        int x154;                       // 0x154
+        u8 x158;                        // 0x158
+        u8 x159;                        // 0x159
+        u8 x15a;                        // 0x15a
+        u8 color[4];                    // 0x15b
         u8 x15f;
     } airride_select_ply;
     int x160; // 0x160
@@ -318,8 +319,8 @@ typedef struct GameData // 805359d8
     int x1cc; // 0x1cc
     struct
     {
-        u8 is_enter_from_settings;      // 0x1d0
-        u8 x1d1[3];                     // 0x1d1
+        u8 x1d0[3];                     // 0x1d0
+        u8 is_enter_from_settings;      // 0x1d3
         u8 x1d4;                        // 0x1d4
         u8 is_all_ready;                // 0x1d5, checks for start inputs when this is 1
         u8 ply_is_selecting_bitfield;   // 0x1d6, (ply << 1). flag raised when selecting an icon or cpu/handicap level
@@ -849,7 +850,7 @@ typedef struct GameData // 805359d8
     u8 city_kind;                    // 0xa94, 5 = main city trial. stadium modes are derived here @ 8004051c (0xE is destruction derby)
     u8 xa95;                         // 0xa95
     u8 view_num;                     // 0xa96, number of views to create?
-    u8 stage_kind;                   // 0xa97, StageKind
+    StageKind stage_kind : 8;        // 0xa97, StageKind
     u8 bgm_override;                 // 0xa98, when this is not 1, it plays it as the song id
     u8 is_always_ura_bgm;            // 0xa99
     u8 xa9a;                         // 0xa9a
@@ -1855,8 +1856,8 @@ typedef struct gmDataAll
     } *x0;
     struct // 0x4
     {
-        int x0;                  // unk
-        int weights[STKIND_NUM]; // 0x4, indexed by StadiumKind
+        int x0;                         // unk
+        int weights[STADIUMKIND_NUM];   // 0x4, indexed by StadiumKind
     } *stadium_weights;
     struct // 0x8
     {
@@ -1975,7 +1976,7 @@ typedef struct grBoxGeneInfo // r13 + 0x610
         struct // 0x4
         {
             int it_kind;
-            u16 fall_chance[STGROUP_NUM];
+            u16 fall_chance[STADIUMGROUP_NUM];
             u16 same_item_chance;
             u16 unk_chance;
         } *item_spawn;
@@ -2325,7 +2326,7 @@ int ClearChecker_GetClearKindFromRewardKind(GameMode gm, int clear_kind);
 int ClearChecker_GetRewardNum(GameMode gm);
 int ClearChecker_CheckUnlocked(GameMode gm, int clear_kind);
 u8 ClearChecker_GetClearData(GameMode gm, int clear_kind);
-int Gm_IsGrKindCity(GroundKind gr_kind);
+int Gm_IsStKindCity(GroundKind gr_kind);
 int Gm_IsDestructionDerby();
 void CitySelect_GetPlyElementPosition(int ply, int joint_kind, Vec3 *out);
 void CitySelect_UpdatePlayerBoard(int ply, PKind p_kind, int color_idx);

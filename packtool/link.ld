@@ -423,7 +423,7 @@ SECTIONS
   Gm_GetCurrentStadiumGroup = 0x8000ae74;
   Gm_GetStadiumGroupFromKind = 0x8000BA20;
   Gm_GetCurrentStageKind = 0x800092d8;
-  Gm_GetCurrentGrKind = 0x80261ECC;
+  Gm_GetCurrentStageKind2 = 0x80261ECC;
   Gm_GetGrKindFromStageKind = 0x80261ce8;
   Gm_StadiumIsDefaultUnlocked = 0x8000C148;
   Gm_StadiumIsUnlocked = 0x8000C17C;
@@ -431,7 +431,7 @@ SECTIONS
   Gm_GetCityMode = 0x8003F6CC;
   Gm_GetIntroState = 0x8000A958;
   Gm_IsInCity = 0x8000ACB0;
-  Gm_IsGrKindCity = 0x80262574;
+  Gm_IsStKindCity = 0x80262574;
   Gm_IsDestructionDerby = 0x80191900;
   Gr_StateChange = 0x800f5548;
   Ply_GetCityStatNum = 0x8000AB48;

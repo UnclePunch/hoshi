@@ -11,37 +11,38 @@
 
 typedef enum GroundKind
 {
-    GRKIND_CITY1 = 9,
-    GRKIND_DRAG1,
-    GRKIND_DRAG2,
-    GRKIND_DRAG3,
-    GRKIND_DRAG4,
-    GRKIND_AIRGLIDER,
-    GRKIND_TARGETFLIGHT,
-    GRKIND_HIGHJUMP,
-    GRKIND_KIRBYMELEE1,
-    GRKIND_KIRBYMELEE2,
-    GRKIND_DESTRUCTIONDERBY1,
-    GRKIND_DESTRUCTIONDERBY2,
-    GRKIND_DESTRUCTIONDERBY3,
-    GRKIND_DESTRUCTIONDERBY4,
-    GRKIND_DESTRUCTIONDERBY5,
-    GRKIND_SINGLERACE1,
-    GRKIND_SINGLERACE2,
-    GRKIND_SINGLERACE3,
-    GRKIND_SINGLERACE4,
-    GRKIND_SINGLERACE5,
-    GRKIND_SINGLERACE6,
-    GRKIND_SINGLERACE7,
-    GRKIND_SINGLERACE8,
-    GRKIND_SINGLERACE9,
-    GRKIND_VSKINGDEDEDE,
     GRKIND_NUM,
 } GroundKind;
 
 typedef enum StageKind
 {
-    STAGEKIND_NUM,
+    STAGEKIND_CITY1 = 9,
+    STAGEKIND_DRAG1,
+    STAGEKIND_DRAG2,
+    STAGEKIND_DRAG3,
+    STAGEKIND_DRAG4,
+    STAGEKIND_AIRGLIDER,
+    STAGEKIND_TARGETFLIGHT,
+    STAGEKIND_HIGHJUMP,
+    STAGEKIND_KIRBYMELEE1,
+    STAGEKIND_KIRBYMELEE2,
+    STAGEKIND_DESTRUCTIONDERBY1,
+    STAGEKIND_DESTRUCTIONDERBY2,
+    STAGEKIND_DESTRUCTIONDERBY3,
+    STAGEKIND_DESTRUCTIONDERBY4,
+    STAGEKIND_DESTRUCTIONDERBY5,
+    STAGEKIND_SINGLERACE1,
+    STAGEKIND_SINGLERACE2,
+    STAGEKIND_SINGLERACE3,
+    STAGEKIND_SINGLERACE4,
+    STAGEKIND_SINGLERACE5,
+    STAGEKIND_SINGLERACE6,
+    STAGEKIND_SINGLERACE7,
+    STAGEKIND_SINGLERACE8,
+    STAGEKIND_SINGLERACE9,
+    STAGEKIND_VSKINGDEDEDE,
+    STAGEKIND_CITYFREE = 52,
+    STAGEKIND_NUM = 59,
 } StageKind;
 
 typedef struct YakumonoParam
@@ -119,7 +120,37 @@ typedef struct GrModelMotion  // exists in the stage file
     GrModelMotionAnim anim[]; // variable amount of these depending on the stage
 } GrModelMotion;              //
 
-typedef struct GrData // exists in the stage file
+typedef struct StageData
+{
+    GroundKind ground_kind;     // 0x0
+    u32 bgm_idx;                // 0x4
+    u32 ura_bgm_idx;            // 0x8
+    u32 bgm_change;             // 0xc
+    u32 x10;                    // 0x10
+    void *x14;                  // 0x14
+    u32 max_ply;                // 0x18
+    u32 start_pos_idx;          // 0x20
+    u32 enemy_pos_idx;          // 0x24
+    u32 item_pos_idx;           // 0x28
+    u32 machine_pos_idx;        // 0x2c
+    u32 x30;                    // 0x30
+    u32 has_item;               // 0x34
+    u32 has_yaku;               // 0x38
+    u32 x3c;                    // 0x3c
+    void *x40;                  // 0x40
+    u32 x44;                    // 0x44
+    u32 x48;                    // 0x48
+    u32 has_kirby;              // 0x4c, requests kirby dat files preload, used for city trial
+    u32 has_dedede;             // 0x50, probably just for VS king dedede
+    u32 has_kirby_walk;         // 0x54, requests RdKirbyMotionWalk.dat preload
+} StageData;
+
+typedef struct stData // exists in the Stage.dat file
+{
+    StageData *stage_data;      // array of these with STAGEKIND_NUM elements
+} stData;
+
+typedef struct GrData // exists in the stage's main dat file
 {                     //
     int flags;        // 0x0
     struct
@@ -185,7 +216,7 @@ static GrData **stc_grdatalookup = (GrData **)(0x80557638); // indexed by gr_kin
 static GrObj **stc_grobj = (GrObj **)(0x805dd0e0 + 0x5ec);
 
 StageKind Gm_GetCurrentStageKind();
-GroundKind Gm_GetCurrentGrKind();
+StageKind Gm_GetCurrentStageKind2();
 GroundKind Gm_GetGrKindFromStageKind(StageKind stage_kind);
 
 void Gr_StateChange(YakumonoData *yp, int state_idx, int anim_idx, int joint_idx, int flags, float start_frame, float anim_rate, float blend_rate);

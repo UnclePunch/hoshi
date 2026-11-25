@@ -163,7 +163,7 @@ struct PreloadTable
     int is_cache_menus;         // 0xc, checked @ 80074908 and will cache game menus flagged in the stc_preload_menu_files array
     int x10;                    // 0x10
     int update_num;             // 0x14, used to know how up to date the cache is. incremented when Preload::heap_kind != MinorSceneDesc::heap_kind OR when calling Preload_Invalidate
-    GroundKind gr_kind;         // 0x18, checked @ 800748ec. some files are gated behind this, e.g. rider files are loaded when this is not set to 59 (800748f4)
+    StageKind st_kind;          // 0x18, checked @ 800748ec. some files are gated behind this, e.g. rider files are loaded when this is not set to 59 (800748f4)
     int x1c;                    // 0x1c, checked @ 800748e0
     int x20;                    // 0x20, -1 to disable entirely? 800748d8
     int is_cache_alloc1;        // 0x24, alloc id 2001, not sure what uses this

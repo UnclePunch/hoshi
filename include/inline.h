@@ -797,16 +797,17 @@ static int RandomBitInField(u32 bitfield)
     return -1;
 }
 
-static TextCanvas *Text_GetCanvasFromIndex(int idx)
+static TextCanvas *Text_GetCanvasFromIndex(int sis_idx, int idx)
 {
+    int this_idx = 0;
     for (TextCanvas *tc = *stc_textcanvas_first; tc; tc = tc->next)
     {
-        if (tc->sis_idx == 0)
+        if (tc->sis_idx == sis_idx)
         {
-            if (idx == idx)
+            if (idx == this_idx)
                 return tc;
 
-            idx++;
+            this_idx++;
         }
     }
 

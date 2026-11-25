@@ -771,7 +771,8 @@ typedef struct HSD_GObjInitData {
 /*** Static Variables ***/
 static GOBJ ***stc_gobj_lookup = (GOBJ ***)0x805de334;                          //
 static GOBJ ***stc_gobj_plink_head = (GOBJ ***)0x805de334;                      //
-static GOBJ ***stc_gobj_gxlink_head = (GOBJ ***)0x805de32c;                     // 
+static GOBJ ***stc_gobj_gxlink_tail = (GOBJ ***)0x805de328;                     // 0x1248 
+static GOBJ ***stc_gobj_gxlink_head = (GOBJ ***)0x805de32c;                     // 0x124c
 static u8 *stc_gobj_proc_num = (u8 *)0x8058c190;                                // number of elements in the below array
 static GOBJProc ***stc_gobjproc_lookup = (GOBJProc ***)0x805de348;              // array of gobj procs ptrs
 static GOBJProc **stc_gobjproc_cur = (GOBJProc **)0x0;                          // current gobj proc being processed

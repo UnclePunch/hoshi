@@ -125,6 +125,7 @@ SECTIONS
   GObj_AddUserData = 0x80429D0C;
   GObj_Create = 0x80428F28;
   GObj_Destroy = 0x80428F64;
+  GObj_DestroyGXLink = 0x80429774;
   GOBJ_InitCamera = 0x80429728;
   GObj_RemoveProc = 0x80428AD8;
   GObj_UpdateAll = 0x80429ED4;
